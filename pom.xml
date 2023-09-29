@@ -11,7 +11,7 @@
 	<groupId>com.ferbo</groupId>
 	<artifactId>sgp-api</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<packaging>war</packaging>
 	<name>API Empleados</name>
 	<description>API para información de empleados.</description>
 	<properties>
