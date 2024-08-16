@@ -1,4 +1,4 @@
-package com.ferbo.sgp.api.models;
+package com.ferbo.sgp.api.model;
 
 import java.util.Date;
 import javax.persistence.Column;
@@ -6,6 +6,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -13,14 +15,15 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="det_biometrico")
-public class DetBiometricoModel {
+public class Biometrico {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_biometrico",unique = true)
     private Integer idBiometrico;
     
-    @Column(name = "id_empleado")
-    private Integer idEmpleado;
+    @OneToOne
+    @JoinColumn(name = "id_empleado")
+    private Empleado empleado;
     
     @Temporal(TemporalType.DATE)
     @Column(name = "fecha_captura")
@@ -30,7 +33,7 @@ public class DetBiometricoModel {
     private Integer activo;
     
     @Column(name = "huella")
-    private String huella;
+    private String huella1;
     
     @Column(name = "huella2")
     private String huella2;
@@ -39,14 +42,14 @@ public class DetBiometricoModel {
     public String getHuella2() {
         return huella2;
     }
-    public void setHuella2(String huella2) {
-        this.huella2 = huella2;
+    public void setHuella2(String huella) {
+        this.huella2 = huella;
     }
-    public String getHuella() {
-        return huella;
+    public String getHuella1() {
+        return huella1;
     }
-    public void setHuella(String huella) {
-        this.huella = huella;
+    public void setHuella1(String huella) {
+        this.huella1 = huella;
     }
     
     public Integer getActivo() {
@@ -56,11 +59,11 @@ public class DetBiometricoModel {
         this.activo = activo;
     }
     
-    public Integer getIdEmpleado() {
-        return idEmpleado;
+    public Empleado getEmpleado() {
+        return empleado;
     }
-    public void setIdEmpleado(Integer idEmpleado) {
-        this.idEmpleado = idEmpleado;
+    public void setIdEmpleado(Empleado empleado) {
+        this.empleado = empleado;
     }
     
     public Date getFechaCaptura() {

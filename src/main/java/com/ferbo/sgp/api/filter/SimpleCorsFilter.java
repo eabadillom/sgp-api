@@ -1,4 +1,4 @@
-package com.ferbo.sgp.api.filters;
+package com.ferbo.sgp.api.filter;
 
 import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
@@ -39,7 +39,7 @@ public class SimpleCorsFilter implements Filter {
         response.setHeader("Access-Control-Allow-Headers",
                 "Access-Control-Allow-Headers, Content-Type, Access-Control-Allow-Headers, Authorization, X-Requested-With");
         response.setHeader("Access-Control-Expose-Headers", "*");
-        log.info("Agregando encabezados");
+        log.debug("Agregando encabezados");
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
             response.setStatus(HttpServletResponse.SC_OK);
         } else {

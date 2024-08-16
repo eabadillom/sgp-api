@@ -1,4 +1,4 @@
-package com.ferbo.sgp.api.models;
+package com.ferbo.sgp.api.model;
 
 import java.util.Date;
 
@@ -7,41 +7,91 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "det_empleado")
-public class DetEmpleadoModel {
+public class Empleado {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column( name = "id_empleado", unique = true)
     private Integer idEmpleado;
 
-    public Integer getIdEmpleado() {
+    @Column(name = "num_empleado")
+    private String numeroEmpleado;
+    
+    @Column(name = "nombre")
+    private String nombre;
+    
+    @Column(name = "primer_ap")
+    private String primeroAp;
+    
+    @Column(name = "segundo_ap")
+    private String segundoAp;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_nacimiento")
+    private Date fechaNacimiento;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_registro")
+    private Date fechaRegistro;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_modificacion")
+    private Date fechaModificacion;
+    
+    @Column(name = "curp")
+    private String curp;
+    
+    @Column(name = "rfc")
+    private String rfc;
+    
+    @Column(name = "correo")
+    private String correo;
+    
+    @Temporal(TemporalType.DATE)
+    @Column(name = "fecha_ingreso")
+    private Date fechaIngreso;
+    
+    @Column(name = "nss")
+    private String nss;
+    
+    @Column(name = "activo")
+    private Integer activo;
+    
+    @OneToOne
+    @JoinColumn(name = "id_empleado_foto")
+    private Fotografia fotografia;
+    
+    @OneToOne
+    @JoinColumn(name = "id_empleado_empresa")
+    private InformacionEmpresa informacionEmpresa;
+    
+    @OneToOne(mappedBy = "empleado")
+    private Biometrico biometrico;
+    
+	public Integer getIdEmpleado() {
         return idEmpleado;
     }
 
     public void setIdEmpleado(Integer idEmpleado) {
         this.idEmpleado = idEmpleado;
     }
-
-    @Column(name = "num_empleado")
-    private String numEmpleado;
-
-    public String getNumEmpleado() {
-        return numEmpleado;
+    
+    public String getNumeroEmpleado() {
+        return numeroEmpleado;
     }
 
-    public void setNumEmpleado(String numEmpleado) {
-        this.numEmpleado = numEmpleado;
+    public void setNumeroEmpleado(String numEmpleado) {
+        this.numeroEmpleado = numEmpleado;
     }
-
-    @Column(name = "nombre")
-    private String nombre;
-
+    
     public String getNombre() {
         return nombre;
     }
@@ -49,10 +99,7 @@ public class DetEmpleadoModel {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-
-    @Column(name = "primer_ap")
-    private String primeroAp;
-
+    
     public String getPrimeroAp() {
         return primeroAp;
     }
@@ -60,9 +107,6 @@ public class DetEmpleadoModel {
     public void setPrimeroAp(String primeroAp) {
         this.primeroAp = primeroAp;
     }
-
-    @Column(name = "segundo_ap")
-    private String segundoAp;
     
     public String getSegundoAp() {
         return segundoAp;
@@ -72,10 +116,6 @@ public class DetEmpleadoModel {
         this.segundoAp = segundoAp;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_nacimiento")
-    private Date fechaNacimiento;
-
     public Date getFechaNacimiento() {
         return fechaNacimiento;
     }
@@ -83,10 +123,6 @@ public class DetEmpleadoModel {
     public void setFechaNacimiento(Date fechaNacimiento) {
         this.fechaNacimiento = fechaNacimiento;
     }
-
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_registro")
-    private Date fechaRegistro;
 
     public Date getFechaRegistro() {
         return fechaRegistro;
@@ -96,10 +132,6 @@ public class DetEmpleadoModel {
         this.fechaRegistro = fechaRegistro;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_modificacion")
-    private Date fechaModificacion;
-
     public Date getFechaModificacion() {
         return fechaModificacion;
     }
@@ -107,9 +139,6 @@ public class DetEmpleadoModel {
     public void setFechaModificacion(Date fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
     }
-
-    @Column(name = "curp")
-    private String curp;
 
     public String getCurp() {
         return curp;
@@ -119,9 +148,6 @@ public class DetEmpleadoModel {
         this.curp = curp;
     }
 
-    @Column(name = "rfc")
-    private String rfc;
-
     public String getRfc() {
         return rfc;
     }
@@ -129,9 +155,6 @@ public class DetEmpleadoModel {
     public void setRfc(String rfc) {
         this.rfc = rfc;
     }
-
-    @Column(name = "correo")
-    private String correo;
 
     public String getCorreo() {
         return correo;
@@ -141,10 +164,6 @@ public class DetEmpleadoModel {
         this.correo = correo;
     }
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_ingreso")
-    private Date fechaIngreso;
-
     public Date getFechaIngreso() {
         return fechaIngreso;
     }
@@ -152,9 +171,6 @@ public class DetEmpleadoModel {
     public void setFechaIngreso(Date fechaIngreso) {
         this.fechaIngreso = fechaIngreso;
     }
-
-    @Column(name = "nss")
-    private String nss;
 
     public String getNss() {
         return nss;
@@ -164,9 +180,6 @@ public class DetEmpleadoModel {
         this.nss = nss;
     }
 
-    @Column(name = "activo")
-    private Integer activo;
-
     public Integer getActivo() {
         return activo;
     }
@@ -175,26 +188,27 @@ public class DetEmpleadoModel {
         this.activo = activo;
     }
 
-    @Column(name = "fotografia")
-    private String fotografia;
+	public Fotografia getFotografia() {
+		return fotografia;
+	}
 
-    public String getFotografia() {
-        return fotografia;
-    }
+	public void setFotografia(Fotografia fotografia) {
+		this.fotografia = fotografia;
+	}
+	
+	public InformacionEmpresa getInformacionEmpresa() {
+		return informacionEmpresa;
+	}
 
-    public void setFotografia(String fotografia) {
-        this.fotografia = fotografia;
-    }
+	public void setInformacionEmpresa(InformacionEmpresa informacionEmpresa) {
+		this.informacionEmpresa = informacionEmpresa;
+	}
 
-    @Column(name = "sueldo_diario")
-    private float sueldoDiario;
+	public Biometrico getBiometrico() {
+		return biometrico;
+	}
 
-    public float getSueldoDiario() {
-        return sueldoDiario;
-    }
-
-    public void setSueldoDiario(float sueldoDiario) {
-        this.sueldoDiario = sueldoDiario;
-    }
-
+	public void setBiometrico(Biometrico biometrico) {
+		this.biometrico = biometrico;
+	}
 }
