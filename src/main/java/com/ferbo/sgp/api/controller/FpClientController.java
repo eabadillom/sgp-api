@@ -179,6 +179,7 @@ public class FpClientController {
 				log.info("Registro guardado: {}", registroSaved);
 				
 				biometricoResponse = new BiometricoResponse();
+				biometricoResponse.setUuid(asistencia.getUuid());
 				biometricoResponse.setNumero(asistencia.getNumero());
 				biometricoResponse.setHoraEntrada(asistencia.getHoraEntrada());
 				biometricoResponse.setHoraSalida(asistencia.getHoraSalida());

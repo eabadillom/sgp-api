@@ -6,7 +6,7 @@ import java.util.Objects;
 import com.ferbo.sgp.api.model.response.FotografiaResponse;
 
 public class BiometricoRequest {
-	
+	protected String uuid = null;
 	protected String numero = null;
 	protected String biometrico1 = null;
 	protected String biometrico2 = null;
@@ -16,6 +16,12 @@ public class BiometricoRequest {
 	
 	protected FotografiaResponse fotografia = null;
 	
+	public String getUuid() {
+		return this.uuid;
+	}
+	public void setUuid(String uuid) {
+		this.uuid = uuid;
+	}
 	public String getNumero() {
 		return numero;
 	}
