@@ -58,6 +58,12 @@ public class BiometricoRequest {
 	public void setHoraSalida(LocalDateTime horaSalida) {
 		this.horaSalida = horaSalida;
 	}
+	public FotografiaResponse getFotografia() {
+		return fotografia;
+	}
+	public void setFotografia(FotografiaResponse fotografia) {
+		this.fotografia = fotografia;
+	}
 	@Override
 	public int hashCode() {
 		return Objects.hash(biometrico1, biometrico2, captura, horaEntrada, horaSalida, numero);
@@ -77,13 +83,9 @@ public class BiometricoRequest {
 	}
 	@Override
 	public String toString() {
-		return "FpClientRequest [numero=" + numero + ", biometrico1=" + biometrico1 + ", biometrico2=" + biometrico2
-				+ ", captura=" + captura + ", horaEntrada=" + horaEntrada + ", horaSalida=" + horaSalida + "]";
+		return "{\"uuid\":\"" + uuid + "\", \"numero\":\"" + numero + "\", \"biometrico1\":\"" + biometrico1
+				+ "\", \"biometrico2\":\"" + biometrico2 + "\", \"captura\":\"" + captura + "\", \"horaEntrada\":\""
+				+ horaEntrada + "\", \"horaSalida\":\"" + horaSalida + "\", \"fotografia\":\"" + fotografia + "\"}";
 	}
-	public FotografiaResponse getFotografia() {
-		return fotografia;
-	}
-	public void setFotografia(FotografiaResponse fotografia) {
-		this.fotografia = fotografia;
-	}
+	
 }
