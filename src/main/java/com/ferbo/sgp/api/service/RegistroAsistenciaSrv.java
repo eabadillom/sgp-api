@@ -1,6 +1,6 @@
 package com.ferbo.sgp.api.service;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,10 +20,10 @@ public class RegistroAsistenciaSrv {
 	
 	public RegistroAsistencia guardar(RegistroAsistencia asistencia) {
 		RegistroAsistencia asistenciaPrevia = null;
-		LocalDateTime fechaEntrada = asistencia.getFechaEntrada();
+		OffsetDateTime fechaEntrada = asistencia.getFechaEntrada();
 		
-		LocalDateTime fechaInicio = LocalDateTime.of(fechaEntrada.getYear(), fechaEntrada.getMonth(), fechaEntrada.getDayOfMonth(), 0, 0, 0, 0);
-		LocalDateTime fechaFin = LocalDateTime.of(fechaEntrada.getYear(), fechaEntrada.getMonth(), fechaEntrada.getDayOfMonth(), 23, 59, 59, 999);
+		OffsetDateTime fechaInicio = fechaEntrada.withHour(0).withMinute(0).withSecond(0).withNano(0);
+		OffsetDateTime fechaFin = fechaEntrada.withHour(23).withMinute(59).withSecond(59).withNano(999);
 		
 		/*Se debe verificar en el SGP si el número de empleado ya cuenta con un registro de asistencia.*/
 		Optional<RegistroAsistencia> oAsistencia = asistenciaRepo.buscarPorPeriodo(asistencia.getEmpleado().getNumeroEmpleado(), fechaInicio, fechaFin);

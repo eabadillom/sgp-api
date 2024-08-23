@@ -1,6 +1,6 @@
 package com.ferbo.sgp.api.repository;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.Query;
@@ -11,7 +11,7 @@ import com.ferbo.sgp.api.model.RegistroAsistencia;
 public interface RegistroAsistenciaRepo extends CrudRepository<RegistroAsistencia, Integer>{
 	
 	@Query("SELECT r FROM RegistroAsistencia r WHERE r.empleado.numeroEmpleado = :numeroEmpleado AND r.fechaEntrada BETWEEN :fechaInicio AND :fechaFin")
-	public abstract Optional<RegistroAsistencia> buscarPorPeriodo(String numeroEmpleado, LocalDateTime fechaInicio, LocalDateTime fechaFin);
+	public abstract Optional<RegistroAsistencia> buscarPorPeriodo(String numeroEmpleado, OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
 	
 	
 	
