@@ -1,6 +1,6 @@
 package com.ferbo.sgp.api.model;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -26,10 +26,10 @@ public class RegistroAsistencia {
 	private Empleado empleado;
 	
 	@Column(name = "fecha_entrada")
-	private LocalDateTime fechaEntrada;
+	private OffsetDateTime fechaEntrada;
 	
 	@Column(name = "fecha_salida")
-	private LocalDateTime fechaSalida;
+	private OffsetDateTime fechaSalida;
 	
 	@ManyToOne
 	@JoinColumn(name = "id_estatus", referencedColumnName = "id_estatus")
@@ -51,19 +51,19 @@ public class RegistroAsistencia {
 		this.empleado = empleado;
 	}
 
-	public LocalDateTime getFechaEntrada() {
+	public OffsetDateTime getFechaEntrada() {
 		return fechaEntrada;
 	}
 
-	public void setFechaEntrada(LocalDateTime fechaEntrada) {
+	public void setFechaEntrada(OffsetDateTime fechaEntrada) {
 		this.fechaEntrada = fechaEntrada;
 	}
 
-	public LocalDateTime getFechaSalida() {
+	public OffsetDateTime getFechaSalida() {
 		return fechaSalida;
 	}
 
-	public void setFechaSalida(LocalDateTime fechaSalida) {
+	public void setFechaSalida(OffsetDateTime fechaSalida) {
 		this.fechaSalida = fechaSalida;
 	}
 

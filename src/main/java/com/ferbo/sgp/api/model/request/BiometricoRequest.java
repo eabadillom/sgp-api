@@ -1,6 +1,6 @@
 package com.ferbo.sgp.api.model.request;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Objects;
 
 import com.ferbo.sgp.api.model.response.FotografiaResponse;
@@ -11,8 +11,8 @@ public class BiometricoRequest {
 	protected String biometrico1 = null;
 	protected String biometrico2 = null;
 	protected String captura = null;
-	protected LocalDateTime horaEntrada = null;
-	protected LocalDateTime horaSalida = null;
+	protected OffsetDateTime horaEntrada = null;
+	protected OffsetDateTime horaSalida = null;
 	
 	protected FotografiaResponse fotografia = null;
 	
@@ -46,16 +46,16 @@ public class BiometricoRequest {
 	public void setCaptura(String captura) {
 		this.captura = captura;
 	}
-	public LocalDateTime getHoraEntrada() {
+	public OffsetDateTime getHoraEntrada() {
 		return horaEntrada;
 	}
-	public void setHoraEntrada(LocalDateTime horaEntrada) {
+	public void setHoraEntrada(OffsetDateTime horaEntrada) {
 		this.horaEntrada = horaEntrada;
 	}
-	public LocalDateTime getHoraSalida() {
+	public OffsetDateTime getHoraSalida() {
 		return horaSalida;
 	}
-	public void setHoraSalida(LocalDateTime horaSalida) {
+	public void setHoraSalida(OffsetDateTime horaSalida) {
 		this.horaSalida = horaSalida;
 	}
 	public FotografiaResponse getFotografia() {
