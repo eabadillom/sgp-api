@@ -165,7 +165,8 @@ public class FpClientController {
 			estado = estadoService.buscarPorCodigo("T").get();
 			listaBiometricoResponse = new ArrayList<BiometricoResponse>();
 			
-			for(BiometricoRequest asistencia : registroAsistencia) {	
+			for(BiometricoRequest asistencia : registroAsistencia) {
+				log.info("Asistencia recibida: {}", asistencia);
 				empleado = empleadoService.buscarPorNumeroEmpleado(asistencia.getNumero());
 				
 				registro = new RegistroAsistencia();
@@ -176,8 +177,6 @@ public class FpClientController {
 				
 				registroSaved = asistenciaService.guardar(registro);
 				
-				log.info("Registro guardado: {}", registroSaved);
-				
 				biometricoResponse = new BiometricoResponse();
 				biometricoResponse.setUuid(asistencia.getUuid());
 				biometricoResponse.setNumero(asistencia.getNumero());
@@ -186,8 +185,10 @@ public class FpClientController {
 				biometricoResponse.setCodigoError(0);
 				biometricoResponse.setMensajeError("Registro correcto.");
 				
+				log.info("Registro guardado: {}", biometricoResponse);
 				listaBiometricoResponse.add(biometricoResponse);
 			}
+			log.info("Registro(s) procesado(s): {}", listaBiometricoResponse.size());
 			
 			response = new ResponseEntity<List<BiometricoResponse>>(listaBiometricoResponse, HttpStatus.ACCEPTED);
 		} catch(Exception ex) {
