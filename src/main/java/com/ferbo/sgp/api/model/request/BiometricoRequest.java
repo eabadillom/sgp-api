@@ -3,6 +3,7 @@ package com.ferbo.sgp.api.model.request;
 import java.time.OffsetDateTime;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ferbo.sgp.api.model.response.FotografiaResponse;
 
 public class BiometricoRequest {
@@ -11,7 +12,9 @@ public class BiometricoRequest {
 	protected String biometrico1 = null;
 	protected String biometrico2 = null;
 	protected String captura = null;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
 	protected OffsetDateTime horaEntrada = null;
+	@JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
 	protected OffsetDateTime horaSalida = null;
 	
 	protected FotografiaResponse fotografia = null;
