@@ -6,7 +6,9 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -158,6 +160,7 @@ public class FpClientController {
 		Empleado empleado = null;
 		RegistroAsistencia registro = null;
 		RegistroAsistencia registroSaved = null;
+		HttpHeaders headers = null;
 		
 		try {
 			log.info("Biometrico: {}", registroAsistencia);
@@ -190,7 +193,10 @@ public class FpClientController {
 			}
 			log.info("Registro(s) procesado(s): {}", listaBiometricoResponse.size());
 			
-			response = new ResponseEntity<List<BiometricoResponse>>(listaBiometricoResponse, HttpStatus.ACCEPTED);
+			headers = new HttpHeaders();
+	        headers.setContentType(MediaType.APPLICATION_JSON);
+			
+			response = new ResponseEntity<List<BiometricoResponse>>(listaBiometricoResponse, headers, HttpStatus.ACCEPTED);
 		} catch(Exception ex) {
 			log.error("Problema al guardar la información de asistencia...",ex);
 			biometricoResponse = new BiometricoResponse();
