@@ -195,6 +195,7 @@ public class FpClientController {
 			
 			headers = new HttpHeaders();
 	        headers.setContentType(MediaType.APPLICATION_JSON);
+	        headers.set("Content-Type", "application/json; charset=UTF-8");
 			
 			response = new ResponseEntity<List<BiometricoResponse>>(listaBiometricoResponse, headers, HttpStatus.ACCEPTED);
 		} catch(Exception ex) {
