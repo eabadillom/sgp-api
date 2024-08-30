@@ -132,7 +132,7 @@ public class FpClientController {
 			token = tokenService.generaToken(biometrico.getEmpleado());
 			biometricoResponse.setNumero(biometrico.getEmpleado().getNumeroEmpleado());
 			biometricoResponse.setBiometrico1(biometrico.getHuella1());
-			biometricoResponse.setBiometrico2(biometrico.getHuella1());
+			biometricoResponse.setBiometrico2(biometrico.getHuella2());
 			biometricoResponse.setToken(token.getToken());
 			biometricoResponse.setCodigoError(0);
 			biometricoResponse.setMensajeError("Respuesta correcta.");
