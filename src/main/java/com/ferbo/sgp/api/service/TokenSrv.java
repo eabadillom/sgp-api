@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.ferbo.sgp.api.model.Empleado;
@@ -15,6 +16,9 @@ import com.ferbo.sgp.api.tool.SecurityTool;
 
 @Service
 public class TokenSrv {
+	
+	@Value("${sgp-api.duracionToken}")
+	private Integer duracionToken;
 	
 	@Autowired
 	private TokenRepo tokenRepository;
@@ -33,7 +37,7 @@ public class TokenSrv {
 		
 		
 		caducidad = LocalDateTime.of(LocalDate.now(), LocalTime.now());
-		caducidad = caducidad.plusMinutes(5);
+		caducidad = caducidad.plusMinutes(duracionToken);
 		
 		token = new Token();
 		token.setEmpleado(empleado);
