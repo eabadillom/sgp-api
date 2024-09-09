@@ -141,7 +141,7 @@ public class FpClientController {
 			biometricoResponse.setMensajeError("Respuesta correcta.");
 			
 			response = new ResponseEntity<BiometricoResponse>(biometricoResponse, HttpStatus.OK);
-			log.info("Respuesta: {}", biometricoResponse);
+			log.info("La consulta de biometricos para el empleado {} terminó correctamente.", numero);
 		} catch(Exception ex) {
 			log.error("Problema para obtener el biometrico del empleado " + numero + "...", ex);
 			biometricoResponse = new BiometricoResponse();
