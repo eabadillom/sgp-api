@@ -107,10 +107,10 @@ public class FpClientController {
 				biometricoResponse.setBiometrico2(i.getEmpleado().getBiometrico().getHuella2());
 				
 				listaResponse.add(biometricoResponse);
-				log.info("Biometrico agregado.");
+				log.debug("Biometrico agregado.");
 			}
-			
 			response = new ResponseEntity<List<BiometricoResponse>>(listaResponse, HttpStatus.OK);
+			log.info("La consulta de biometricos terminó correctamente.");
 		} catch(Exception ex) {
 			log.error("Problema para obtener el listado de biometricos...", ex);
 			response = new ResponseEntity<List<BiometricoResponse>>(HttpStatus.NOT_FOUND);

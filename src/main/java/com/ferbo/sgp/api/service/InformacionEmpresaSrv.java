@@ -35,9 +35,9 @@ public class InformacionEmpresaSrv {
 		List<InformacionEmpresa> lista = null;
 		lista = informacionEmpresaRepo.findByIdPlanta(idPlanta);
 		
-		for(InformacionEmpresa model : lista) {
-			log.info("Biometrico: {}", model.getEmpleado().getBiometrico().getIdBiometrico());
-		}
+//		for(InformacionEmpresa model : lista) {
+//			log.info("Biometrico: {}", model.getEmpleado().getBiometrico().getIdBiometrico());
+//		}
 		
 		return lista;
 	}

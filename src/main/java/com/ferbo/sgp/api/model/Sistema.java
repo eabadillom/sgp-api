@@ -96,6 +96,6 @@ public class Sistema {
 
 	@Override
 	public String toString() {
-		return "Sistema [id=" + id + ", nombre=" + nombre + ", password=" + password + ", rol=" + rol + "]";
+		return "Sistema [id=" + id + ", nombre=" + nombre + ", rol=" + rol + "]";
 	}
 }
