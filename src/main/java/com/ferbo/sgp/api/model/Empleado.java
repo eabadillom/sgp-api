@@ -1,6 +1,7 @@
 package com.ferbo.sgp.api.model;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -211,4 +212,32 @@ public class Empleado {
 	public void setBiometrico(Biometrico biometrico) {
 		this.biometrico = biometrico;
 	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(idEmpleado);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Empleado other = (Empleado) obj;
+		return Objects.equals(idEmpleado, other.idEmpleado);
+	}
+
+	@Override
+	public String toString() {
+		return "Empleado [idEmpleado=" + idEmpleado + ", numeroEmpleado=" + numeroEmpleado + ", nombre=" + nombre
+				+ ", primeroAp=" + primeroAp + ", segundoAp=" + segundoAp + ", fechaNacimiento=" + fechaNacimiento
+				+ ", fechaRegistro=" + fechaRegistro + ", fechaModificacion=" + fechaModificacion + ", curp=" + curp
+				+ ", rfc=" + rfc + ", correo=" + correo + ", fechaIngreso=" + fechaIngreso + ", nss=" + nss
+				+ ", activo=" + activo + "]";
+	}
+	
+	
 }

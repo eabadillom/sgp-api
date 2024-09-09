@@ -9,8 +9,6 @@ import com.ferbo.sgp.api.model.InformacionEmpresa;
 
 public interface InformacionEmpresaRepo extends CrudRepository<InformacionEmpresa, Integer> {
 
-//	public abstract Optional<InformacionEmpresa> findById(Integer id);
-	
-	@Query("SELECT i FROM InformacionEmpresa i WHERE i.planta.id = :idPlanta AND i.empleado IS NOT NULL AND i.empleado.biometrico IS NOT NULL")
+	@Query("SELECT i FROM InformacionEmpresa i WHERE i.planta IS NOT NULL AND i.planta.id = :idPlanta AND i.empleado IS NOT NULL AND i.empleado.biometrico.empleado IS NOT NULL")
 	public abstract List<InformacionEmpresa> findByIdPlanta(Integer idPlanta);
 }
