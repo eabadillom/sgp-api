@@ -89,7 +89,9 @@ public class FpClientController {
 			log.info("Usuario solictante: {}", fpClientName);
 			sistema = sistemaService.buscarPorNombre(fpClientName);
 			
+			log.info("Buscando lista de biometricos...");
 			listaInfoEmpresa = informacionEmpresaService.buscarPorIdPlanta(sistema.getPlanta().getId());
+			log.info("Lista de biometricos: {}", listaInfoEmpresa.size());
 			
 			listaResponse = new ArrayList<BiometricoResponse>();
 			for(InformacionEmpresa i : listaInfoEmpresa) {
@@ -105,11 +107,12 @@ public class FpClientController {
 				biometricoResponse.setBiometrico2(i.getEmpleado().getBiometrico().getHuella2());
 				
 				listaResponse.add(biometricoResponse);
+				log.debug("Biometrico agregado.");
 			}
-			
 			response = new ResponseEntity<List<BiometricoResponse>>(listaResponse, HttpStatus.OK);
+			log.info("La consulta de biometricos terminó correctamente.");
 		} catch(Exception ex) {
-			log.error("Probolema para obtener el listado de biometricos...", ex);
+			log.error("Problema para obtener el listado de biometricos...", ex);
 			response = new ResponseEntity<List<BiometricoResponse>>(HttpStatus.NOT_FOUND);
 		}
 		

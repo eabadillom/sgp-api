@@ -202,6 +202,14 @@ public class InformacionEmpresa {
 	public void setTolerancia(Integer tolerancia) {
 		this.tolerancia = tolerancia;
 	}
+	
+	public Empleado getEmpleado() {
+		return empleado;
+	}
+
+	public void setEmpleado(Empleado empleado) {
+		this.empleado = empleado;
+	}
 
 	@Override
 	public int hashCode() {
@@ -226,15 +234,4 @@ public class InformacionEmpresa {
 				+ rfc + "\", \"salarioDiario\":\"" + salarioDiario + "\", \"horaEntrada\":\"" + horaEntrada
 				+ "\", \"tolerancia\":\"" + tolerancia + "\"}";
 	}
-
-	public Empleado getEmpleado() {
-		return empleado;
-	}
-
-	public void setEmpleado(Empleado empleado) {
-		this.empleado = empleado;
-	}
-	
-	
-
 }
