@@ -27,23 +27,6 @@ public class Fotografia {
 	@OneToOne(mappedBy = "fotografia")
 	private Empleado empleado;
 	
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public String getFotografia() {
-		return fotografia;
-	}
-
-	public void setFotografia(String fotografia) {
-		this.fotografia = fotografia;
-	}
-
 	@Override
 	public int hashCode() {
 		return Objects.hash(id);
@@ -63,9 +46,26 @@ public class Fotografia {
 
 	@Override
 	public String toString() {
-		return "Fotografia [id=" + id + ", fotografia=" + fotografia + "]";
+		return "Fotografia [id=" + id + "]";
+	}
+	
+
+	public Integer getId() {
+		return id;
 	}
 
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getFotografia() {
+		return fotografia;
+	}
+
+	public void setFotografia(String fotografia) {
+		this.fotografia = fotografia;
+	}
+	
 	public Empleado getEmpleado() {
 		return empleado;
 	}

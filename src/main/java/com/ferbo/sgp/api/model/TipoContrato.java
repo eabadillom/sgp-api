@@ -23,23 +23,7 @@ public class TipoContrato {
 	@Size(max = 150)
 	@Basic(optional = false)
 	private String nombre;
-
-	public String getClave() {
-		return clave;
-	}
-
-	public void setClave(String clave) {
-		this.clave = clave;
-	}
-
-	public String getNombre() {
-		return nombre;
-	}
-
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
-
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(clave);
@@ -60,5 +44,21 @@ public class TipoContrato {
 	@Override
 	public String toString() {
 		return "{\"clave\":\"" + clave + "\", \"nombre\":\"" + nombre + "\"}";
+	}
+
+	public String getClave() {
+		return clave;
+	}
+
+	public void setClave(String clave) {
+		this.clave = clave;
+	}
+
+	public String getNombre() {
+		return nombre;
+	}
+
+	public void setNombre(String nombre) {
+		this.nombre = nombre;
 	}
 }

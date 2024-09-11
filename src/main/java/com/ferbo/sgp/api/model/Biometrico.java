@@ -40,6 +40,26 @@ public class Biometrico {
     @Column(name = "huella2")
     private String huella2;
     
+    @Override
+	public int hashCode() {
+		return Objects.hash(idBiometrico);
+	}
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Biometrico other = (Biometrico) obj;
+		return Objects.equals(idBiometrico, other.idBiometrico);
+	}
+	@Override
+	public String toString() {
+		return "Biometrico [idBiometrico=" + idBiometrico + ", fechaCaptura=" + fechaCaptura + ", activo=" + activo
+				+ "]";
+	}
     
     public String getHuella2() {
         return huella2;
@@ -81,25 +101,5 @@ public class Biometrico {
     public void setIdBiometrico(Integer idBiometrico) {
         this.idBiometrico = idBiometrico;
     }
-	@Override
-	public int hashCode() {
-		return Objects.hash(idBiometrico);
-	}
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Biometrico other = (Biometrico) obj;
-		return Objects.equals(idBiometrico, other.idBiometrico);
-	}
-	@Override
-	public String toString() {
-		return "Biometrico [idBiometrico=" + idBiometrico + ", fechaCaptura=" + fechaCaptura + ", activo=" + activo
-				+ "]";
-	}
 }
 
