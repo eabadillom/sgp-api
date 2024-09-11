@@ -15,11 +15,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ferbo.sgp.api.model.Empleado;
+import com.ferbo.sgp.api.model.Fotografia;
 import com.ferbo.sgp.api.model.Token;
 import com.ferbo.sgp.api.model.response.BiometricoResponse;
 import com.ferbo.sgp.api.model.response.EmpleadoResponse;
 import com.ferbo.sgp.api.model.response.FotografiaResponse;
 import com.ferbo.sgp.api.service.EmpleadoSrv;
+import com.ferbo.sgp.api.service.FotografiaSrv;
 import com.ferbo.sgp.api.service.TokenSrv;
 
 @RestController
@@ -32,20 +34,23 @@ public class GestionController {
 	EmpleadoSrv empleadoService;
 	
 	@Autowired
+	FotografiaSrv fotografiaService;
+	
+	@Autowired
 	TokenSrv tokenService = null;
 	
 	@GetMapping("/{numero}/fotografia")
 	public ResponseEntity<FotografiaResponse> buscarFoto(@PathVariable String numero) {
 		ResponseEntity<FotografiaResponse> response = null;
 		FotografiaResponse fotografiaResponse = null;
-		Empleado empleado = null;
+		Fotografia fotografia = null;
 		try {
 			log.info("Consultando fotografia por número de empleado: {}", numero);
-			empleado = empleadoService.buscarPorNumeroEmpleado(numero);
+			fotografia = fotografiaService.buscarPorNumeroEmpleado(numero);
 			
 			fotografiaResponse = new FotografiaResponse();
-			fotografiaResponse.setFotografia(empleado.getFotografia().getFotografia());
-			fotografiaResponse.setNumero(empleado.getNumeroEmpleado());
+			fotografiaResponse.setFotografia(fotografia.getFotografia());
+			fotografiaResponse.setNumero(fotografia.getEmpleado().getNumeroEmpleado());
 			fotografiaResponse.setCodigoError(0);
 			fotografiaResponse.setMensajeError("Respuesta correcta.");
 			
@@ -111,7 +116,7 @@ public class GestionController {
 		
 		try {
 			log.info("Consultando información de los empleados");
-			empleados = empleadoService.obtenerEmpleados();
+			empleados = empleadoService.obtenerEmpleadosActivos();
 			
 			listaResponse = new ArrayList<>();
 			for(Empleado e : empleados) {

@@ -69,6 +69,33 @@ public class Empresa {
 	@Column(name = "nu_cp")
 	@Size(max = 5)
 	private String codigoPostal;
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(id);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Empresa other = (Empresa) obj;
+		return Objects.equals(id, other.id);
+	}
+
+	@Override
+	public String toString() {
+		return "{\"id\":\"" + id + "\", \"descripcion\":\"" + descripcion + "\", \"activo\":\"" + activo
+				+ "\", \"razonSocial\":\"" + razonSocial + "\", \"tipoPersona\":\"" + tipoPersona
+				+ "\", \"regimenCapital\":\"" + regimenCapital + "\", \"rfc\":\"" + rfc + "\", \"inicioOperaciones\":\""
+				+ inicioOperaciones + "\", \"ultimoCambio\":\"" + ultimoCambio + "\", \"statusPadron\":\""
+				+ statusPadron + "\", \"registroPatronal\":\"" + registroPatronal + "\", \"codigoPostal\":\""
+				+ codigoPostal + "\"}";
+	}
 
 	public Integer getId() {
 		return id;
@@ -172,32 +199,5 @@ public class Empresa {
 
 	public void setCodigoPostal(String codigoPostal) {
 		this.codigoPostal = codigoPostal;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(id);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Empresa other = (Empresa) obj;
-		return Objects.equals(id, other.id);
-	}
-
-	@Override
-	public String toString() {
-		return "{\"id\":\"" + id + "\", \"descripcion\":\"" + descripcion + "\", \"activo\":\"" + activo
-				+ "\", \"razonSocial\":\"" + razonSocial + "\", \"tipoPersona\":\"" + tipoPersona
-				+ "\", \"regimenCapital\":\"" + regimenCapital + "\", \"rfc\":\"" + rfc + "\", \"inicioOperaciones\":\""
-				+ inicioOperaciones + "\", \"ultimoCambio\":\"" + ultimoCambio + "\", \"statusPadron\":\""
-				+ statusPadron + "\", \"registroPatronal\":\"" + registroPatronal + "\", \"codigoPostal\":\""
-				+ codigoPostal + "\"}";
 	}
 }

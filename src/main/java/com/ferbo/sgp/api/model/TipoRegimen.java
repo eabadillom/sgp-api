@@ -32,6 +32,29 @@ public class TipoRegimen {
 	@Column(name = "fh_vigencia_fin")
 	@Basic(optional = true)
 	private LocalDate vigenciaFin;
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(clave);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		TipoRegimen other = (TipoRegimen) obj;
+		return Objects.equals(clave, other.clave);
+	}
+
+	@Override
+	public String toString() {
+		return "{\"clave\":\"" + clave + "\", \"nombre\":\"" + nombre + "\", \"vigenciaInicio\":\"" + vigenciaInicio
+				+ "\", \"vigenciaFin\":\"" + vigenciaFin + "\"}";
+	}
 
 	public String getClave() {
 		return clave;
@@ -63,28 +86,5 @@ public class TipoRegimen {
 
 	public void setVigenciaFin(LocalDate vigenciaFin) {
 		this.vigenciaFin = vigenciaFin;
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(clave);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		TipoRegimen other = (TipoRegimen) obj;
-		return Objects.equals(clave, other.clave);
-	}
-
-	@Override
-	public String toString() {
-		return "{\"clave\":\"" + clave + "\", \"nombre\":\"" + nombre + "\", \"vigenciaInicio\":\"" + vigenciaInicio
-				+ "\", \"vigenciaFin\":\"" + vigenciaFin + "\"}";
 	}
 }
