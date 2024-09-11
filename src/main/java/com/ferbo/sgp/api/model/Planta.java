@@ -35,6 +35,28 @@ public class Planta {
 	
 	@OneToMany(mappedBy = "planta")
 	private List<Sistema> sistemas;
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(activo, descripcion);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Planta other = (Planta) obj;
+		return Objects.equals(activo, other.activo) && Objects.equals(descripcion, other.descripcion);
+	}
+
+	@Override
+	public String toString() {
+		return "{\"id\":\"" + id + "\", \"descripcion\":\"" + descripcion + "\", \"activo\":\"" + activo + "\"}";
+	}
 
 	public List<Sistema> getSistemas() {
 		return sistemas;
@@ -75,27 +97,4 @@ public class Planta {
 	public void setInformacionEmpresas(List<InformacionEmpresa> informacionEmpresas) {
 		this.informacionEmpresas = informacionEmpresas;
 	}
-	
-	@Override
-	public int hashCode() {
-		return Objects.hash(activo, descripcion);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Planta other = (Planta) obj;
-		return Objects.equals(activo, other.activo) && Objects.equals(descripcion, other.descripcion);
-	}
-
-	@Override
-	public String toString() {
-		return "{\"id\":\"" + id + "\", \"descripcion\":\"" + descripcion + "\", \"activo\":\"" + activo + "\"}";
-	}
-
 }

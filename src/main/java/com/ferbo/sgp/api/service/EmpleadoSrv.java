@@ -21,4 +21,9 @@ public class EmpleadoSrv {
     public Empleado buscarPorNumeroEmpleado(String numeroEmpleado ){
         return (Empleado) detEmpleadoRepository.findByNumeroEmpleado(numeroEmpleado);
     }
+    
+    public List<Empleado> obtenerEmpleadosActivos() {
+    	return (List<Empleado>) detEmpleadoRepository.findByActivo();
+    }
+    
 }

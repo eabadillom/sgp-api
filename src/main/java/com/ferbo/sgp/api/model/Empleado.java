@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -66,7 +67,7 @@ public class Empleado {
     @Column(name = "activo")
     private Integer activo;
     
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "id_empleado_foto")
     private Fotografia fotografia;
     
@@ -74,8 +75,34 @@ public class Empleado {
     @JoinColumn(name = "id_empleado_empresa")
     private InformacionEmpresa informacionEmpresa;
     
-    @OneToOne(mappedBy = "empleado")
+    @OneToOne(mappedBy = "empleado", fetch = FetchType.LAZY)
     private Biometrico biometrico;
+    
+    @Override
+	public int hashCode() {
+		return Objects.hash(idEmpleado);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Empleado other = (Empleado) obj;
+		return Objects.equals(idEmpleado, other.idEmpleado);
+	}
+
+	@Override
+	public String toString() {
+		return "Empleado [idEmpleado=" + idEmpleado + ", numeroEmpleado=" + numeroEmpleado + ", nombre=" + nombre
+				+ ", primeroAp=" + primeroAp + ", segundoAp=" + segundoAp + ", fechaNacimiento=" + fechaNacimiento
+				+ ", fechaRegistro=" + fechaRegistro + ", fechaModificacion=" + fechaModificacion + ", curp=" + curp
+				+ ", rfc=" + rfc + ", correo=" + correo + ", fechaIngreso=" + fechaIngreso + ", nss=" + nss
+				+ ", activo=" + activo + "]";
+	}
     
 	public Integer getIdEmpleado() {
         return idEmpleado;
@@ -212,32 +239,4 @@ public class Empleado {
 	public void setBiometrico(Biometrico biometrico) {
 		this.biometrico = biometrico;
 	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(idEmpleado);
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Empleado other = (Empleado) obj;
-		return Objects.equals(idEmpleado, other.idEmpleado);
-	}
-
-	@Override
-	public String toString() {
-		return "Empleado [idEmpleado=" + idEmpleado + ", numeroEmpleado=" + numeroEmpleado + ", nombre=" + nombre
-				+ ", primeroAp=" + primeroAp + ", segundoAp=" + segundoAp + ", fechaNacimiento=" + fechaNacimiento
-				+ ", fechaRegistro=" + fechaRegistro + ", fechaModificacion=" + fechaModificacion + ", curp=" + curp
-				+ ", rfc=" + rfc + ", correo=" + correo + ", fechaIngreso=" + fechaIngreso + ", nss=" + nss
-				+ ", activo=" + activo + "]";
-	}
-	
-	
 }
