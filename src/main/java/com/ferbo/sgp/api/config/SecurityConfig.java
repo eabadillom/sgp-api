@@ -10,6 +10,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import com.ferbo.sgp.api.filter.JwtAuthenticationFilter;
+import org.springframework.security.authentication.AuthenticationManager;
 
 import com.ferbo.sgp.api.tool.SistemaDetailsSrv;
 
@@ -20,6 +23,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	private SistemaDetailsSrv sistemaDetailsSrv;
+
+	@Autowired
+	private JwtAuthenticationFilter jwtAtuthenticationFilter;
 	
 	@Override
 	protected void configure (AuthenticationManagerBuilder auth) throws Exception {
@@ -29,6 +35,29 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			;
 	}
 	
+
+	@Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+            .csrf().disable()
+            .authorizeRequests()
+                // Rutas protegidas con BASIC
+                .antMatchers("/fp-client/**").authenticated()
+                .antMatchers("/movil/inicio").authenticated()
+
+                // Rutas protegidas con JWT
+                .antMatchers("/inicio/**").authenticated()
+
+                // Otras rutas (public, etc.)
+                .anyRequest().permitAll()
+            .and()
+            .httpBasic() // Habilita Basic Auth
+            .and()
+            // Agrega filtro JWT antes del filtro de login
+            .addFilterBefore(jwtAtuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+	/* 
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -37,7 +66,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().authenticated()
             .and()
             .httpBasic();
-    }
+    }*/
 
 //	@Override
 //	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -67,4 +96,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 	public PasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
+
+	@Bean
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
 }
