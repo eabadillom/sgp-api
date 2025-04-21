@@ -87,4 +87,8 @@ public class MovilController {
         return ResponseEntity.ok(tokenResponse);
     }
 
+    @GetMapping("/verificar")
+    public ResponseEntity<?> verificarToken() {
+        return ResponseEntity.ok("Acceso autorizado");
+    }
 }
