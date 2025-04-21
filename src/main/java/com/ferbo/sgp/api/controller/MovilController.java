@@ -28,7 +28,6 @@ import org.apache.logging.log4j.Logger;
 
 @RestController
 @RequestMapping("movil")
-@PreAuthorize("hasRole('FP_CLIENT')")
 public class MovilController {
 
     private static Logger log = LogManager.getLogger(MovilController.class);
@@ -45,7 +44,7 @@ public class MovilController {
     @Autowired
     private ControlMovilSrv controlMovilSrv;
 
-    @GetMapping("/inicio")
+    @GetMapping("/generar")
     public ResponseEntity<?> inicioPantalla(HttpServletRequest request) {
 
         String[] credenciales = null;
@@ -86,20 +85,6 @@ public class MovilController {
 
         log.info("Finaliza el proceso para gererar, guardar y enviar token");
         return ResponseEntity.ok(tokenResponse);
-
-        /*
-         * try {
-         * 
-         * } catch (HTTPException ex) {
-         * log.error("Hubo un problema al momento de hacer el proceso del token", ex);
-         * return ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-         * .body("Problema en el servicio. Contactar al administrador del sistema");
-         * } catch (Exception e) {
-         * log.error("Error inesperado: ", e);
-         * return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-         * .body("Error inesperado. Contactar al administrador");
-         * }
-         */
     }
 
 }

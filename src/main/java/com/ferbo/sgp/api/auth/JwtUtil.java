@@ -17,8 +17,8 @@ import io.jsonwebtoken.security.Keys;
 public class JwtUtil {
 
     private final String secret = "V3ryS3cur3JWTK3yWithMoreThan32Bytes";
-    private final long accessExpiration = 1000 * 60 * 15;
-    private final long refreshExpiration = 1000 * 60 * 60 * 24;
+    private final long accessExpiration = 1000L * 60 * 60 * 24 * 7;
+    final long refreshExpiration = 1000L * 60 * 60 * 24 * 30;
 
     public String generateToken(String username) {
         return Jwts.builder()

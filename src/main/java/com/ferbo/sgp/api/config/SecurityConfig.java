@@ -18,46 +18,38 @@ import com.ferbo.sgp.api.tool.SistemaDetailsSrv;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)	
+@EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-	
-	@Autowired
-	private SistemaDetailsSrv sistemaDetailsSrv;
 
-	@Autowired
-	private JwtAuthenticationFilter jwtAtuthenticationFilter;
-	
-	@Override
-	protected void configure (AuthenticationManagerBuilder auth) throws Exception {
-		auth
-			.userDetailsService(sistemaDetailsSrv)
-			.passwordEncoder(encoder())
-			;
-	}
-	
+    @Autowired
+    private SistemaDetailsSrv sistemaDetailsSrv;
 
-	@Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-            .csrf().disable()
-            .authorizeRequests()
-                // Rutas protegidas con BASIC
-                .antMatchers("/fp-client/**").authenticated()
-                .antMatchers("/movil/inicio").authenticated()
+    @Autowired
+    private JwtAuthenticationFilter jwtAtuthenticationFilter;
 
-                // Rutas protegidas con JWT
-                .antMatchers("/inicio/**").authenticated()
-
-                // Otras rutas (public, etc.)
-                .anyRequest().permitAll()
-            .and()
-            .httpBasic() // Habilita Basic Auth
-            .and()
-            // Agrega filtro JWT antes del filtro de login
-            .addFilterBefore(jwtAtuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth
+                .userDetailsService(sistemaDetailsSrv)
+                .passwordEncoder(encoder());
     }
 
-	/* 
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/fp-client/**").authenticated()
+                .antMatchers("/movil/generar").authenticated()
+                .antMatchers("/movil/**").authenticated()
+                .anyRequest().authenticated()
+                .and()
+                .httpBasic()
+                .and()
+                .addFilterBefore(jwtAtuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+    }
+
+    /* 
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -67,7 +59,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .and()
             .httpBasic();
     }*/
-
 //	@Override
 //	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //		auth
@@ -81,7 +72,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.roles("USER")
 //			;
 //	}
-	
 //	@Override
 //	protected void configure(HttpSecurity http) throws Exception {
 //		http
@@ -91,13 +81,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.and()
 //			.httpBasic();
 //	}
+    @Bean
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder();
+    }
 
-	@Bean
-	public PasswordEncoder encoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
+    @Bean
     @Override
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();

@@ -15,6 +15,10 @@ import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.stereotype.Component;
 
 import com.ferbo.sgp.api.auth.JwtUtil;
+import java.util.Arrays;
+import java.util.List;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 /**
  *
@@ -32,24 +36,28 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
+
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         String authHeader = httpRequest.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            
             String jwt = authHeader.substring(7);
 
             if (jwtUtil.isValid(jwt)) {
                 String username = jwtUtil.extractUsername(jwt);
 
-                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username,
-                        null, null);
+                List<GrantedAuthority> authorities = Arrays.asList(
+                        new SimpleGrantedAuthority("ROLE_USER")
+                );
+
+                UsernamePasswordAuthenticationToken authentication
+                        = new UsernamePasswordAuthenticationToken(username, null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }
         }
-
         chain.doFilter(request, response);
     }
-
 }
