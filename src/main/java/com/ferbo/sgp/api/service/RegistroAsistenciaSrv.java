@@ -1,5 +1,8 @@
 package com.ferbo.sgp.api.service;
 
+import com.ferbo.sgp.api.dto.RegistroCompletoDTO;
+import com.ferbo.sgp.api.dto.RegistroParcialDTO;
+import com.ferbo.sgp.api.mappers.RegistroCompletoMapper;
 import java.time.OffsetDateTime;
 import java.util.Optional;
 
@@ -10,10 +13,25 @@ import org.springframework.stereotype.Service;
 
 import com.ferbo.sgp.api.model.RegistroAsistencia;
 import com.ferbo.sgp.api.repository.RegistroAsistenciaRepo;
+import com.ferbo.sgp.api.tool.DateUtil;
+import java.time.ZoneOffset;
+import java.util.Date;
+import java.util.List;
+import com.ferbo.sgp.api.mappers.RegistroParcialMapper;
 
 @Service
 public class RegistroAsistenciaSrv {
 	private static Logger log = LogManager.getLogger(RegistroAsistenciaSrv.class);
+        
+        private final RegistroParcialMapper registroParcialMapper;
+        private final RegistroCompletoMapper registroCompletoMapper;
+        
+        @Autowired
+        public RegistroAsistenciaSrv(RegistroParcialMapper registroParcialMapper, RegistroCompletoMapper registroCompletoMapper) 
+        {
+            this.registroParcialMapper = registroParcialMapper;
+            this.registroCompletoMapper = registroCompletoMapper;
+        }
 	
 	@Autowired
 	private RegistroAsistenciaRepo asistenciaRepo;
@@ -54,4 +72,52 @@ public class RegistroAsistenciaSrv {
 		
 		return asistencia;
 	}
+        
+        public RegistroAsistencia obtenerRegistro(Integer idRegistro)
+        {
+            return asistenciaRepo.findByIdRegistro(idRegistro);
+        }
+
+        public List<RegistroAsistencia> obtenerRegistrosPorFechasEstatus(OffsetDateTime fechaInicio, String codigo)
+        {
+            OffsetDateTime fechaFin = OffsetDateTime.now().withOffsetSameInstant(ZoneOffset.ofHours(-6));
+            fechaFin = DateUtil.resetTime(fechaFin);
+            
+            OffsetDateTime fechaAux;
+            
+            if(fechaInicio.isAfter(fechaFin))
+            {
+                fechaAux = fechaInicio;
+                fechaInicio = fechaFin;
+                fechaFin = fechaAux;
+            }
+            
+            return (List<RegistroAsistencia>) asistenciaRepo.findByFechaEstatus(fechaInicio, fechaFin, codigo);
+        }
+        
+        public RegistroAsistencia actualizarRegistro(RegistroAsistencia registro)
+        {
+            return asistenciaRepo.save(registro);
+        }
+        
+        public RegistroParcialDTO getRegistroParcialDTO(RegistroAsistencia registro) 
+        {
+            return registroParcialMapper.toDTO(registro);
+        }
+
+        public List<RegistroParcialDTO> convertParcialList(List<RegistroAsistencia> registros) 
+        {
+            return registroParcialMapper.toDTOList(registros);
+        }
+        
+        public RegistroCompletoDTO getRegistroCompletoDTO(RegistroAsistencia registro)
+        {
+            return registroCompletoMapper.toDTO(registro);
+        }
+        
+        public List<RegistroCompletoDTO> convertCompleteList(List<RegistroAsistencia> registros)
+        {
+            return registroCompletoMapper.toDTOList(registros);
+        }
+        
 }

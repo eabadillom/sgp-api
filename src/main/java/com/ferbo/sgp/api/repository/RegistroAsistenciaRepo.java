@@ -7,12 +7,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.ferbo.sgp.api.model.RegistroAsistencia;
+import java.util.List;
 
 public interface RegistroAsistenciaRepo extends CrudRepository<RegistroAsistencia, Integer>{
 	
 	@Query("SELECT r FROM RegistroAsistencia r WHERE r.empleado.numeroEmpleado = :numeroEmpleado AND r.fechaEntrada BETWEEN :fechaInicio AND :fechaFin")
 	public abstract Optional<RegistroAsistencia> buscarPorPeriodo(String numeroEmpleado, OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
 	
-	
+        @Query("SELECT r FROM RegistroAsistencia r WHERE r.id = :idRegistro")
+        public abstract RegistroAsistencia findByIdRegistro(Integer idRegistro);
+        
+	@Query("SELECT r FROM RegistroAsistencia r INNER JOIN r.empleado e INNER JOIN r.status s WHERE r.fechaEntrada BETWEEN :fechaInicio and :fechaFin AND r.status.codigo = :codigo")
+        public abstract List<RegistroAsistencia> findByFechaEstatus(OffsetDateTime fechaInicio, OffsetDateTime fechaFin, String codigo);
 	
 }

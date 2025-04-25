@@ -18,4 +18,9 @@ public class EstadoRegistroSrv {
 	public Optional<EstadoRegistro> buscarPorCodigo(String codigo) {
 		return estadoRegistroRepo.findByCodigo(codigo);
 	}
+        
+        public EstadoRegistro obtenerEstatusRegistro(String codigo) 
+        {
+            return this.estadoRegistroRepo.buscarPorCodigo(codigo);
+        }
 }

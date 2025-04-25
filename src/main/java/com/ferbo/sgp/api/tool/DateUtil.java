@@ -5,7 +5,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -844,6 +848,42 @@ public class DateUtil {
                 .collect(Collectors.toList());
             
             return diasDeTrabajo;
+        }
+        
+        public static Date obtenerFecha(String fecha)
+        {
+            try 
+            {
+                SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                Date fechaConvertida = formatter.parse(fecha);
+                return fechaConvertida;
+            } catch (ParseException e) {
+                log.warn("Problema para convertir a Date: " + fecha, e.getMessage());
+                return null;
+            }
+        }
+        
+        public static OffsetDateTime obtenerFechaString(String fecha)
+        {
+            try 
+            {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+                LocalDate localDate = LocalDate.parse(fecha, formatter);
+                return localDate.atStartOfDay().atOffset(ZoneOffset.ofHours(-6));
+            } catch (DateTimeParseException e) 
+            {
+                log.warn("Problema para convertir a OffsetDateTime: " + fecha, e.getMessage());
+                return null;
+            }
+        }
+        
+        public static OffsetDateTime resetTime(OffsetDateTime dateTime) 
+        {
+            return dateTime
+                .withHour(0)
+                .withMinute(0)
+                .withSecond(0)
+                .withNano(0);
         }
         
 }
