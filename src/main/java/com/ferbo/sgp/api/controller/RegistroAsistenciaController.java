@@ -27,17 +27,18 @@ public class RegistroAsistenciaController {
     @Autowired
     private RegistroAsistenciaSrv registroAsistenciaSrv;
 
-    @GetMapping(value = "/registros/{fecha}/{estatus}", produces = "application/json")
+    @GetMapping(value = "/registros/{fechaIni}/{fechaFin}/{estatus}", produces = "application/json")
     public ResponseEntity<?> obtenerRegistrosPorEstado(
-            @PathVariable String fecha,
+            @PathVariable String fechaIni,
+            @PathVariable String fechaFin,
             @PathVariable String estatus) {
         List<RegistroParcialDTO> registros = null;
         try {
-            registros = registroAsistenciaSrv.obtenerPorPeriodoYEstatus(fecha, estatus);
+            registros = registroAsistenciaSrv.obtenerPorPeriodoYEstatus(fechaIni, fechaFin, estatus);
         } catch (RuntimeException rtEx) {
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: contacte con el administrador de sistemas");
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(registros);
     }
@@ -51,7 +52,7 @@ public class RegistroAsistenciaController {
         } catch (RuntimeException rtEx) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: contacte con el administrador de sistemas");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(registro);
     }
@@ -66,7 +67,7 @@ public class RegistroAsistenciaController {
          } catch (RuntimeException rtEx) {
              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
          } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: contacte con el administrador de sistemas");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
          }
          return ResponseEntity.ok(registro);
      }

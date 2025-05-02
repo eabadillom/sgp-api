@@ -1,9 +1,5 @@
 package com.ferbo.sgp.api.service;
-
-import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -78,29 +74,23 @@ public class RegistroAsistenciaSrv {
 
 		return asistencia;
 	}
+	
+	public List<RegistroParcialDTO> obtenerPorPeriodoYEstatus(String fechaIni, String fechaFin, String codgio) {
 
-	public List<RegistroParcialDTO> obtenerPorPeriodoYEstatus(String fecha, String codgio) {
+		OffsetDateTime fechaInicio = DateUtil.stringToOffSetTime(fechaIni);
+		OffsetDateTime fechaFinal = DateUtil.stringToOffSetTime(fechaFin);
 
-		LocalDate fechaParseada = LocalDate.parse(fecha);
-		Date fechaIni = DateUtil.toDate(fechaParseada);
+		fechaInicio = DateUtil.resetOffSetTime(fechaInicio);
+		fechaFinal = DateUtil.resetOffSetTime(fechaFinal);
 
-		LocalDate fechaActual = LocalDate.now();
-		LocalDate fechaInicioLocal = DateUtil.toLocalDate(fechaIni);
-
-		ZoneOffset zonaHoraria = ZoneOffset.of("-06");
-
-		OffsetDateTime fechaFin = OffsetDateTime.of(fechaActual, java.time.LocalTime.MIN, zonaHoraria);
-
-		OffsetDateTime fechaInicio = OffsetDateTime.of(fechaInicioLocal, java.time.LocalTime.MIN, zonaHoraria);
-
-		if (fechaInicio.isAfter(fechaFin)) {
-			OffsetDateTime fechaAux = fechaFin;
-			fechaFin = fechaInicio;
+		if (fechaInicio.isAfter(fechaFinal)) {
+			OffsetDateTime fechaAux = fechaFinal;
+			fechaFinal = fechaInicio;
 			fechaInicio = fechaAux;
 		}
 
 		List<RegistroParcialDTO> registrosAsistenciaDTO = asistenciaRepo
-				.buscarPorPeriodoYEstatus(codgio, fechaInicio, fechaFin)
+				.buscarPorPeriodoYEstatus(codgio, fechaInicio, fechaFinal)
 				.stream()
 				.map(this::convertir)
 				.collect(Collectors.toList());
@@ -111,7 +101,7 @@ public class RegistroAsistenciaSrv {
 	public RegistroCompletoDTO obtenerRegistoPorId(Integer id) throws Exception {
 
 		RegistroAsistencia registro = asistenciaRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Error: no existe registro con ese identificador"));
+				.orElseThrow(() -> new RuntimeException("No existe registro con ese identificador"));
 
 		RegistroCompletoDTO registroCompletoDTO = registroCompletoMapper.toDTO(registro);
 
@@ -122,10 +112,10 @@ public class RegistroAsistenciaSrv {
 	public RegistroCompletoDTO actualizarEstatusRegistro(Integer id, RegistroCompletoDTO body) {
 
 		RegistroAsistencia registro = asistenciaRepo.findById(id)
-				.orElseThrow(() -> new RuntimeException("Error: no existe registro con ese identificador"));
+				.orElseThrow(() -> new RuntimeException("No existe registro con ese identificador"));
 
 		registro.setStatus(estadoRegistroRepo.findByCodigo(body.getCodigoRegistro())
-				.orElseThrow(() -> new RuntimeException("Error: no existe registro con ese codigo")));
+				.orElseThrow(() -> new RuntimeException("No existe registro con el codigo " + body.getCodigoRegistro()) ));
 
 		asistenciaRepo.save(registro);
 
