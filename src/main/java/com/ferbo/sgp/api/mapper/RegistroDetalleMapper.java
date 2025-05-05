@@ -3,21 +3,24 @@ package com.ferbo.sgp.api.mapper;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import com.ferbo.sgp.api.dto.RegistroParcialDTO;
+import com.ferbo.sgp.api.dto.RegistroDetalleDTO;
 import com.ferbo.sgp.api.model.RegistroAsistencia;
 
-@Mapper(componentModel = "spring")
-public interface RegistroParcialMapper {
+@Mapper(componentModel = "spring", uses = RegistroMapper.class)
+public interface RegistroDetalleMapper {
 
     @Mapping(source = "status.codigo", target = "codigoRegistro")
     @Mapping(source = "empleado.nombre", target = "nombreEmpleado")
     @Mapping(source = "empleado.primeroAp", target = "primerApEmpleado")
     @Mapping(source = "empleado.segundoAp", target = "segundoApEmpleado")
-    RegistroParcialDTO toDTO(RegistroAsistencia registroAsistencia);
+    @Mapping(source = "empleado.informacionEmpresa.planta.descripcion", target = "plantaEmpleado")
+    RegistroDetalleDTO toDTO(RegistroAsistencia registroAsistencia);
 
     @Mapping(source = "codigoRegistro", target = "status.codigo")
     @Mapping(source = "nombreEmpleado", target = "empleado.nombre")
     @Mapping(source = "primerApEmpleado", target = "empleado.primeroAp")
     @Mapping(source = "segundoApEmpleado", target = "empleado.segundoAp")
-    RegistroAsistencia toEntity(RegistroParcialDTO dto);
+    @Mapping(source = "plantaEmpleado" , target = "empleado.informacionEmpresa.planta.descripcion")
+    RegistroAsistencia toEntity(RegistroDetalleDTO dto);
+
 }

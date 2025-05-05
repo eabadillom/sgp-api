@@ -2,7 +2,7 @@ package com.ferbo.sgp.api.dto;
 
 import java.time.OffsetDateTime;
 
-public class RegistroParcialDTO {
+public class RegistroDTO {
     private Integer id;
     private String codigoRegistro; 
     private String nombreEmpleado;
@@ -10,7 +10,7 @@ public class RegistroParcialDTO {
     private String segundoApEmpleado;
     private OffsetDateTime fechaEntrada;
     
-    public RegistroParcialDTO() {
+    public RegistroDTO() {
     }
 
     public Integer getId() {
@@ -77,7 +77,7 @@ public class RegistroParcialDTO {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        RegistroParcialDTO other = (RegistroParcialDTO) obj;
+        RegistroDTO other = (RegistroDTO) obj;
         if (id == null) {
             if (other.id != null)
                 return false;

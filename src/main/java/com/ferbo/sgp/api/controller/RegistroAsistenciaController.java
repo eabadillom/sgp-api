@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.ferbo.sgp.api.dto.RegistroCompletoDTO;
-import com.ferbo.sgp.api.dto.RegistroParcialDTO;
+import com.ferbo.sgp.api.dto.RegistroDetalleDTO;
+import com.ferbo.sgp.api.dto.RegistroDTO;
 import com.ferbo.sgp.api.service.RegistroAsistenciaSrv;
 
 @RestController
@@ -32,7 +32,7 @@ public class RegistroAsistenciaController {
             @PathVariable String fechaIni,
             @PathVariable String fechaFin,
             @PathVariable String estatus) {
-        List<RegistroParcialDTO> registros = null;
+        List<RegistroDTO> registros = null;
         try {
             registros = registroAsistenciaSrv.obtenerPorPeriodoYEstatus(fechaIni, fechaFin, estatus);
         } catch (RuntimeException rtEx) {
@@ -46,7 +46,7 @@ public class RegistroAsistenciaController {
     @GetMapping("/registros/{id}/estatus")
     public ResponseEntity<?> obtenerRegistroAsistencia(
             @PathVariable Integer id) {
-                RegistroCompletoDTO registro = null;
+                RegistroDetalleDTO registro = null;
         try {
             registro = registroAsistenciaSrv.obtenerRegistoPorId(id);
         } catch (RuntimeException rtEx) {
@@ -60,8 +60,8 @@ public class RegistroAsistenciaController {
     
     @PatchMapping("/registros/{id}/estatus")
      public ResponseEntity<?> actualizarRegistroAsistencia(
-             @PathVariable Integer id, @RequestBody RegistroCompletoDTO body) {
-                 RegistroCompletoDTO registro = null;
+             @PathVariable Integer id, @RequestBody RegistroDetalleDTO body) {
+                 RegistroDetalleDTO registro = null;
          try {
              registro = registroAsistenciaSrv.actualizarEstatusRegistro(id, body);
          } catch (RuntimeException rtEx) {

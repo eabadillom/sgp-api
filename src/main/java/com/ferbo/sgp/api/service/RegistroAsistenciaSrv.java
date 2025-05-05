@@ -9,10 +9,10 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ferbo.sgp.api.dto.RegistroCompletoDTO;
-import com.ferbo.sgp.api.dto.RegistroParcialDTO;
-import com.ferbo.sgp.api.mapper.RegistroCompletoMapper;
-import com.ferbo.sgp.api.mapper.RegistroParcialMapper;
+import com.ferbo.sgp.api.dto.RegistroDetalleDTO;
+import com.ferbo.sgp.api.dto.RegistroDTO;
+import com.ferbo.sgp.api.mapper.RegistroDetalleMapper;
+import com.ferbo.sgp.api.mapper.RegistroMapper;
 import com.ferbo.sgp.api.model.RegistroAsistencia;
 import com.ferbo.sgp.api.repository.EstadoRegistroRepo;
 import com.ferbo.sgp.api.repository.RegistroAsistenciaRepo;
@@ -26,10 +26,10 @@ public class RegistroAsistenciaSrv {
 	private RegistroAsistenciaRepo asistenciaRepo;
 
 	@Autowired
-	RegistroCompletoMapper registroCompletoMapper;
+	RegistroDetalleMapper registroCompletoMapper;
 
 	@Autowired
-	RegistroParcialMapper registroParcialMapper;
+	RegistroMapper registroParcialMapper;
 
 	@Autowired
 	EstadoRegistroRepo estadoRegistroRepo;
@@ -75,7 +75,7 @@ public class RegistroAsistenciaSrv {
 		return asistencia;
 	}
 	
-	public List<RegistroParcialDTO> obtenerPorPeriodoYEstatus(String fechaIni, String fechaFin, String codgio) {
+	public List<RegistroDTO> obtenerPorPeriodoYEstatus(String fechaIni, String fechaFin, String codgio) {
 
 		OffsetDateTime fechaInicio = DateUtil.stringToOffSetTime(fechaIni);
 		OffsetDateTime fechaFinal = DateUtil.stringToOffSetTime(fechaFin);
@@ -89,7 +89,7 @@ public class RegistroAsistenciaSrv {
 			fechaInicio = fechaAux;
 		}
 
-		List<RegistroParcialDTO> registrosAsistenciaDTO = asistenciaRepo
+		List<RegistroDTO> registrosAsistenciaDTO = asistenciaRepo
 				.buscarPorPeriodoYEstatus(codgio, fechaInicio, fechaFinal)
 				.stream()
 				.map(this::convertir)
@@ -98,18 +98,18 @@ public class RegistroAsistenciaSrv {
 		return registrosAsistenciaDTO;
 	}
 
-	public RegistroCompletoDTO obtenerRegistoPorId(Integer id) throws Exception {
+	public RegistroDetalleDTO obtenerRegistoPorId(Integer id) throws Exception {
 
 		RegistroAsistencia registro = asistenciaRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("No existe registro con ese identificador"));
 
-		RegistroCompletoDTO registroCompletoDTO = registroCompletoMapper.toDTO(registro);
+		RegistroDetalleDTO registroCompletoDTO = registroCompletoMapper.toDTO(registro);
 
 		return registroCompletoDTO;
 
 	}
 
-	public RegistroCompletoDTO actualizarEstatusRegistro(Integer id, RegistroCompletoDTO body) {
+	public RegistroDetalleDTO actualizarEstatusRegistro(Integer id, RegistroDetalleDTO body) {
 
 		RegistroAsistencia registro = asistenciaRepo.findById(id)
 				.orElseThrow(() -> new RuntimeException("No existe registro con ese identificador"));
@@ -123,7 +123,7 @@ public class RegistroAsistenciaSrv {
 
 	}
 
-	public RegistroParcialDTO convertir(RegistroAsistencia registroAsistencia) {
+	public RegistroDTO convertir(RegistroAsistencia registroAsistencia) {
 		return registroParcialMapper.toDTO(registroAsistencia);
 	}
 }

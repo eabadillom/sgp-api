@@ -2,14 +2,14 @@ package com.ferbo.sgp.api.dto;
 
 import java.time.OffsetDateTime;
 
-public class RegistroCompletoDTO extends RegistroParcialDTO {
+public class RegistroDetalleDTO extends RegistroDTO {
     
-    private RegistroParcialDTO registroParcialDTO;
+    private RegistroDTO registroParcialDTO;
 
     private OffsetDateTime fechaSalida;
     private String plantaEmpleado;
 
-    public RegistroCompletoDTO() {
+    public RegistroDetalleDTO() {
     }
 
     public OffsetDateTime getFechaSalida() {
@@ -28,11 +28,11 @@ public class RegistroCompletoDTO extends RegistroParcialDTO {
         this.plantaEmpleado = plantaEmpleado;
     }
 
-    public RegistroParcialDTO getRegistroParcialDTO() {
+    public RegistroDTO getRegistroParcialDTO() {
         return registroParcialDTO;
     }
 
-    public void setRegistroParcialDTO(RegistroParcialDTO registroParcialDTO) {
+    public void setRegistroParcialDTO(RegistroDTO registroParcialDTO) {
         this.registroParcialDTO = registroParcialDTO;
     }
 
