@@ -34,10 +34,14 @@ public class RegistroAsistenciaController {
             @PathVariable String estatus) {
         List<RegistroDTO> registros = null;
         try {
+            log.info("Inicia proceso de obtencion de registros con estatus {} del periodo desde {} al {}", estatus, fechaIni, fechaFin);
             registros = registroAsistenciaSrv.obtenerPorPeriodoYEstatus(fechaIni, fechaFin, estatus);
+            log.info("Finaliza proceso de obtencion de registros con estatus {} del periodo dedde {} al {}", estatus, fechaIni, fechaFin);
         } catch (RuntimeException rtEx) {
+            log.warn("Problema al obtener los registros. Error: {}", rtEx);
             ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
+            log.error("Problema al obtener los registros. Error: {}", ex);
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(registros);
@@ -48,10 +52,14 @@ public class RegistroAsistenciaController {
             @PathVariable Integer id) {
                 RegistroDetalleDTO registro = null;
         try {
+            log.info("Inicia proceso de obtencion del registro con id {}", id);
             registro = registroAsistenciaSrv.obtenerRegistoPorId(id);
+            log.info("Finaliza proceso de obtencion del registro con id {}", id);
         } catch (RuntimeException rtEx) {
+            log.warn("Problema al obtener el registro. Error: {}", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
+            log.error("Problema al obtener el registro. Error: {}", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(registro);
@@ -63,10 +71,14 @@ public class RegistroAsistenciaController {
              @PathVariable Integer id, @RequestBody RegistroDetalleDTO body) {
                  RegistroDetalleDTO registro = null;
          try {
+            log.info("Inicia proceso para actualizar el estado del registro con id {}", id);
              registro = registroAsistenciaSrv.actualizarEstatusRegistro(id, body);
+             log.info("Finaliza proceso para actualizar el estado del registro con id {}", id);
          } catch (RuntimeException rtEx) {
+            log.warn("Problema obtener el estado del registro con id {}. Error: {}", id, rtEx);
              return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
          } catch (Exception ex) {
+            log.warn("Problema actualizar el estado del registro con id {}. Error: {}", id, ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
          }
          return ResponseEntity.ok(registro);
