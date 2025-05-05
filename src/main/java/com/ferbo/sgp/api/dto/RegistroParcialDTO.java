@@ -1,31 +1,56 @@
 package com.ferbo.sgp.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.OffsetDateTime;
-import java.util.Objects;
 
-/**
- *
- * @author alberto
- */
-public class RegistroParcialDTO 
-{
-    protected Integer id;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    protected OffsetDateTime fechaEntrada;
-    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ssXXX")
-    protected OffsetDateTime fechaSalida;
-    protected String codigo;
-    protected String nombre;
-    protected String primeroAp;
-    protected String segundoAp;
+public class RegistroParcialDTO {
+    private Integer id;
+    private String codigoRegistro; 
+    private String nombreEmpleado;
+    private String primerApEmpleado;
+    private String segundoApEmpleado;
+    private OffsetDateTime fechaEntrada;
     
+    public RegistroParcialDTO() {
+    }
+
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public String getCodigoRegistro() {
+        return codigoRegistro;
+    }
+
+    public void setCodigoRegistro(String codigoRegistro) {
+        this.codigoRegistro = codigoRegistro;
+    }
+
+    public String getNombreEmpleado() {
+        return nombreEmpleado;
+    }
+
+    public void setNombreEmpleado(String nombreEmpleado) {
+        this.nombreEmpleado = nombreEmpleado;
+    }
+
+    public String getPrimerApEmpleado() {
+        return primerApEmpleado;
+    }
+
+    public void setPrimerApEmpleado(String primerApEmpleado) {
+        this.primerApEmpleado = primerApEmpleado;
+    }
+
+    public String getSegundoApEmpleado() {
+        return segundoApEmpleado;
+    }
+
+    public void setSegundoApEmpleado(String segundoApEmpleado) {
+        this.segundoApEmpleado = segundoApEmpleado;
     }
 
     public OffsetDateTime getFechaEntrada() {
@@ -36,51 +61,12 @@ public class RegistroParcialDTO
         this.fechaEntrada = fechaEntrada;
     }
     
-    public OffsetDateTime getFechaSalida() {
-        return fechaSalida;
-    }
-
-    public void setFechaSalida(OffsetDateTime fechaSalida) {
-        this.fechaSalida = fechaSalida;
-    }
-
-    public String getCodigo() {
-        return codigo;
-    }
-
-    public void setCodigo(String codigo) {
-        this.codigo = codigo;
-    }
-
-    public String getNombre() {
-        return nombre;
-    }
-
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
-    }
-
-    public String getPrimeroAp() {
-        return primeroAp;
-    }
-
-    public void setPrimeroAp(String primeroAp) {
-        this.primeroAp = primeroAp;
-    }
-
-    public String getSegundoAp() {
-        return segundoAp;
-    }
-
-    public void setSegundoAp(String segundoAp) {
-        this.segundoAp = segundoAp;
-    }
-    
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 23 * hash + Objects.hashCode(this.id);
-        return hash;
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
     }
 
     @Override
@@ -95,13 +81,19 @@ public class RegistroParcialDTO
             return false;
         }
         final RegistroParcialDTO other = (RegistroParcialDTO) obj;
-        return Objects.equals(this.id, other.id);
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
+            return false;
+        return true;
     }
 
     @Override
     public String toString() {
-        return "RegistroParcialDTO[" + "id=" + id + ", fechaEntrada=" + fechaEntrada + "fechaSalida=" + fechaSalida + ", codigo=" + codigo + ", "
-                + "nombre=" + nombre + ", primerAp=" + primeroAp + ", segundoAp=" + segundoAp + ']';
+        return "RegistroParcialDTO [id=" + id + ", codigoRegistro=" + codigoRegistro + ", nombreEmpleado="
+                + nombreEmpleado + ", primerApEmpleado=" + primerApEmpleado + ", segundoApEmpleado=" + segundoApEmpleado
+                + ", fechaEntrada=" + fechaEntrada + "]";
     }
-    
+        
 }

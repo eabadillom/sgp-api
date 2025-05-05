@@ -1,49 +1,45 @@
 package com.ferbo.sgp.api.dto;
 
-import java.util.Objects;
+import java.time.OffsetDateTime;
 
-/**
- *
- * @author alberto
- */
-public class RegistroCompletoDTO extends RegistroParcialDTO
-{
-    protected String planta;
+public class RegistroCompletoDTO extends RegistroParcialDTO {
+    
+    private RegistroParcialDTO registroParcialDTO;
 
-    public String getPlanta() {
-        return planta;
+    private OffsetDateTime fechaSalida;
+    private String plantaEmpleado;
+
+    public RegistroCompletoDTO() {
     }
 
-    public void setPlanta(String planta) {
-        this.planta = planta;
+    public OffsetDateTime getFechaSalida() {
+        return fechaSalida;
     }
 
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 59 * hash + Objects.hashCode(this.id);
-        return hash;
+    public void setFechaSalida(OffsetDateTime fechaSalida) {
+        this.fechaSalida = fechaSalida;
     }
 
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final RegistroCompletoDTO other = (RegistroCompletoDTO) obj;
-        return Objects.equals(this.id, other.id);
+    public String getPlantaEmpleado() {
+        return plantaEmpleado;
+    }
+
+    public void setPlantaEmpleado(String plantaEmpleado) {
+        this.plantaEmpleado = plantaEmpleado;
+    }
+
+    public RegistroParcialDTO getRegistroParcialDTO() {
+        return registroParcialDTO;
+    }
+
+    public void setRegistroParcialDTO(RegistroParcialDTO registroParcialDTO) {
+        this.registroParcialDTO = registroParcialDTO;
     }
 
     @Override
     public String toString() {
-        return "RegistroCompletoDTO[" + "id=" + id + ", fechaEntrada=" + fechaEntrada + "fechaSalida=" + fechaSalida + ", codigo=" + codigo + 
-                ", nombre=" + nombre + ", primerAp=" + primeroAp + ", segundoAp=" + segundoAp + ", planta=" + planta + ']';
+        return "RegistroCompletoDTO [registroParcialDTO=" + registroParcialDTO + ", fechaSalida=" + fechaSalida
+                + ", plantaEmpleado=" + plantaEmpleado + "]";
     }
     
 }
