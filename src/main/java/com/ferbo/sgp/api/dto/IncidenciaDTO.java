@@ -84,8 +84,8 @@ public class IncidenciaDTO {
 		return solicitudPermiso;
 	}
 
-	public void setSolicitudPermiso(Integer idSolicitudPermiso) {
-		this.solicitudPermiso = idSolicitudPermiso;
+	public void setSolicitudPermiso(Integer solicitudPermiso) {
+		this.solicitudPermiso = solicitudPermiso;
 	}
 
 	public Integer getSolicitudPrenda() {
