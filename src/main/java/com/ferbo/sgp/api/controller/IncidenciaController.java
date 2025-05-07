@@ -1,0 +1,45 @@
+package com.ferbo.sgp.api.controller;
+
+import java.util.List;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.ferbo.sgp.api.dto.IncidenciaDTO;
+import com.ferbo.sgp.api.service.IncidenciaSrv;
+
+@RestController
+@RequestMapping("movil")
+public class IncidenciaController {
+
+    private static Logger log = LogManager.getLogger(IncidenciaController.class);
+
+    @Autowired
+    private IncidenciaSrv incidenciaSrv;
+
+    @GetMapping(value = "/incidencias/{tipo}/{estatus}/{fechaIni}/{fechaFin}", produces = "application/json")
+    public ResponseEntity<?> obtenerIncicidenciasPorTipoEstusYPeriodo(@PathVariable String tipo,
+            @PathVariable String status, @PathVariable String fechaIni, @PathVariable String fechaFin) {
+
+                List<IncidenciaDTO> incidenciasDTO = null;
+                try{
+                    log.info("Inicio proceso para obtener todas los incidencias en base a los parametros dados.");
+                    incidenciasDTO = incidenciaSrv.obtenerIncidenciaTipoEstatusEnPeriodo(tipo, status, fechaIni, fechaFin);
+                    log.info("Finaliza proceso para obtener todas los incidencias en base a los parametros dados.");
+                } catch (RuntimeException rtEx){
+                    log.warn("Problema al obtenr las incidencias en base a los parametros dados. {}", rtEx);
+                    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+                } catch(Exception ex) {
+                    log.error("Problema desconocido al obtener las incidencias. {}", ex);
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+                }
+                return ResponseEntity.ok(incidenciasDTO);
+    }
+}
