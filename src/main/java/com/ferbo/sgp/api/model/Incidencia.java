@@ -94,6 +94,38 @@ public class Incidencia {
         return result;
     }
 
+    public TipoIncidencia getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoIncidencia tipo) {
+        this.tipo = tipo;
+    }
+
+    public EstatusIncidencia getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(EstatusIncidencia estatus) {
+        this.estatus = estatus;
+    }
+
+    public Empleado getEmpleado() {
+        return empleado;
+    }
+
+    public void setEmpleado(Empleado empleado) {
+        this.empleado = empleado;
+    }
+
+    public Empleado getEmpladoRevisa() {
+        return empladoRevisa;
+    }
+
+    public void setEmpladoRevisa(Empleado empladoRevisa) {
+        this.empladoRevisa = empladoRevisa;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
