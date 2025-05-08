@@ -16,7 +16,7 @@ import javax.persistence.Table;
 public class Incidencia {
 
     @Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id_incidencia")
     private Integer id;
 
@@ -39,17 +39,15 @@ public class Incidencia {
     
     @JoinColumn(name = "id_empleado", referencedColumnName = "id_empleado")
     @ManyToOne()
-    private Empleado empleado;
+    private Empleado empleadoSol;
 
     @JoinColumn(name = "id_empleado_rev", referencedColumnName = "id_empleado")
     @ManyToOne()
     private Empleado empladoRevisa;
-
-    /*
+    
     @JoinColumn(name = "id_sol_permiso", referencedColumnName = "id_solicitud")
     @ManyToOne()
     private SolicitudPermiso solicitudPermiso;
-    */
 
     // private SolicitudArticulo solicitudArticulo;
     // private SolicitudPrenda solicitudPrenda;
@@ -84,6 +82,46 @@ public class Incidencia {
 
     public void setFechaModificacion(OffsetDateTime fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
+    }
+
+    public TipoIncidencia getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoIncidencia tipo) {
+        this.tipo = tipo;
+    }
+
+    public EstatusIncidencia getEstatus() {
+        return estatus;
+    }
+
+    public void setEstatus(EstatusIncidencia estatus) {
+        this.estatus = estatus;
+    }
+
+    public Empleado getEmpleadoSol() {
+        return empleadoSol;
+    }
+
+    public void setEmpleadoSol(Empleado empleadoSol) {
+        this.empleadoSol = empleadoSol;
+    }
+
+    public Empleado getEmpladoRevisa() {
+        return empladoRevisa;
+    }
+
+    public void setEmpladoRevisa(Empleado empladoRevisa) {
+        this.empladoRevisa = empladoRevisa;
+    }
+
+    public SolicitudPermiso getSolicitudPermiso() {
+        return solicitudPermiso;
+    }
+
+    public void setSolicitudPermiso(SolicitudPermiso solicitudPermiso) {
+        this.solicitudPermiso = solicitudPermiso;
     }
 
     @Override

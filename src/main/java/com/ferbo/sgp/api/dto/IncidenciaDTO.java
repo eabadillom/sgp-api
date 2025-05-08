@@ -6,7 +6,7 @@ public class IncidenciaDTO {
 
     private Integer idIncidencia;
 
-    private String codigoEstadoincidencia;
+    private String codigoEstadoIncidencia;
 
 	private String codigoTipoIncidencia;
 
@@ -32,12 +32,12 @@ public class IncidenciaDTO {
 		this.idIncidencia = idIncidencia;
 	}
 
-	public String getCodigoEstadoincidencia() {
-		return codigoEstadoincidencia;
+	public String getCodigoEstadoIncidencia() {
+		return codigoEstadoIncidencia;
 	}
 
-	public void setCodigoEstadoincidencia(String codigoEstadoincidencia) {
-		this.codigoEstadoincidencia = codigoEstadoincidencia;
+	public void setCodigoEstadoIncidencia(String codigoEstadoIncidencia) {
+		this.codigoEstadoIncidencia = codigoEstadoIncidencia;
 	}
 
 	public String getCodigoTipoIncidencia() {
@@ -131,7 +131,7 @@ public class IncidenciaDTO {
 
 	@Override
 	public String toString() {
-		return "IncidenciaDTO [idIncidencia=" + idIncidencia + ", codigoEstadoincidencia=" + codigoEstadoincidencia
+		return "IncidenciaDTO [idIncidencia=" + idIncidencia + ", codigoEstadoincidencia=" + codigoEstadoIncidencia
 				+ ", nombreSolicitante=" + nombreSolicitante + ", primerApSolicitante=" + primerApSolicitante
 				+ ", segundoApSolicitante=" + segundoApSolicitante + ", fechaCaptura=" + fechaCaptura
 				+ ", idSolicitudPermiso=" + solicitudPermiso + ", idSolicitudPrenda=" + solicitudPrenda

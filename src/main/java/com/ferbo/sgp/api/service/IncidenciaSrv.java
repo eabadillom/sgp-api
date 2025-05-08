@@ -21,6 +21,16 @@ public class IncidenciaSrv {
 
     @Autowired
     IncidenciaMapper incidenciaMapper;
+    
+    public IncidenciaDTO obtenerIncidenciaPorID(Integer id)
+    {
+        Incidencia incidencia = incidenciaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("No se encontro registro de incidencia"));
+        
+        IncidenciaDTO incidenciaDTO = this.convertir(incidencia);
+        
+        return incidenciaDTO;
+    }
 
     public List<IncidenciaDTO> obtenerIncidenciaTipoEstatusEnPeriodo(String claveTipo, String claveEstatus,
             String fechaInicial, String fechaFinal) throws RuntimeException {
@@ -38,7 +48,7 @@ public class IncidenciaSrv {
         }
 
         List<IncidenciaDTO> incidenciasDTO = incidenciaRepo
-                .findByTipoEstatusEnPeriodo(claveTipo, claveEstatus, fechaInicial, fechaFinal).stream()
+                .findByTipoEstatusEnPeriodo(claveTipo, claveEstatus, fechaInicio, fechaFin).stream()
                 .map(this::convertir).collect(Collectors.toList());
 
         if (incidenciasDTO.isEmpty()) {

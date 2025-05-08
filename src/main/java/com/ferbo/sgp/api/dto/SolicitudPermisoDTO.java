@@ -14,7 +14,9 @@ public class SolicitudPermisoDTO
     private String segundoApEmpleado;
     private OffsetDateTime fechaInicio;
     private OffsetDateTime fechaFin;
-    private String claveSolicitud;
+    private String claveEstatus;
+    private String descripcionRechazo;
+    private Integer empleadoRev;
 
     public SolicitudPermisoDTO() {
     }
@@ -67,19 +69,28 @@ public class SolicitudPermisoDTO
         this.fechaFin = fechaFin;
     }
 
-    public String getClaveSolicitud() {
-        return claveSolicitud;
+    public String getClaveEstatus() {
+        return claveEstatus;
     }
 
-    public void setClaveSolicitud(String claveSolicitud) {
-        this.claveSolicitud = claveSolicitud;
+    public void setClaveEstatus(String claveEstatus) {
+        this.claveEstatus = claveEstatus;
     }
 
-    @Override
-    public String toString() {
-        return "SolicitudPermisoDTO[" + "idSolicitud=" + idSolicitud + ", nombreEmpleado=" + nombreEmpleado + ", primerApEmpleado=" 
-                + primerApEmpleado + ", segundoApEmpleado=" + segundoApEmpleado + ", fechaInicio=" + fechaInicio + ", fechaFin=" 
-                + fechaFin + ", claveSolicitud=" + claveSolicitud + ']';
+    public String getDescripcionRechazo() {
+        return descripcionRechazo;
+    }
+
+    public void setDescripcionRechazo(String descripcionRechazo) {
+        this.descripcionRechazo = descripcionRechazo;
+    }
+
+    public Integer getEmpleadoRev() {
+        return empleadoRev;
+    }
+
+    public void setEmpleadoRev(Integer empleadoRev) {
+        this.empleadoRev = empleadoRev;
     }
     
 }

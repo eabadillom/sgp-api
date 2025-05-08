@@ -6,10 +6,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 
 import com.ferbo.sgp.api.model.Incidencia;
+import java.time.OffsetDateTime;
 
 public interface IncidenciaRepo extends CrudRepository <Incidencia, Integer>{
 
-    @Query("SELECT i FROM INCIDENCIA i WHERE i.tipo.clave = :claveTipo and i.estatus.clave = :claveEstatus AND (i.fechaCaptura BETWEEN :fechaInicio AND :fechaFin")
-    public abstract List<Incidencia> findByTipoEstatusEnPeriodo(String claveTipo, String claveEstatus, String fechaInicio, String fechaFin);
+    @Query("SELECT i FROM Incidencia i WHERE i.tipo.clave = :claveTipo AND i.estatus.clave = :claveEstatus AND (i.fechaCaptura BETWEEN :fechaInicio AND :fechaFin)")
+    public abstract List<Incidencia> findByTipoEstatusEnPeriodo(String claveTipo, String claveEstatus, OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
 
 }

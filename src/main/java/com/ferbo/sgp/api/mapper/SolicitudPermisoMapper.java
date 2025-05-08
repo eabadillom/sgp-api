@@ -18,7 +18,8 @@ public interface SolicitudPermisoMapper
     @Mapping(source = "empleadoSol.segundoAp", target = "segundoApEmpleado")
     @Mapping(source = "fechaInicio", target = "fechaInicio")
     @Mapping(source = "fechaFin", target = "fechaFin")
-    @Mapping(source = "estatusSolicitud.clave", target = "claveSolicitud")
+    @Mapping(source = "estatusSolicitud.clave", target = "claveEstatus")
+    @Mapping(source = "empleadoRev.idEmpleado", target = "empleadoRev")
     SolicitudPermisoDTO toDTO(SolicitudPermiso solicitudPermiso);
     
     @Mapping(source = "idSolicitud", target = "idSolicitud")
@@ -27,7 +28,8 @@ public interface SolicitudPermisoMapper
     @Mapping(source = "segundoApEmpleado", target = "empleadoSol.segundoAp")
     @Mapping(source = "fechaInicio", target = "fechaInicio")
     @Mapping(source = "fechaFin", target = "fechaFin")
-    @Mapping(source = "claveSolicitud", target = "estatusSolicitud.clave")  
+    @Mapping(source = "claveEstatus", target = "estatusSolicitud.clave")
+    @Mapping(source = "empleadoRev", target = "empleadoRev.idEmpleado")
     SolicitudPermiso toEntity(SolicitudPermisoDTO dto);
     
 }

@@ -1,8 +1,6 @@
 package com.ferbo.sgp.api.service;
 
 import com.ferbo.sgp.api.dto.SolicitudPermisoDTO;
-import com.ferbo.sgp.api.dto.SolicitudPermisoDetalleDTO;
-import com.ferbo.sgp.api.mapper.SolicitudPermisoDetalleMapper;
 import com.ferbo.sgp.api.mapper.SolicitudPermisoMapper;
 import com.ferbo.sgp.api.model.EstatusSolicitud;
 import com.ferbo.sgp.api.model.SolicitudPermiso;
@@ -32,9 +30,6 @@ public class SolicitudPermisoSrv
     @Autowired
     SolicitudPermisoMapper solicitudPermisoMapper;
     
-    @Autowired
-    SolicitudPermisoDetalleMapper solicitudPermisoDetalleMapper;
-    
     public SolicitudPermisoDTO obtenerSolicitudPorId(Integer id) throws Exception
     {
         SolicitudPermiso solicitudPermiso = solicitudPermisoRepo.findById(id)
@@ -45,12 +40,12 @@ public class SolicitudPermisoSrv
         return solicitudPermisoDTO;
     }
     
-    public SolicitudPermisoDetalleDTO actualizarSolicitudPermiso(Integer id, SolicitudPermisoDetalleDTO dto) throws Exception
+    public SolicitudPermisoDTO actualizarSolicitudPermiso(Integer id, SolicitudPermisoDTO dto) throws Exception
     {
         SolicitudPermiso solicitudPermiso = solicitudPermisoRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontro registro de solicitud permiso"));
         
-        EstatusSolicitud estatusSolicitud = estatusSoliciturRepo.buscarPorClave(dto.getClaveSolicitud())
+        EstatusSolicitud estatusSolicitud = estatusSoliciturRepo.buscarPorClave(dto.getClaveEstatus())
                 .orElseThrow(() -> new RuntimeException("No se encontro registro de estatus solicitud"));
         
         BigDecimal valor = null;
@@ -70,17 +65,12 @@ public class SolicitudPermisoSrv
         solicitudPermiso.setEstatusSolicitud(estatusSolicitud);
         solicitudPermisoRepo.save(solicitudPermiso);
         
-        return convertirToDetalleDTO(solicitudPermiso);
+        return convertirToDTO(solicitudPermiso);
     }
     
     public SolicitudPermisoDTO convertirToDTO(SolicitudPermiso solicitudPermiso)
     {
         return solicitudPermisoMapper.toDTO(solicitudPermiso);
-    }
-    
-    public SolicitudPermisoDetalleDTO convertirToDetalleDTO(SolicitudPermiso solicitudPermiso)
-    {
-        return solicitudPermisoDetalleMapper.toDTO(solicitudPermiso);
     }
     
 }
