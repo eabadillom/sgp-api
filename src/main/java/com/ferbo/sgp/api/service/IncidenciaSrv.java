@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.ferbo.sgp.api.dto.IncidenciaDTO;
 import com.ferbo.sgp.api.mapper.IncidenciaMapper;
 import com.ferbo.sgp.api.model.Incidencia;
+import com.ferbo.sgp.api.repository.EstatusIncidenciaRepo;
 import com.ferbo.sgp.api.repository.IncidenciaRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
 
@@ -21,6 +22,9 @@ public class IncidenciaSrv {
 
     @Autowired
     IncidenciaMapper incidenciaMapper;
+    
+    @Autowired
+    EstatusIncidenciaRepo estatusIncidenciaRepo;
     
     public IncidenciaDTO obtenerIncidenciaPorID(Integer id)
     {
@@ -56,6 +60,21 @@ public class IncidenciaSrv {
         }
 
         return incidenciasDTO;
+    }
+
+    public IncidenciaDTO actualizarEstatusIncidencia(Integer id, IncidenciaDTO body) {
+
+        Incidencia incidencia = incidenciaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("No existe incidencia con ese identificador"));
+
+        incidencia.setFechaModificacion(OffsetDateTime.now());
+        incidencia.setEstatus(estatusIncidenciaRepo.findByClave(body.getCodigoEstadoIncidencia()).orElseThrow(
+                () -> new RuntimeException("No existe estus con esa clave: " + body.getCodigoEstadoIncidencia())));
+
+        incidenciaRepo.save(incidencia);
+
+        return incidenciaMapper.toDTO(incidencia);
+
     }
 
     public IncidenciaDTO convertir(Incidencia incidencia) {
