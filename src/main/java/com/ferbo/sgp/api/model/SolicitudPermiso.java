@@ -44,8 +44,8 @@ public class SolicitudPermiso
     @Column(name = "descripcion_rechazo")
     private String descripcionRechazo;
     
-    @JoinColumn(name = "aprobada", referencedColumnName = "id_est_solicitud")
-    @ManyToOne()
+    @JoinColumn(name = "aprobada", referencedColumnName = "cd_st_solicitud")
+    @ManyToOne(optional = false)
     private EstatusSolicitud estatusSolicitud;
     
     @JoinColumn(name = "id_tipo_solicitud", referencedColumnName = "id_tipo_solicitud")

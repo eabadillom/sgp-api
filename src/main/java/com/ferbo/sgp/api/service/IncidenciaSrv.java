@@ -8,11 +8,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ferbo.sgp.api.dto.IncidenciaDTO;
+import com.ferbo.sgp.api.dto.IncidenciaPermisoDTO;
 import com.ferbo.sgp.api.mapper.IncidenciaMapper;
+import com.ferbo.sgp.api.mapper.IncidenciaPermisoMapper;
+import com.ferbo.sgp.api.model.Empleado;
+import com.ferbo.sgp.api.model.EstatusSolicitud;
 import com.ferbo.sgp.api.model.Incidencia;
+import com.ferbo.sgp.api.model.SolicitudPermiso;
+import com.ferbo.sgp.api.repository.EmpleadoRepo;
 import com.ferbo.sgp.api.repository.EstatusIncidenciaRepo;
+import com.ferbo.sgp.api.repository.EstatusSolicitudRepo;
 import com.ferbo.sgp.api.repository.IncidenciaRepo;
+import com.ferbo.sgp.api.repository.SolicitudPermisoRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
+import java.math.BigDecimal;
 
 @Service
 public class IncidenciaSrv {
@@ -24,16 +33,28 @@ public class IncidenciaSrv {
     IncidenciaMapper incidenciaMapper;
     
     @Autowired
+    IncidenciaPermisoMapper incidenciaPermisoMapper;
+    
+    @Autowired
     EstatusIncidenciaRepo estatusIncidenciaRepo;
     
-    public IncidenciaDTO obtenerIncidenciaPorID(Integer id)
+    @Autowired
+    private SolicitudPermisoRepo solicitudPermisoRepo;
+    
+    @Autowired
+    private EstatusSolicitudRepo estatusSoliciturRepo;
+    
+    @Autowired
+    private EmpleadoRepo empleadoRepo;
+    
+    public IncidenciaPermisoDTO obtenerIncidenciaPorID(Integer id)
     {
         Incidencia incidencia = incidenciaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("No se encontro registro de incidencia"));
         
-        IncidenciaDTO incidenciaDTO = this.convertir(incidencia);
+        IncidenciaPermisoDTO incidenciaPermisoDTO = this.convertirPermiso(incidencia);
         
-        return incidenciaDTO;
+        return incidenciaPermisoDTO;
     }
 
     public List<IncidenciaDTO> obtenerIncidenciaTipoEstatusEnPeriodo(String claveTipo, String claveEstatus,
@@ -62,22 +83,56 @@ public class IncidenciaSrv {
         return incidenciasDTO;
     }
 
-    public IncidenciaDTO actualizarEstatusIncidencia(Integer id, IncidenciaDTO body) {
-
+    public IncidenciaPermisoDTO actualizarEstatusIncidencia(Integer id, IncidenciaPermisoDTO body) {
+        
+        String numeroEmpleado = "0030";
+        Empleado empleadoRevision = empleadoRepo.findByNumeroEmpleado(numeroEmpleado);
+        
         Incidencia incidencia = incidenciaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe incidencia con ese identificador"));
+        
+        SolicitudPermiso solicitudPermiso = solicitudPermisoRepo.findById(incidencia.getSolicitudPermiso().getIdSolicitud())
+                .orElseThrow(() -> new RuntimeException("No se encontro registro de solicitud permiso"));
+        
+        BigDecimal valor = null;
+        String sGoceSueldo = "100.0"; 
+        if(solicitudPermiso.getEmpleadoSol().getEmpleadoConfiguracion().getGoceSueldo() == false)
+        {
+            valor = BigDecimal.ZERO;
+        }else{
+            if (sGoceSueldo != null && !sGoceSueldo.isEmpty()) 
+            {
+                valor = new BigDecimal(sGoceSueldo);
+            }
+        }
+        
+        if(body.getCodigoEstado().matches("R"))
+        {
+            solicitudPermiso.setDescripcionRechazo(body.getDescripcionRechazo());
+        }
+        solicitudPermiso.setGoceSueldo(valor);
+        solicitudPermiso.setFechaMod(OffsetDateTime.now());
+        solicitudPermiso.setEmpleadoRev(empleadoRevision);
+        solicitudPermiso.setEstatusSolicitud(estatusSoliciturRepo.buscarPorClave(body.getCodigoEstado())
+                .orElseThrow(() -> new RuntimeException("No se encontro registro de estatus solicitud")));
+        solicitudPermisoRepo.save(solicitudPermiso);
 
         incidencia.setFechaModificacion(OffsetDateTime.now());
-        incidencia.setEstatus(estatusIncidenciaRepo.findByClave(body.getCodigoEstadoIncidencia()).orElseThrow(
-                () -> new RuntimeException("No existe estus con esa clave: " + body.getCodigoEstadoIncidencia())));
+        incidencia.setEmpladoRevisa(empleadoRevision);
+        incidencia.setEstatus(estatusIncidenciaRepo.findByClave(body.getCodigoEstado()).orElseThrow(
+                () -> new RuntimeException("No existe estus con esa clave: " + body.getCodigoEstado())));
 
         incidenciaRepo.save(incidencia);
 
-        return incidenciaMapper.toDTO(incidencia);
-
+        return incidenciaPermisoMapper.toDTO(incidencia);
     }
 
     public IncidenciaDTO convertir(Incidencia incidencia) {
         return incidenciaMapper.toDTO(incidencia);
     }
+    
+    public IncidenciaPermisoDTO convertirPermiso(Incidencia incidencia){
+        return incidenciaPermisoMapper.toDTO(incidencia);
+    }
+    
 }
