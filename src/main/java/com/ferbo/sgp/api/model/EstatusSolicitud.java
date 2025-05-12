@@ -13,12 +13,12 @@ import javax.persistence.Table;
  * @author alberto
  */
 @Entity
-@Table(name = "cat_estatus_solicitud")
+@Table(name = "cat_st_solicitud")
 public class EstatusSolicitud 
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_est_solicitud")
+    @Column(name = "cd_st_solicitud")
     private Integer id;
     
     @Column(name = "clave")
