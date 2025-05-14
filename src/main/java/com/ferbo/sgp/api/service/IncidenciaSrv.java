@@ -11,20 +11,34 @@ import com.ferbo.sgp.api.dto.IncidenciaDTO;
 import com.ferbo.sgp.api.dto.IncidenciaPermisoDTO;
 import com.ferbo.sgp.api.mapper.IncidenciaMapper;
 import com.ferbo.sgp.api.mapper.IncidenciaPermisoMapper;
+import com.ferbo.sgp.api.model.DiaNoLaboral;
 import com.ferbo.sgp.api.model.Empleado;
+import com.ferbo.sgp.api.model.EstadoRegistro;
 import com.ferbo.sgp.api.model.EstatusSolicitud;
 import com.ferbo.sgp.api.model.Incidencia;
+import com.ferbo.sgp.api.model.InformacionEmpresa;
+import com.ferbo.sgp.api.model.RegistroAsistencia;
 import com.ferbo.sgp.api.model.SolicitudPermiso;
+import com.ferbo.sgp.api.repository.DiaNoLaboralRepo;
 import com.ferbo.sgp.api.repository.EmpleadoRepo;
+import com.ferbo.sgp.api.repository.EstadoRegistroRepo;
 import com.ferbo.sgp.api.repository.EstatusIncidenciaRepo;
 import com.ferbo.sgp.api.repository.EstatusSolicitudRepo;
 import com.ferbo.sgp.api.repository.IncidenciaRepo;
+import com.ferbo.sgp.api.repository.RegistroAsistenciaRepo;
 import com.ferbo.sgp.api.repository.SolicitudPermisoRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Optional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 @Service
 public class IncidenciaSrv {
+    
+    private static final Logger log = LogManager.getLogger(IncidenciaSrv.class);
 
     @Autowired
     IncidenciaRepo incidenciaRepo;
@@ -46,6 +60,15 @@ public class IncidenciaSrv {
     
     @Autowired
     private EmpleadoRepo empleadoRepo;
+    
+    @Autowired
+    private RegistroAsistenciaRepo asistenciaRepo;
+    
+    @Autowired
+    private EstadoRegistroRepo estadoRegistroRepo;
+    
+    @Autowired
+    private DiaNoLaboralRepo diaNoLaboralRepo;
     
     public IncidenciaPermisoDTO obtenerIncidenciaPorID(Integer id)
     {
@@ -85,6 +108,7 @@ public class IncidenciaSrv {
 
     public IncidenciaPermisoDTO actualizarEstatusIncidencia(Integer id, IncidenciaPermisoDTO body) {
         
+        log.info("Iniciando el actualizado de incidencia");
         String numeroEmpleado = "0030";
         Empleado empleadoRevision = empleadoRepo.findByNumeroEmpleado(numeroEmpleado);
         
@@ -121,9 +145,15 @@ public class IncidenciaSrv {
         incidencia.setEmpladoRevisa(empleadoRevision);
         incidencia.setEstatus(estatusIncidenciaRepo.findByClave(body.getCodigoEstado()).orElseThrow(
                 () -> new RuntimeException("No existe estus con esa clave: " + body.getCodigoEstado())));
+        
+        if(incidencia.getEstatus().getClave().trim().matches("A"))
+        {
+            List<OffsetDateTime> diasAsueto = this.diasDeAsueto();
+            this.guardarRegistroVacaciones(incidencia.getEmpleadoSol(), incidencia, diasAsueto);
+        }
 
         incidenciaRepo.save(incidencia);
-
+        log.info("Se actualizo correctamente la incidencia");
         return incidenciaPermisoMapper.toDTO(incidencia);
     }
 
@@ -133,6 +163,104 @@ public class IncidenciaSrv {
     
     public IncidenciaPermisoDTO convertirPermiso(Incidencia incidencia){
         return incidenciaPermisoMapper.toDTO(incidencia);
+    }
+    
+    public void guardarRegistroVacaciones(Empleado empleado, Incidencia incidencia, List<OffsetDateTime> diasAsueto)
+    {
+        this.empleadoTieneDiasLaborales(empleado);
+        
+        int cantidadRegistrosGuardados = 0;
+        InformacionEmpresa empleadoEmpresa = empleado.getInformacionEmpresa();
+        EstadoRegistro estadoRegistro = null;
+        
+        switch(incidencia.getSolicitudPermiso().getTipoSolicitud().getClave())
+        {
+            case "V":
+                estadoRegistro = this.estatusVacaciones();
+                break;
+            case "P":
+                estadoRegistro = this.estatusPermiso();
+                break;
+        }
+        
+        Integer horaEntrada = DateUtil.getHora(empleadoEmpresa.getHoraEntrada());
+        Integer horaSalida = DateUtil.getHora(empleadoEmpresa.getHorasalida());
+        
+        OffsetDateTime fechaInicio = incidencia.getSolicitudPermiso().getFechaInicio();
+        OffsetDateTime fechaFin = incidencia.getSolicitudPermiso().getFechaFin();
+        
+        List<OffsetDateTime> listaFechas = DateUtil.generarArreglosFechas(fechaInicio, fechaFin);
+        
+        listaFechas = DateUtil.diasVacacionesSolicitados(listaFechas, diasAsueto, empleado.getInformacionEmpresa());
+        
+        for(OffsetDateTime dia : listaFechas) 
+        {
+            RegistroAsistencia registro = new RegistroAsistencia();
+            registro.setEmpleado(empleado);
+            registro.setStatus(estadoRegistro);
+            
+            Date entrada = DateUtil.offsetDateTimeToDate(dia);
+
+            Date registroEntrada = DateUtil.getDateTime(DateUtil.getAnio(entrada), DateUtil.getMes(entrada), DateUtil.getDia(entrada), horaEntrada, 0, 0, 0);
+            log.trace("Dia hora entrada: {}", registroEntrada);
+            registro.setFechaEntrada(DateUtil.dateToOffsetDateTime(registroEntrada));
+
+            Date registroSalida = DateUtil.getDateTime(DateUtil.getAnio(entrada), DateUtil.getMes(entrada), DateUtil.getDia(entrada), horaSalida, 0, 0, 0);
+            log.trace("Dia hora salida: {}", registroSalida);
+            registro.setFechaSalida(DateUtil.dateToOffsetDateTime(registroSalida));
+
+            asistenciaRepo.save(registro);
+            cantidadRegistrosGuardados += 1;
+        }
+        
+        log.info("Num. registros de incapacidad guardados del empleado {} en asistencia: {}", empleado.getIdEmpleado(), cantidadRegistrosGuardados);
+    }
+    
+    public void empleadoTieneDiasLaborales(Empleado empleado)
+    {
+        if (empleado == null) {
+            throw new RuntimeException("Error: El empleado no tiene informacion");
+        }
+
+        if (empleado.getInformacionEmpresa() == null) {
+            throw new RuntimeException("Erro: El empleado no tiene informacion empresarial");
+        }
+
+        if (empleado.getInformacionEmpresa().getDiaLunes() == false || empleado.getInformacionEmpresa().getDiaMartes() == false || empleado.getInformacionEmpresa().getDiaMiercoles() == false || empleado.getInformacionEmpresa().getDiaJueves() == false || empleado.getInformacionEmpresa().getDiaViernes() == false) {
+            throw new RuntimeException("Error: No tiene dias laborales asignados. Por favor contactar a RH");
+        }
+
+    }
+    
+    public EstadoRegistro estatusPermiso()
+    {
+        String permiso = "P";
+        Optional<EstadoRegistro> estatusPermiso = estadoRegistroRepo.findByCodigo(permiso);
+        return estatusPermiso.get();
+    }
+    
+    public EstadoRegistro estatusVacaciones()
+    {
+        String vacaciones = "V";
+        Optional<EstadoRegistro> estatusVacaciones = estadoRegistroRepo.findByCodigo(vacaciones);
+        return estatusVacaciones.get();
+    }
+    
+    public List<OffsetDateTime> diasDeAsueto() 
+    {
+        Integer anioEnCurso = DateUtil.getAnio(new Date());
+        OffsetDateTime fechaInicio = DateUtil.inicializaFechaInicioAnioCurso(anioEnCurso - 1);
+        OffsetDateTime fechaFin = DateUtil.inicializaFechaTerminoAnioCurso(anioEnCurso + 1);
+        
+        List<DiaNoLaboral> diasNoLaboral = diaNoLaboralRepo.buscarPorPeriodo("MX", fechaInicio, fechaFin);
+        List<OffsetDateTime> diasDeAsueto = new ArrayList();
+        
+        for(DiaNoLaboral aux : diasNoLaboral) 
+        {
+            diasDeAsueto.add(aux.getFecha());
+        }
+        
+        return diasDeAsueto;
     }
     
 }
