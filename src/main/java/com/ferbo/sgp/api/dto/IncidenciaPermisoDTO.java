@@ -15,6 +15,7 @@ public class IncidenciaPermisoDTO
     private String segundoApSolicitante;
     private OffsetDateTime fechaInicio;
     private OffsetDateTime fechaFin;
+    private String empleadoRev;
     private String descripcionRechazo;
 
     public IncidenciaPermisoDTO() {
@@ -74,6 +75,14 @@ public class IncidenciaPermisoDTO
 
     public void setFechaFin(OffsetDateTime fechaFin) {
         this.fechaFin = fechaFin;
+    }
+
+    public String getEmpleadoRev() {
+        return empleadoRev;
+    }
+
+    public void setEmpleadoRev(String empleadoRev) {
+        this.empleadoRev = empleadoRev;
     }
 
     public String getDescripcionRechazo() {
