@@ -10,7 +10,7 @@ import java.time.OffsetDateTime;
 
 public interface IncidenciaRepo extends CrudRepository <Incidencia, Integer>{
 
-    @Query("SELECT i FROM Incidencia i WHERE i.tipo.clave = :claveTipo AND i.estatus.clave = :claveEstatus AND (i.fechaCaptura BETWEEN :fechaInicio AND :fechaFin)")
-    public abstract List<Incidencia> findByTipoEstatusEnPeriodo(String claveTipo, String claveEstatus, OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
+    @Query("SELECT i FROM Incidencia i WHERE i.tipo.clave = :claveTipo AND i.estatus.clave <> 'C' AND (i.fechaCaptura BETWEEN :fechaInicio AND :fechaFin)")
+    public abstract List<Incidencia> findByTipoEnPeriodo(String claveTipo, OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
 
 }

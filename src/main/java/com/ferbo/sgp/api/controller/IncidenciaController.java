@@ -27,14 +27,13 @@ public class IncidenciaController {
     @Autowired
     private IncidenciaSrv incidenciaSrv;
 
-    @GetMapping(value = "/incidencias/{tipo}/{estatus}/{fechaIni}/{fechaFin}", produces = "application/json")
-    public ResponseEntity<?> obtenerIncicidenciasPorTipoEstusYPeriodo(@PathVariable String tipo,
-            @PathVariable String estatus, @PathVariable String fechaIni, @PathVariable String fechaFin) {
+    @GetMapping(value = "/incidencias/{tipo}/{fechaIni}/{fechaFin}", produces = "application/json")
+    public ResponseEntity<?> obtenerIncicidenciasPorTipoYPeriodo(@PathVariable String tipo, @PathVariable String fechaIni, @PathVariable String fechaFin) {
 
         List<IncidenciaDTO> incidenciasDTO = null;
         try {
             log.info("Inicio proceso para obtener todas los incidencias en base a los parametros dados.");
-            incidenciasDTO = incidenciaSrv.obtenerIncidenciaTipoEstatusEnPeriodo(tipo, estatus, fechaIni, fechaFin);
+            incidenciasDTO = incidenciaSrv.obtenerIncidenciaTipoEnPeriodo(tipo, fechaIni, fechaFin);
             log.info("Finaliza proceso para obtener todas los incidencias en base a los parametros dados.");
         } catch (RuntimeException rtEx) {
             log.warn("Problema al obtenr las incidencias en base a los parametros dados. {}", rtEx);

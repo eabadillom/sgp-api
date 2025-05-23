@@ -80,7 +80,7 @@ public class IncidenciaSrv {
         return incidenciaPermisoDTO;
     }
 
-    public List<IncidenciaDTO> obtenerIncidenciaTipoEstatusEnPeriodo(String claveTipo, String claveEstatus,
+    public List<IncidenciaDTO> obtenerIncidenciaTipoEnPeriodo(String claveTipo,
             String fechaInicial, String fechaFinal) throws RuntimeException {
 
         OffsetDateTime fechaInicio = DateUtil.stringToOffSetTime(fechaInicial);
@@ -96,7 +96,7 @@ public class IncidenciaSrv {
         }
 
         List<IncidenciaDTO> incidenciasDTO = incidenciaRepo
-                .findByTipoEstatusEnPeriodo(claveTipo, claveEstatus, fechaInicio, fechaFin).stream()
+                .findByTipoEnPeriodo(claveTipo, fechaInicio, fechaFin).stream()
                 .map(this::convertir).collect(Collectors.toList());
 
         if (incidenciasDTO.isEmpty()) {
