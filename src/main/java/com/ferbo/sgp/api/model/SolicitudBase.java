@@ -21,8 +21,9 @@ public abstract class SolicitudBase {
     @Column(name = "cantidad", nullable = false)
     private Integer cantidad;
 
-    @Column(name = "aprobada")
-    private Boolean aprobada;
+    @ManyToOne
+    @JoinColumn(name = "aprobada")
+    private EstatusSolicitud estatusSolicitud;
 
     @Column(name = "fecha_cap", nullable = false)
     private LocalDateTime fechaCaptura;
@@ -58,12 +59,13 @@ public abstract class SolicitudBase {
         this.cantidad = cantidad;
     }
 
-    public Boolean getAprobada() {
-        return aprobada;
+    
+    public EstatusSolicitud getEstatusSolicitud() {
+        return estatusSolicitud;
     }
 
-    public void setAprobada(Boolean aprobada) {
-        this.aprobada = aprobada;
+    public void setEstatusSolicitud(EstatusSolicitud estatusSolicitud) {
+        this.estatusSolicitud = estatusSolicitud;
     }
 
     public LocalDateTime getFechaCaptura() {
@@ -105,5 +107,6 @@ public abstract class SolicitudBase {
     public void setDescripcionRechazo(String descripcionRechazo) {
         this.descripcionRechazo = descripcionRechazo;
     }
+
     
 }
