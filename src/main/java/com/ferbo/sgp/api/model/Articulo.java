@@ -18,13 +18,13 @@ public class Articulo {
     @Column(name = "id_articulo")
     private Integer id;
 
-    @Column(name = "decripcion")
+    @Column(name = "descripcion")
     @Size(max = 45)
 	@Basic(optional = false)
     private String descripcion;
 
     @Column(name = "cantidadMax")
-    private Integer canditdadMax;
+    private Integer cantidadMax;
 
     @Column(name = "unidad")
     @Size(max = 45)
@@ -37,52 +37,52 @@ public class Articulo {
     @Column(name = "activo")
     private Boolean activo;
 
-    public Integer getId() {
-        return id;
-    }
+	public Integer getId() {
+		return id;
+	}
 
-    public void setId(Integer id) {
-        this.id = id;
-    }
+	public void setId(Integer id) {
+		this.id = id;
+	}
 
-    public String getDescripcion() {
-        return descripcion;
-    }
+	public String getDescripcion() {
+		return descripcion;
+	}
 
-    public void setDescripcion(String descripcion) {
-        this.descripcion = descripcion;
-    }
+	public void setDescripcion(String descripcion) {
+		this.descripcion = descripcion;
+	}
 
-    public Integer getCanditdadMax() {
-        return canditdadMax;
-    }
+	public Integer getCantidadMax() {
+		return cantidadMax;
+	}
 
-    public void setCanditdadMax(Integer canditdadMax) {
-        this.canditdadMax = canditdadMax;
-    }
+	public void setCantidadMax(Integer cantidadMax) {
+		this.cantidadMax = cantidadMax;
+	}
 
-    public String getUnidad() {
-        return unidad;
-    }
+	public String getUnidad() {
+		return unidad;
+	}
 
-    public void setUnidad(String unidad) {
-        this.unidad = unidad;
-    }
+	public void setUnidad(String unidad) {
+		this.unidad = unidad;
+	}
 
-    public String getDetalle() {
-        return detalle;
-    }
+	public String getDetalle() {
+		return detalle;
+	}
 
-    public void setDetalle(String detalle) {
-        this.detalle = detalle;
-    }
+	public void setDetalle(String detalle) {
+		this.detalle = detalle;
+	}
 
-    public Boolean getActivo() {
-        return activo;
-    }
+	public Boolean getActivo() {
+		return activo;
+	}
 
-    public void setActivo(Boolean activo) {
-        this.activo = activo;
-    }
+	public void setActivo(Boolean activo) {
+		this.activo = activo;
+	}
 
 }

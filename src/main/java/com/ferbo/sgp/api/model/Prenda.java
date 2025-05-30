@@ -20,7 +20,7 @@ public class Prenda {
     @Column(name = "id_prenda")
     private Integer id;
 
-    @Column(name = "decripcion")
+    @Column(name = "descripcion")
     @Size(max = 45)
 	@Basic(optional = false)
     private String descripcion;
@@ -29,7 +29,7 @@ public class Prenda {
     private BigDecimal precio;
 
     @Column(name = "cantidadMax")
-    private Integer canditdadMax;
+    private Integer cantidadMax;
 
     @Column(name = "detalle")
     @Size(max = 150)
@@ -62,12 +62,12 @@ public class Prenda {
         this.precio = precio;
     }
 
-    public Integer getCanditdadMax() {
-        return canditdadMax;
+    public Integer getCantidadMax() {
+        return cantidadMax;
     }
 
-    public void setCanditdadMax(Integer canditdadMax) {
-        this.canditdadMax = canditdadMax;
+    public void setCantidadMax(Integer cantidadMax) {
+        this.cantidadMax = cantidadMax;
     }
 
     public String getDetalle() {

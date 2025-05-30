@@ -17,8 +17,8 @@ public interface IncidenciaMapper
     @Mapping(source = "empleadoSol.primeroAp", target = "primerApSolicitante")
     @Mapping(source = "empleadoSol.segundoAp", target = "segundoApSolicitante")
     @Mapping(source = "fechaCaptura", target = "fechaCaptura")
-    @Mapping(ignore = true, target = "solicitudPrenda")
-    @Mapping(ignore = true, target = "solicitudArticulo")
+    @Mapping(source = "solicitudPrenda.id", target = "solicitudPrenda")
+    @Mapping(source = "solicitudArticulo.id", target = "solicitudArticulo")
     IncidenciaDTO toDTO(Incidencia incidencia);
     
     @Mapping(source = "idIncidencia", target = "id")
@@ -29,5 +29,7 @@ public interface IncidenciaMapper
     @Mapping(source = "primerApSolicitante", target = "empleadoSol.primeroAp")
     @Mapping(source = "segundoApSolicitante", target = "empleadoSol.segundoAp")
     @Mapping(source = "fechaCaptura", target = "fechaCaptura")
+    @Mapping(source = "solicitudPrenda", target = "solicitudPrenda.id")
+    @Mapping(source = "solicitudArticulo", target = "solicitudArticulo.id")
     Incidencia  toEntity(IncidenciaDTO incidenciaDTO);    
 }

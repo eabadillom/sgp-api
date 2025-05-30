@@ -1,34 +1,25 @@
 package com.ferbo.sgp.api.dto;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public class SolicitudBaseDTO {
 
-    private Integer idSolicitud;
+    private Long id;
 
     private String estatusSolicitud;
 
-    private LocalDateTime fechaCaptura;
+    private OffsetDateTime fechaCaptura;
 
-    private LocalDateTime fechaModificacion;
+    private OffsetDateTime fechaModificacion;
 
-    private String nombreRevisor;
-    private String primerApRevisor;
-    private String segundoApRevisor;
+    private String numeroRevisor;
 
     private String nombreSolicitante;
     private String primerApSolicitante;
     private String segundoApSolicitante;
 
     private String descripcionRechazo;
-
-    public Integer getIdSolicitud() {
-        return idSolicitud;
-    }
-
-    public void setIdSolicitud(Integer idSolicitud) {
-        this.idSolicitud = idSolicitud;
-    }
 
     public String getEstatusSolicitud() {
         return estatusSolicitud;
@@ -38,44 +29,20 @@ public class SolicitudBaseDTO {
         this.estatusSolicitud = estatusSolicitud;
     }
 
-    public LocalDateTime getFechaCaptura() {
+    public OffsetDateTime getFechaCaptura() {
         return fechaCaptura;
     }
 
-    public void setFechaCaptura(LocalDateTime fechaCaptura) {
+    public void setFechaCaptura(OffsetDateTime fechaCaptura) {
         this.fechaCaptura = fechaCaptura;
     }
 
-    public LocalDateTime getFechaModificacion() {
+    public OffsetDateTime getFechaModificacion() {
         return fechaModificacion;
     }
 
-    public void setFechaModificacion(LocalDateTime fechaModificacion) {
+    public void setFechaModificacion(OffsetDateTime fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
-    }
-
-    public String getNombreRevisor() {
-        return nombreRevisor;
-    }
-
-    public void setNombreRevisor(String nombreRevisor) {
-        this.nombreRevisor = nombreRevisor;
-    }
-
-    public String getPrimerApRevisor() {
-        return primerApRevisor;
-    }
-
-    public void setPrimerApRevisor(String primerApRevisor) {
-        this.primerApRevisor = primerApRevisor;
-    }
-
-    public String getSegundoApRevisor() {
-        return segundoApRevisor;
-    }
-
-    public void setSegundoApRevisor(String segundoApRevisor) {
-        this.segundoApRevisor = segundoApRevisor;
     }
 
     public String getNombreSolicitante() {
@@ -108,6 +75,22 @@ public class SolicitudBaseDTO {
 
     public void setDescripcionRechazo(String descripcionRechazo) {
         this.descripcionRechazo = descripcionRechazo;
+    }
+
+    public String getNumeroRevisor() {
+        return numeroRevisor;
+    }
+
+    public void setNumeroRevisor(String numeroRevisor) {
+        this.numeroRevisor = numeroRevisor;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     

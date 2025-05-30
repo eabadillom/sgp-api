@@ -49,8 +49,13 @@ public class Incidencia {
     @ManyToOne()
     private SolicitudPermiso solicitudPermiso;
 
-    // private SolicitudArticulo solicitudArticulo;
-    // private SolicitudPrenda solicitudPrenda;
+    @JoinColumn(name = "id_sol_articulo")
+    @ManyToOne()
+    private SolicitudArticulo solicitudArticulo;
+
+    @JoinColumn(name = "id_sol_prenda")
+    @ManyToOne()
+    private SolicitudPrenda solicitudPrenda;
 
     public Integer getId() {
         return id;
@@ -122,6 +127,22 @@ public class Incidencia {
 
     public void setSolicitudPermiso(SolicitudPermiso solicitudPermiso) {
         this.solicitudPermiso = solicitudPermiso;
+    }
+
+    public SolicitudArticulo getSolicitudArticulo() {
+        return solicitudArticulo;
+    }
+
+    public void setSolicitudArticulo(SolicitudArticulo solicitudArticulo) {
+        this.solicitudArticulo = solicitudArticulo;
+    }
+
+    public SolicitudPrenda getSolicitudPrenda() {
+        return solicitudPrenda;
+    }
+
+    public void setSolicitudPrenda(SolicitudPrenda solicitudPrenda) {
+        this.solicitudPrenda = solicitudPrenda;
     }
 
     @Override

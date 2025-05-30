@@ -1,6 +1,6 @@
 package com.ferbo.sgp.api.model;
 
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
@@ -26,10 +26,10 @@ public abstract class SolicitudBase {
     private EstatusSolicitud estatusSolicitud;
 
     @Column(name = "fecha_cap", nullable = false)
-    private LocalDateTime fechaCaptura;
+    private OffsetDateTime fechaCaptura;
 
     @Column(name = "fecha_mod")
-    private LocalDateTime fechaModificacion;
+    private OffsetDateTime fechaModificacion;
 
     @ManyToOne
     @JoinColumn(name = "id_empleado_sol")
@@ -68,19 +68,19 @@ public abstract class SolicitudBase {
         this.estatusSolicitud = estatusSolicitud;
     }
 
-    public LocalDateTime getFechaCaptura() {
+    public OffsetDateTime getFechaCaptura() {
         return fechaCaptura;
     }
 
-    public void setFechaCaptura(LocalDateTime fechaCaptura) {
+    public void setFechaCaptura(OffsetDateTime fechaCaptura) {
         this.fechaCaptura = fechaCaptura;
     }
 
-    public LocalDateTime getFechaModificacion() {
+    public OffsetDateTime getFechaModificacion() {
         return fechaModificacion;
     }
 
-    public void setFechaModificacion(LocalDateTime fechaModificacion) {
+    public void setFechaModificacion(OffsetDateTime fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
     }
 
