@@ -15,13 +15,11 @@ public interface TipoIncapacidadMapper
     @Mapping(source = "idTpIncapacidad.", target = "idTpIncapacidad")
     @Mapping(source = "clave", target = "clave")
     @Mapping(source = "descripcion", target = "descripcion")
-    @Mapping(source = "maxDias", target = "maxDias")
     TipoIncapacidadDTO toDTO(TipoIncapacidad tipoIncapacidad);
     
     @Mapping(source = "idTpIncapacidad.", target = "idTpIncapacidad")
     @Mapping(source = "clave", target = "clave")
     @Mapping(source = "descripcion", target = "descripcion")
-    @Mapping(source = "maxDias", target = "maxDias")
     TipoIncapacidad toEntity(TipoIncapacidadDTO tipoIncapacidadDTO);
     
 }

@@ -11,7 +11,6 @@ public class TipoIncapacidadDTO
     private Integer idTpIncapacidad;
     private String clave;
     private String descripcion;
-    private Integer maxDias;
 
     public TipoIncapacidadDTO() {
     }
@@ -44,14 +43,6 @@ public class TipoIncapacidadDTO
         this.descripcion = descripcion;
     }
 
-    public Integer getMaxDias() {
-        return maxDias;
-    }
-
-    public void setMaxDias(Integer maxDias) {
-        this.maxDias = maxDias;
-    }
-
     @Override
     public int hashCode() {
         int hash = 5;
@@ -76,7 +67,7 @@ public class TipoIncapacidadDTO
 
     @Override
     public String toString() {
-        return "TipoIncapacidadDTO[" + "idTpIncapacidad=" + idTpIncapacidad + ", clave=" + clave + ", descripcion=" + descripcion + ", maxDias=" + maxDias + ']';
+        return "TipoIncapacidadDTO[" + "idTpIncapacidad=" + idTpIncapacidad + ", clave=" + clave + ", descripcion=" + descripcion + ']';
     }
     
     

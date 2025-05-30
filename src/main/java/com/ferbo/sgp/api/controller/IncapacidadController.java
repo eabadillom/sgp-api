@@ -1,8 +1,12 @@
 package com.ferbo.sgp.api.controller;
 
+import com.ferbo.sgp.api.dto.EmpleadoIncDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDetalleDTO;
 import com.ferbo.sgp.api.dto.TipoIncapacidadDTO;
+import com.ferbo.sgp.api.model.ControlIncapacidad;
+import com.ferbo.sgp.api.model.RiesgoTrabajo;
+import com.ferbo.sgp.api.model.TipoRiesgo;
 import com.ferbo.sgp.api.service.IncapacidadSrv;
 import java.util.List;
 import org.apache.logging.log4j.LogManager;
@@ -53,17 +57,36 @@ public class IncapacidadController
         IncapacidadDetalleDTO incapacidadDetalleDTO = null;
         
         try {
-            log.info("Inicio proceso para obtener todas los incapacidades en base a los parametros dados.");
+            log.info("Inicio proceso para obtener la incapacidad en base a los parametros dados.");
             incapacidadDetalleDTO = incapacidadSrv.obtenerIncapacidadPorId(id);
-            log.info("Finaliza proceso para obtener todas los incapacidades en base a los parametros dados.");
+            log.info("Finaliza proceso para obtener la incapacidad en base a los parametros dados.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener las incapacidades en base a los parametros dados. {}", rtEx);
+            log.warn("Problema al obtener la incapacidad en base a los parametros dados. {}", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener las incapacidades. {}", ex);
+            log.error("Problema desconocido al obtener la incapacidad. {}", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(incapacidadDetalleDTO);
+    }
+    
+    @GetMapping(value = "/incapacidad/empleados", produces = "application/json")
+    public ResponseEntity<?> obtenerEmpleados() 
+    {
+        List<EmpleadoIncDTO> empleadosDTO = null;
+        
+        try {
+            log.info("Inicio proceso para obtener todos los empleados.");
+            empleadosDTO = incapacidadSrv.obtenerEmpleados();
+            log.info("Finaliza proceso para obtener todos los empleados.");
+        } catch (RuntimeException rtEx) {
+            log.warn("Problema al obtener los empleados. {}", rtEx);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Problema desconocido al obtener los empleados. {}", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+        }
+        return ResponseEntity.ok(empleadosDTO);
     }
     
     @GetMapping(value = "/incapacidad/tiposIncapacidades", produces = "application/json")
@@ -72,17 +95,74 @@ public class IncapacidadController
         List<TipoIncapacidadDTO> tipoIncapacidadesDTO = null;
         
         try {
-            log.info("Inicio proceso para obtener todas los incapacidades en base a los parametros dados.");
+            log.info("Inicio proceso para obtener todos los tipos de incapacidades.");
             tipoIncapacidadesDTO = incapacidadSrv.obtenerTipoIncapacidad();
-            log.info("Finaliza proceso para obtener todas los incapacidades en base a los parametros dados.");
+            log.info("Finaliza proceso para obtener todas los tipos de incapacidades.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener las incapacidades en base a los parametros dados. {}", rtEx);
+            log.warn("Problema al obtener los tipos de incapacidades. {}", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener las incapacidades. {}", ex);
+            log.error("Problema desconocido al obtener los tipos de incapacidades. {}", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(tipoIncapacidadesDTO);
+    }
+    
+    @GetMapping(value = "/incapacidad/controlIncapacidades", produces = "application/json")
+    public ResponseEntity<?> obtenerControlIncapacidades() 
+    {
+        List<ControlIncapacidad> controlIncapacidades = null;
+        
+        try {
+            log.info("Inicio proceso para obtener el listado de control de incapacidades.");
+            controlIncapacidades = incapacidadSrv.obtenerControlIncapacidad();
+            log.info("Finaliza proceso para obtener el listado de control de incapacidades.");
+        } catch (RuntimeException rtEx) {
+            log.warn("Problema al obtener el listado de control de incapacidades. {}", rtEx);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Problema desconocido al obtener el listado de control de incapacidades. {}", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+        }
+        return ResponseEntity.ok(controlIncapacidades);
+    }
+    
+    @GetMapping(value = "/incapacidad/riesgosTrabajos", produces = "application/json")
+    public ResponseEntity<?> obtenerRiesgosDeTrabajo() 
+    {
+        List<RiesgoTrabajo> riesgosDeTrabajo = null;
+        
+        try {
+            log.info("Inicio proceso para obtener el listado de riesgo de trabajo.");
+            riesgosDeTrabajo = incapacidadSrv.obtenerRiesgoTrabajo();
+            log.info("Finaliza proceso para obtener el listado de riesgo de trabajo.");
+        } catch (RuntimeException rtEx) {
+            log.warn("Problema al obtener el listado de riesgo de trabajo. {}", rtEx);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Problema desconocido al obtener el listado de riesgo de trabajo. {}", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+        }
+        return ResponseEntity.ok(riesgosDeTrabajo);
+    }
+    
+    @GetMapping(value = "/incapacidad/tiposRiesgos", produces = "application/json")
+    public ResponseEntity<?> obtenerTiposDeRiesgo() 
+    {
+        List<TipoRiesgo> tiposDeRiesgo = null;
+        
+        try {
+            log.info("Inicio proceso para obtener el listado de tipos de riesgo.");
+            tiposDeRiesgo = incapacidadSrv.obtenerTipoRiesgo();
+            log.info("Finaliza proceso para obtener el listado de tipos de riesgo.");
+        } catch (RuntimeException rtEx) {
+            log.warn("Problema al obtener el listado de tipos de riesgo. {}", rtEx);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Problema desconocido al obtener el listado de tipos de riesgo. {}", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+        }
+        return ResponseEntity.ok(tiposDeRiesgo);
     }
     
 }
