@@ -1,14 +1,20 @@
 package com.ferbo.sgp.api.service;
 
+import java.time.OffsetDateTime;
+
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ferbo.sgp.api.config.RutaImagenProperties;
+import com.ferbo.sgp.api.dto.IncidenciaDTO;
 import com.ferbo.sgp.api.dto.SolicitudArticuloDTO;
 import com.ferbo.sgp.api.dto.SolicitudPrendaDTO;
 import com.ferbo.sgp.api.mapper.SolicitudArticuloMapper;
 import com.ferbo.sgp.api.mapper.SolicitudPrendaMapper;
 import com.ferbo.sgp.api.model.Empleado;
+import com.ferbo.sgp.api.model.EstatusIncidencia;
+import com.ferbo.sgp.api.model.EstatusSolicitud;
 import com.ferbo.sgp.api.model.Incidencia;
 import com.ferbo.sgp.api.model.SolicitudArticulo;
 import com.ferbo.sgp.api.model.SolicitudPrenda;
@@ -19,98 +25,118 @@ import com.ferbo.sgp.api.repository.IncidenciaRepo;
 import com.ferbo.sgp.api.repository.SolicitudArticulodRepo;
 import com.ferbo.sgp.api.repository.SolicitudPrendaRepo;
 import com.ferbo.sgp.api.service.helper.SolicitudHelperService;
+import org.apache.logging.log4j.LogManager;
 
 @Service
 public class SolicitudSrv {
 
-    @Autowired
-    private SolicitudArticulodRepo solicitudArticuloRepo;
+        private static Logger log = LogManager.getLogger(SolicitudSrv.class);
 
-    @Autowired
-    private SolicitudPrendaRepo solicitudPrendaRepo;
+        @Autowired
+        private SolicitudArticulodRepo solicitudArticuloRepo;
 
-    @Autowired
-    private SolicitudArticuloMapper solicitudArticuloMapper;
+        @Autowired
+        private SolicitudPrendaRepo solicitudPrendaRepo;
 
-    @Autowired
-    private SolicitudPrendaMapper solicitudPrendaMapper;
+        @Autowired
+        private SolicitudArticuloMapper solicitudArticuloMapper;
 
-    @Autowired
-    private EstatusSolicitudRepo estatusSolicitudRepo;
+        @Autowired
+        private SolicitudPrendaMapper solicitudPrendaMapper;
 
-    @Autowired
-    private EstatusIncidenciaRepo estatusIncidenciaRepo;
+        @Autowired
+        private EstatusSolicitudRepo estatusSolicitudRepo;
 
-    @Autowired
-    private IncidenciaRepo incidenciaRepo;
+        @Autowired
+        private EstatusIncidenciaRepo estatusIncidenciaRepo;
 
-    @Autowired
-    private EmpleadoRepo empleadoRepo;
+        @Autowired
+        private IncidenciaRepo incidenciaRepo;
 
-    @Autowired
-    private RutaImagenProperties rutaImagenProperties;
+        @Autowired
+        private EmpleadoRepo empleadoRepo;
 
-    @Autowired
-    private SolicitudHelperService helper;
+        @Autowired
+        private RutaImagenProperties rutaImagenProperties;
 
-    public SolicitudArticuloDTO obtenerSolicitudArticulo(Long id) {
-        SolicitudArticulo solicitud = helper.obtenerEntidadPorId(
-                solicitudArticuloRepo.findById(id),
-                "No existe solicitud de articulo con el id: " + id);
+        @Autowired
+        private SolicitudHelperService helper;
 
-        SolicitudArticuloDTO dto = solicitudArticuloMapper.toDTO(solicitud);
-        dto.setRutaImagen(rutaImagenProperties.getArticulo());
-        return dto;
-    }
+        public SolicitudArticuloDTO obtenerSolicitudArticulo(Long id) {
+                SolicitudArticulo solicitud = helper.obtenerEntidadPorId(
+                                solicitudArticuloRepo.findById(id),
+                                "No existe solicitud de articulo con el id: " + id);
 
-    public SolicitudPrendaDTO obtenerSolicitudPrenda(Long id) {
-        SolicitudPrenda solicitud = helper.obtenerEntidadPorId(solicitudPrendaRepo.findById(id),
-                "No existe solicitud de uniforme con el id: " + id);
+                SolicitudArticuloDTO dto = solicitudArticuloMapper.toDTO(solicitud);
+                dto.setRutaImagen(rutaImagenProperties.getArticulo());
+                return dto;
+        }
 
-        SolicitudPrendaDTO dto = solicitudPrendaMapper.toDTO(solicitud);
-        dto.setRutaImagen(rutaImagenProperties.getUniforme());
+        public SolicitudPrendaDTO obtenerSolicitudPrenda(Long id) {
+                SolicitudPrenda solicitud = helper.obtenerEntidadPorId(solicitudPrendaRepo.findById(id),
+                                "No existe solicitud de uniforme con el id: " + id);
 
-        return dto;
-    }
+                SolicitudPrendaDTO dto = solicitudPrendaMapper.toDTO(solicitud);
+                dto.setRutaImagen(rutaImagenProperties.getUniforme());
 
-    public SolicitudArticuloDTO actualizarSolicitudArticulo(SolicitudArticuloDTO body) {
-        SolicitudArticulo solicitud = helper.obtenerEntidadPorId(
-                solicitudArticuloRepo.findById(body.getId()),
-                "No existe la solicitud de articulo con el id: " + body.getId());
+                return dto;
+        }
 
-        Incidencia incidencia = helper.obtenerEntidadPorId(
-                incidenciaRepo.findByIdSolicitudArticulo(solicitud.getId()),
-                "No existe la incidencia con id: " + solicitud.getId());
+        public void actualizarSolicitud(Integer id, IncidenciaDTO body) {
 
-        Empleado revisor = empleadoRepo.findByNumeroEmpleado(body.getNumeroRevisor());
+                Incidencia incidencia = incidenciaRepo.findById(id)
+                                .orElseThrow(() -> new RuntimeException(
+                                                "No existe la incidencia con id: " + body.getIdIncidencia()));
 
-        helper.actualizarIncidencia(incidencia, body.getEstatusSolicitud(), revisor, estatusIncidenciaRepo);
-        helper.actualizarSolicitud(solicitud, body.getEstatusSolicitud(), revisor, estatusSolicitudRepo);
+                EstatusSolicitud estatusSolicitud = estatusSolicitudRepo
+                                .buscarPorClave(body.getCodigoEstadoIncidencia())
+                                .orElseThrow(() -> new RuntimeException("No existe estatus de solicitud con clave"));
 
-        incidenciaRepo.save(incidencia);
-        solicitudArticuloRepo.save(solicitud);
+                Empleado empleadoRevisor = empleadoRepo.findByNumeroEmpleado(body.getNumeroRevisor());
 
-        return solicitudArticuloMapper.toDTO(solicitud);
-    }
+                EstatusIncidencia estatusIncidencia = estatusIncidenciaRepo
+                                .findByClave(body.getCodigoEstadoIncidencia())
+                                .orElseThrow(() -> new RuntimeException("No exite estatus de incidencia con clave"
+                                                + body.getCodigoEstadoIncidencia()));
 
-    public SolicitudPrendaDTO actualizarSolicitudPrenda(SolicitudPrendaDTO body) {
-        SolicitudPrenda solicitud = helper.obtenerEntidadPorId(
-                solicitudPrendaRepo.findById(body.getId()),
-                "No existe la solicitud de uniforme con el id: " + body.getId());
+                String motivoRechazo = body.getMotivoRechazo();
 
-        Incidencia incidencia = helper.obtenerEntidadPorId(
-                incidenciaRepo.findByIdSolicitudArticulo(solicitud.getId()),
-                "No existe la incidencia con id: " + solicitud.getId());
-                
-        Empleado revisor = empleadoRepo.findByNumeroEmpleado(body.getNumeroRevisor());
+                SolicitudArticulo solicitudArticulo = null;
+                SolicitudPrenda solicitudPrenda = null;
 
-        helper.actualizarIncidencia(incidencia, body.getEstatusSolicitud(), revisor, estatusIncidenciaRepo);
-        helper.actualizarSolicitud(solicitud, body.getEstatusSolicitud(), revisor, estatusSolicitudRepo);
+                switch (incidencia.getTipo().getClave()) {
+                        case "A":
+                                solicitudArticulo = solicitudArticuloRepo
+                                                .findById(incidencia.getSolicitudArticulo().getId())
+                                                .orElseThrow(() -> new RuntimeException(
+                                                                "No existe solicitud de articulo con id: " + incidencia
+                                                                                .getSolicitudArticulo().getId()));
 
-        incidenciaRepo.save(incidencia);
-        solicitudPrendaRepo.save(solicitud);
+                                solicitudArticulo.setEstatusSolicitud(estatusSolicitud);
+                                solicitudArticulo.setEmpleadoRevisor(empleadoRevisor);
+                                solicitudArticulo.setDescripcionRechazo(motivoRechazo);
+                                solicitudArticulo.setFechaModificacion(OffsetDateTime.now());
+                                solicitudArticuloRepo.save(solicitudArticulo);
+                                break;
 
-        return solicitudPrendaMapper.toDTO(solicitud);
-    }
+                        case "PR":
+                                solicitudPrenda = solicitudPrendaRepo.findById(incidencia.getSolicitudPrenda().getId())
+                                                .orElseThrow(() -> new RuntimeException(
+                                                                "No existe solicitud de articulo con id: " + incidencia
+                                                                                .getSolicitudPrenda().getId()));
+
+                                solicitudPrenda.setEstatusSolicitud(estatusSolicitud);
+                                solicitudPrenda.setEmpleadoRevisor(empleadoRevisor);
+                                solicitudPrenda.setDescripcionRechazo(motivoRechazo);
+                                solicitudPrenda.setFechaModificacion(OffsetDateTime.now());
+                                solicitudPrendaRepo.save(solicitudPrenda);
+                                break;
+                }
+
+                incidencia.setEmpleadoRevisa(empleadoRevisor);
+                incidencia.setEstatus(estatusIncidencia);
+                incidencia.setFechaModificacion(OffsetDateTime.now());
+                incidenciaRepo.save(incidencia);
+        }
 
 }

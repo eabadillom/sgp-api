@@ -22,7 +22,7 @@ public class SolicitudHelperService {
         incidencia.setEstatus(estatusIncidenciaRepo.findByClave(estatusClave)
                 .orElseThrow(() -> new RuntimeException("No se encontró estatus de incidencia con esa clave")));
         incidencia.setFechaModificacion(OffsetDateTime.now());
-        incidencia.setEmpladoRevisa(revisor);
+        incidencia.setEmpleadoRevisa(revisor);
     }
 
     public void actualizarSolicitud(SolicitudBase solicitud, String estatusClave, Empleado revisor, EstatusSolicitudRepo estatusSolicitudRepo) {

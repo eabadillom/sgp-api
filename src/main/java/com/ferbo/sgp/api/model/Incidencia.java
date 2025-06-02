@@ -43,7 +43,7 @@ public class Incidencia {
 
     @JoinColumn(name = "id_empleado_rev", referencedColumnName = "id_empleado")
     @ManyToOne()
-    private Empleado empladoRevisa;
+    private Empleado empleadoRevisa;
     
     @JoinColumn(name = "id_sol_permiso", referencedColumnName = "id_solicitud")
     @ManyToOne()
@@ -113,12 +113,12 @@ public class Incidencia {
         this.empleadoSol = empleadoSol;
     }
 
-    public Empleado getEmpladoRevisa() {
-        return empladoRevisa;
+    public Empleado getEmpleadoRevisa() {
+        return empleadoRevisa;
     }
 
-    public void setEmpladoRevisa(Empleado empladoRevisa) {
-        this.empladoRevisa = empladoRevisa;
+    public void setEmpleadoRevisa(Empleado empleadoRevisa) {
+        this.empleadoRevisa = empleadoRevisa;
     }
 
     public SolicitudPermiso getSolicitudPermiso() {
