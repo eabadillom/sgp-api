@@ -1,6 +1,6 @@
 package com.ferbo.sgp.api.dto;
 
-import java.time.OffsetDateTime;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 /**
@@ -11,14 +11,14 @@ public class IncapacidadGuardarDetalleDTO
 {
     private Integer idIncapacidad;
     private Integer idEmpleadoInc;
-    private Integer idEmpleadoRev;
+    private String idEmpleadoRev;
     private Integer tipoIncapacidad;
     private Integer controlIncapacidad;
     private Integer riesgoTrabajo;
     private Integer tipoRiesgo;
     private String folio;
     private Integer diasAutorizados;
-    private OffsetDateTime fechaInicio;
+    private LocalDateTime fechaInicio;
     private String descripcion;
     private String estatusIncapacidad;
 
@@ -45,11 +45,11 @@ public class IncapacidadGuardarDetalleDTO
         this.idEmpleadoInc = idEmpleadoInc;
     }
 
-    public Integer getIdEmpleadoRev() {
+    public String getIdEmpleadoRev() {
         return idEmpleadoRev;
     }
 
-    public void setIdEmpleadoRev(Integer idEmpleadoRev) {
+    public void setIdEmpleadoRev(String idEmpleadoRev) {
         this.idEmpleadoRev = idEmpleadoRev;
     }
 
@@ -101,11 +101,11 @@ public class IncapacidadGuardarDetalleDTO
         this.diasAutorizados = diasAutorizados;
     }
 
-    public OffsetDateTime getFechaInicio() {
+    public LocalDateTime getFechaInicio() {
         return fechaInicio;
     }
 
-    public void setFechaInicio(OffsetDateTime fechaInicio) {
+    public void setFechaInicio(LocalDateTime fechaInicio) {
         this.fechaInicio = fechaInicio;
     }
 

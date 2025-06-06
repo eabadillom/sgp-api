@@ -14,4 +14,7 @@ public interface EstatusIncapacidadRepo extends CrudRepository <EstatusIncapacid
     @Override
     @Query("SELECT et FROM EstatusIncapacidad et")
     public abstract List<EstatusIncapacidad> findAll();
+    
+    @Query("SELECT et FROM EstatusIncapacidad et WHERE et.clave = :clave")
+    public abstract EstatusIncapacidad findByClave(String clave);
 }

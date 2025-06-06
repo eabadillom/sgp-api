@@ -3,32 +3,50 @@ package com.ferbo.sgp.api.service;
 import com.ferbo.sgp.api.dto.EmpleadoIncDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDetalleDTO;
+import com.ferbo.sgp.api.dto.IncapacidadGuardarDetalleDTO;
 import com.ferbo.sgp.api.dto.TipoIncapacidadDTO;
+
+import com.ferbo.sgp.api.mapper.EmpleadoIncMapper;
 import com.ferbo.sgp.api.mapper.IncapacidadDetalleMapper;
 import com.ferbo.sgp.api.mapper.IncapacidadMapper;
 import com.ferbo.sgp.api.mapper.TipoIncapacidadMapper;
+
+import com.ferbo.sgp.api.model.ControlIncapacidad;
+import com.ferbo.sgp.api.model.DiaNoLaboral;
 import com.ferbo.sgp.api.model.Empleado;
+import com.ferbo.sgp.api.model.EstadoRegistro;
+import com.ferbo.sgp.api.model.EstatusIncapacidad;
 import com.ferbo.sgp.api.model.Incapacidad;
+import com.ferbo.sgp.api.model.InformacionEmpresa;
+import com.ferbo.sgp.api.model.RegistroAsistencia;
+import com.ferbo.sgp.api.model.RiesgoTrabajo;
+import com.ferbo.sgp.api.model.SolicitudPermiso;
 import com.ferbo.sgp.api.model.TipoIncapacidad;
+import com.ferbo.sgp.api.model.TipoRiesgo;
+
+import com.ferbo.sgp.api.repository.ControlIncapacidadRepo;
+import com.ferbo.sgp.api.repository.DiaNoLaboralRepo;
 import com.ferbo.sgp.api.repository.EmpleadoRepo;
+import com.ferbo.sgp.api.repository.EstadoRegistroRepo;
+import com.ferbo.sgp.api.repository.EstatusIncapacidadRepo;
 import com.ferbo.sgp.api.repository.IncapacidadRepo;
+import com.ferbo.sgp.api.repository.RegistroAsistenciaRepo;
+import com.ferbo.sgp.api.repository.RiesgoTrabajoRepo;
+import com.ferbo.sgp.api.repository.SolicitudPermisoRepo;
 import com.ferbo.sgp.api.repository.TipoIncapacidadRepo;
+import com.ferbo.sgp.api.repository.TipoRiesgoRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
-import java.time.OffsetDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.ferbo.sgp.api.mapper.EmpleadoIncMapper;
-import com.ferbo.sgp.api.model.ControlIncapacidad;
-import com.ferbo.sgp.api.model.RiesgoTrabajo;
-import com.ferbo.sgp.api.model.TipoRiesgo;
-import com.ferbo.sgp.api.repository.ControlIncapacidadRepo;
-import com.ferbo.sgp.api.repository.RiesgoTrabajoRepo;
-import com.ferbo.sgp.api.repository.TipoRiesgoRepo;
 
+import java.time.OffsetDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Date;
 /**
  *
  * @author alberto
@@ -55,6 +73,21 @@ public class IncapacidadSrv
     
     @Autowired
     private TipoRiesgoRepo tipoRiesgoRepo;
+    
+    @Autowired
+    private EstatusIncapacidadRepo estatusIncapacidadRepo;
+    
+    @Autowired
+    private RegistroAsistenciaRepo asistenciaRepo;
+    
+    @Autowired
+    private SolicitudPermisoRepo solicitudPermisoRepo;
+    
+    @Autowired
+    private EstadoRegistroRepo estadoRegistroRepo;
+    
+    @Autowired
+    private DiaNoLaboralRepo diaNoLaboralRepo;
     
     @Autowired
     private IncapacidadMapper incapacidadMapper;
@@ -96,7 +129,37 @@ public class IncapacidadSrv
     public IncapacidadDetalleDTO obtenerIncapacidadPorId(Integer id)
     {
         Incapacidad incapacidad = incapacidadRepo.findById(id)
-            .orElseThrow(() -> new RuntimeException("No se encontro registro de incidencia"));
+            .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de incapacidad del empleado"));
+        
+        IncapacidadDetalleDTO incapacidadDetalleDTO = this.convertirDetalle(incapacidad);
+        
+        return incapacidadDetalleDTO;
+    }
+    
+    public IncapacidadDetalleDTO cancelarIncapacidad(String numEmpleadoRev, IncapacidadDetalleDTO body)
+    {
+        String estatusIncapacidadCancelada = "C";
+        EstatusIncapacidad estatusCancelada = estatusIncapacidadRepo.findByClave(estatusIncapacidadCancelada);
+        
+        Empleado empleadoRev = empleadoRepo.findByNumeroEmpleado(numEmpleadoRev)
+            .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de empleado revisión"));
+        
+        Incapacidad incapacidad = incapacidadRepo.findById(body.getIdIncapacidad())
+            .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de incapacidad del empleado"));
+        
+        incapacidad.setIdEmpleadoRev(empleadoRev);
+        incapacidad.setEstatusSolicitud(estatusCancelada);
+        
+        String claveRegistro = "I";
+        List<RegistroAsistencia> listaRegistroIncapacidades = obtenerRegistroAsistencia(incapacidad.getIdEmpleadoInc(), incapacidad.getFechaInicio(), incapacidad.getFechaFin(), claveRegistro);
+        
+        if(!listaRegistroIncapacidades.isEmpty())
+        {
+           int registrosBorrados = cancelarRegistroAsistencia(listaRegistroIncapacidades);
+           log.info("Registros eliminados del empleado {} en asistencia: {}", incapacidad.getIdEmpleadoInc().getIdEmpleado(), registrosBorrados);
+        }
+        
+        incapacidadRepo.save(incapacidad);
         
         IncapacidadDetalleDTO incapacidadDetalleDTO = this.convertirDetalle(incapacidad);
         
@@ -148,6 +211,382 @@ public class IncapacidadSrv
         log.info("Num. de tipos de riesgos: {}", listTipoRiesgo.size());
         
         return listTipoRiesgo;
+    }
+    
+    public IncapacidadDetalleDTO guardarIncapacidad(IncapacidadGuardarDetalleDTO body)
+    {
+        log.info("Iniciando el guardado de la incapacidad");
+        boolean riesgoTrabajoDefuncion = false;
+        List<OffsetDateTime> diasAsueto = this.diasDeAsueto();
+        
+        Incapacidad incapacidad = new Incapacidad();
+        
+        Empleado empleadoInc = empleadoRepo.findById(body.getIdEmpleadoInc())
+                .orElseThrow(() -> new RuntimeException("Error: no existe empleado con ese identificador"));
+        
+        Empleado empleadpRev = empleadoRepo.findByNumeroEmpleado(body.getIdEmpleadoRev())
+            .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de empleado revisión"));
+        
+        InformacionEmpresa datoEmpresaEmpleado = empleadoInc.getInformacionEmpresa();
+        if(datoEmpresaEmpleado == null)
+        {
+            throw new RuntimeException("Error: el empleado no tiene información empresarial, consulta con RH");
+        }
+        
+        TipoIncapacidad tipoIncapacidad = tipoIncapacidadRepo.findById(body.getTipoIncapacidad())
+                .orElseThrow(() -> new RuntimeException("Error: no existe tipo incapacidad con ese identificador"));
+        
+        ControlIncapacidad controlIncapacidad = controlIncapacidadRepo.findById(body.getControlIncapacidad())
+                .orElseThrow(() -> new RuntimeException("Error: no existe control incapacidad con ese identificador"));
+        
+        OffsetDateTime fechaIni = DateUtil.localDaTeToOffsetDateTime(body.getFechaInicio());
+        OffsetDateTime fechaFin = null;
+        if(body.getDiasAutorizados() == 0)
+        {
+            
+            fechaFin = fechaIni;
+        }else
+        {
+            fechaFin = DateUtil.dateToOffsetDateTime(DateUtil.agregaFechaFin(DateUtil.offsetDateTimeToDate(fechaIni), body.getDiasAutorizados()));
+        }
+        
+        OffsetDateTime fechaCaptura = OffsetDateTime.now();
+        EstatusIncapacidad estatusIncapacidadAceptada = estatusIncapacidadRepo.findByClave("A");
+        
+        incapacidad.setIdEmpleadoInc(empleadoInc);
+        incapacidad.setIdEmpleadoRev(empleadpRev);
+        incapacidad.setTipoIncapacidad(tipoIncapacidad);
+        incapacidad.setControlIncapacidad(controlIncapacidad);
+        
+        RiesgoTrabajo riesgoTrabajo = null;
+        TipoRiesgo tipoRiesgo = null;
+        
+        if(body.getRiesgoTrabajo() != null)
+        {
+            riesgoTrabajo = riesgoTrabajoRepo.findById(body.getRiesgoTrabajo())
+                    .orElseThrow(() -> new RuntimeException("Error: no existe riesgo de trabajo con ese identificador"));
+            incapacidad.setSecuelaRiesgoTrabajo(riesgoTrabajo);
+        }
+        
+        if(body.getTipoRiesgo() != null)
+        {
+            tipoRiesgo = tipoRiesgoRepo.findById(body.getTipoRiesgo())
+                    .orElseThrow(() -> new RuntimeException("Error: no existe tipo de riesgo con ese identificador"));
+            incapacidad.setTipoRiesgo(tipoRiesgo);
+        }
+        
+        incapacidad.setFolio(body.getFolio());
+        incapacidad.setDiasAutorizados(body.getDiasAutorizados());
+        incapacidad.setFechaInicio(fechaIni);
+        incapacidad.setFechaFin(fechaFin);
+        incapacidad.setFechaCaptura(fechaCaptura);
+        incapacidad.setDescripcion(body.getDescripcion());
+        incapacidad.setEstatusSolicitud(estatusIncapacidadAceptada);
+        
+        log.info("info incapacidad {}", incapacidad.toString());
+        riesgoTrabajoDefuncion = validarSolicitudIncapacidad(incapacidad);
+        if(riesgoTrabajoDefuncion == false)
+        {
+            this.guardarRegistroIncapacidad(empleadoInc, incapacidad.getFechaInicio(), incapacidad.getFechaFin(), diasAsueto);
+        }
+        
+        incapacidadRepo.save(incapacidad);
+        
+        IncapacidadDetalleDTO incapacidadDetalleDTO = this.convertirDetalle(incapacidad);
+        return incapacidadDetalleDTO;
+    }
+    
+    public void guardarRegistroIncapacidad(Empleado empleado, OffsetDateTime fechaInicio, OffsetDateTime fechaFin, List<OffsetDateTime> diasAsueto)
+    {
+        this.empleadoTieneDiasLaborales(empleado);
+        
+        int cantidadRegistrosGuardados = 0;
+        InformacionEmpresa empleadoEmpresa = empleado.getInformacionEmpresa();
+        EstadoRegistro estadoRegistro = this.estatusIncapacidad();
+        
+        Integer horaEntrada = DateUtil.getHora(empleadoEmpresa.getHoraEntrada());
+        Integer horaSalida = DateUtil.getHora(empleadoEmpresa.getHorasalida());
+        
+        List<OffsetDateTime> listaFechas = DateUtil.generarArreglosFechas(fechaInicio, fechaFin);
+        log.trace("Lista de Fechas: {}", listaFechas);
+        listaFechas = DateUtil.diasVacacionesSolicitados(listaFechas, diasAsueto, empleado.getInformacionEmpresa());
+        
+        for(OffsetDateTime dia : listaFechas)
+        {
+            RegistroAsistencia registro = new RegistroAsistencia();
+            registro.setEmpleado(empleado);
+            registro.setStatus(estadoRegistro);
+            
+            Date entrada = DateUtil.offsetDateTimeToDate(dia);
+            
+            Date registroEntrada = DateUtil.getDateTime(DateUtil.getAnio(entrada), DateUtil.getMes(entrada), DateUtil.getDia(entrada), horaEntrada, 0, 0, 0);
+            log.trace("Dia hora entrada: {}", registroEntrada);
+            registro.setFechaEntrada(DateUtil.dateToOffsetDateTime(registroEntrada));
+            
+            Date registroSalida = DateUtil.getDateTime(DateUtil.getAnio(entrada), DateUtil.getMes(entrada), DateUtil.getDia(entrada), horaSalida, 0, 0, 0);
+            log.trace("Dia hora salida: {}", registroSalida);
+            registro.setFechaSalida(DateUtil.dateToOffsetDateTime(registroSalida));
+            
+            asistenciaRepo.save(registro);
+            cantidadRegistrosGuardados += 1;
+        }
+        log.info("Num. registros de incapacidad guardados del empleado {} en asistencia: {}", empleado.getIdEmpleado(), cantidadRegistrosGuardados);
+    }
+    
+    public void empleadoTieneDiasLaborales(Empleado empleado)
+    {
+        if (empleado == null) {
+            throw new RuntimeException("Error: el empleado no tiene informacion");
+        }
+
+        if (empleado.getInformacionEmpresa() == null) {
+            throw new RuntimeException("Erro: el empleado no tiene informacion empresarial");
+        }
+
+        if (empleado.getInformacionEmpresa().getDiaLunes() == false || empleado.getInformacionEmpresa().getDiaMartes() == false || empleado.getInformacionEmpresa().getDiaMiercoles() == false || empleado.getInformacionEmpresa().getDiaJueves() == false || empleado.getInformacionEmpresa().getDiaViernes() == false) {
+            throw new RuntimeException("Error: el empleado no tiene dias laborales asignados. Por favor contactar a RH");
+        }
+    }
+    
+    public EstadoRegistro estatusIncapacidad()
+    {
+        String vacaciones = "I";
+        EstadoRegistro estatusVacaciones = estadoRegistroRepo.findByCodigo(vacaciones)
+                .orElseThrow(() -> new RuntimeException("No se encontro registro de estatus incapacidad"));
+        return estatusVacaciones;
+    }
+    
+    public List<OffsetDateTime> diasDeAsueto() 
+    {
+        Integer anioEnCurso = DateUtil.getAnio(new Date());
+        OffsetDateTime fechaInicio = DateUtil.inicializaFechaInicioAnioCurso(anioEnCurso - 1);
+        OffsetDateTime fechaFin = DateUtil.inicializaFechaTerminoAnioCurso(anioEnCurso + 1);
+        
+        List<DiaNoLaboral> diasNoLaboral = diaNoLaboralRepo.buscarPorPeriodo("MX", fechaInicio, fechaFin);
+        List<OffsetDateTime> diasDeAsueto = new ArrayList();
+        
+        for(DiaNoLaboral aux : diasNoLaboral) 
+        {
+            diasDeAsueto.add(aux.getFecha());
+        }
+        
+        return diasDeAsueto;
+    }
+    
+    public boolean validarSolicitudIncapacidad(Incapacidad incapacidad)
+    {
+        boolean regDefuncion = false;
+        ControlIncapacidad conIncapacidad = incapacidad.getControlIncapacidad();
+        RiesgoTrabajo secuelaRiesgoTrabajo = incapacidad.getSecuelaRiesgoTrabajo();
+        RiesgoTrabajo riesgoIncapacidadDefuncion = riesgoTrabajoRepo.findByCodigo("D");
+        String descripcion = "";
+        String clave = "";
+        
+        if(conIncapacidad != null)
+        {
+            descripcion = conIncapacidad.getDescripcion();
+            clave = conIncapacidad.getClave();
+        }
+        
+        if(secuelaRiesgoTrabajo != null)
+        {
+            descripcion = secuelaRiesgoTrabajo.getDescripcion();
+            clave = secuelaRiesgoTrabajo.getClave();
+        }
+        
+        if(clave.trim().matches("D"))
+        {
+            //En caso de incapacidad del tipo defuncion, se da de baja al empleado
+            String descripcionDefuncion = riesgoIncapacidadDefuncion.getDescripcion();
+            log.info("Descripcion del tipo baja defuncion: {}", descripcionDefuncion);
+            modificarRegistroIncapacidad(incapacidad, descripcion);
+            regDefuncion = true;
+        }else
+        {
+            validarRegistroIncapacidad(incapacidad);
+            
+            validarPeriodoSolicitudPermiso(incapacidad);
+            regDefuncion = false;
+        }
+        
+        return regDefuncion;
+    }
+    
+    public void modificarRegistroIncapacidad(Incapacidad incapacidad, String descripcion)
+    {
+        Empleado empleado = incapacidad.getIdEmpleadoInc();
+        OffsetDateTime fechaInicial = incapacidad.getFechaInicio();
+        
+        log.info("Baja del empleado {} en la fecha {}", empleado.getIdEmpleado(), fechaInicial, descripcion);
+        Incapacidad auxRegistroIncapacidad = incapacidadRepo.buscarPorEmpleadoUltimoPeriodo(empleado.getIdEmpleado(), fechaInicial);
+        
+        if(auxRegistroIncapacidad != null)
+        {
+            log.trace("Registro de incapacidad encontrado: {}", auxRegistroIncapacidad.toString());
+            log.trace("Fecha original: {}", fechaInicial);
+            OffsetDateTime fechaIni = DateUtil.moverFechaUnDiaAdelante(fechaInicial);
+            log.trace("Fecha adelantada: {}", fechaIni);
+            
+            String clave = "I";
+            List<RegistroAsistencia> listaRegistroIncapacidades = obtenerRegistroAsistencia(empleado, fechaIni, auxRegistroIncapacidad.getFechaFin(), clave);
+            int numeroRegistrosIncapacidades = listaRegistroIncapacidades.size();
+
+            if(numeroRegistrosIncapacidades > 0)
+            {
+                int registrosBorrados = cancelarRegistroAsistencia(listaRegistroIncapacidades);
+                log.info("Registros eliminados de asistencia: {}", registrosBorrados);
+            }
+            
+        }
+        
+        this.actualizarRegistroEmpleado(empleado, fechaInicial, descripcion);
+    }
+    
+    public List<RegistroAsistencia> obtenerRegistroAsistencia(Empleado empleado, OffsetDateTime fechaInicio, OffsetDateTime fechaFin, String clave) throws RuntimeException
+    {
+        RegistroAsistencia registro = null;
+        InformacionEmpresa empleadoEmpresa = empleado.getInformacionEmpresa();
+        Integer horaEntrada = DateUtil.getHora(empleadoEmpresa.getHoraEntrada());
+        Integer horaSalida = DateUtil.getHora(empleadoEmpresa.getHorasalida());
+        log.info("Buscando registros del empleado {} en asistencia", empleado.getIdEmpleado());
+        
+        fechaInicio = DateUtil.setHourTime(fechaInicio, horaEntrada, 0, 0, 0);
+        log.info("Fecha inicio: {}", fechaInicio);
+        fechaFin = DateUtil.setHourTime(fechaFin, horaSalida, 0, 0, 0);
+        log.info("Fecha fin: {}", fechaFin);
+        
+        List<OffsetDateTime> listaFechasAsistencia = DateUtil.generarArreglosFechas(fechaInicio, fechaFin);
+        listaFechasAsistencia = DateUtil.diasVacacionesSolicitados(listaFechasAsistencia, diasDeAsueto(), empleado.getInformacionEmpresa());
+        int totalFechasIncapacidades = listaFechasAsistencia.size();
+        
+        List<RegistroAsistencia> listaRegistroAsistencia = asistenciaRepo.buscarPorPeriodoSolicitud(empleado.getIdEmpleado(), clave, fechaInicio, fechaFin);
+        int totalRegistros = listaRegistroAsistencia.size();
+        horaEntrada = 12;
+        
+        log.trace("Tamaño rango fechas {}, Tamaño rango registros {}", totalFechasIncapacidades, totalRegistros);
+        
+        if(totalRegistros > 0)
+        {
+            listaRegistroAsistencia.clear();
+            log.info("Lista Fechas Asistencias: {}", listaFechasAsistencia.toString());
+            for(OffsetDateTime aux : listaFechasAsistencia)
+            {
+                OffsetDateTime auxFecha = DateUtil.getOffsetDateTime(aux.getYear(), aux.getMonth().getValue(), aux.getDayOfMonth(), horaEntrada, 0, 0);
+                log.info("Aux Fecha: {}", auxFecha);
+                registro = asistenciaRepo.buscarPorFechaEstatus(empleado.getIdEmpleado(), auxFecha, clave)
+                    .orElseThrow(() -> new RuntimeException("Error: no existe registro con num. empleado y fechas"));
+                if(registro != null)
+                {
+                    listaRegistroAsistencia.add(registro);
+                }
+            }
+            
+            log.info("El empleado {} tiene {} registros en asistencia", empleado.getIdEmpleado(), totalRegistros);
+            
+            if(listaRegistroAsistencia.isEmpty())
+            {
+                throw new RuntimeException("Error: no se encontraron registros en asistencia del empleado");
+            }
+        }else
+        {
+            log.info("El empleado {} tiene {} registros en asistencia", empleado.getIdEmpleado(), totalRegistros);
+        }
+        
+        return listaRegistroAsistencia;
+    }
+    
+    public int cancelarRegistroAsistencia(List<RegistroAsistencia> listaRegistros) throws RuntimeException
+    {
+        int totalRegistros = 0;
+        
+        try
+        {
+            for(RegistroAsistencia auxRegistro : listaRegistros)
+            {
+                asistenciaRepo.delete(auxRegistro);
+                totalRegistros = totalRegistros + 1;
+            }
+        }catch(RuntimeException ex)
+        {
+            log.info("Error al borrar un registo de asistencia: {}", ex);
+            throw new RuntimeException("Error: no se puede cancelar la incapacidad");
+        }
+        return totalRegistros;
+    }
+    
+    public void actualizarRegistroEmpleado(Empleado empleado, OffsetDateTime fecha, String descripcion)
+    {
+        InformacionEmpresa empleadoEmpresa = empleado.getInformacionEmpresa();
+        empleadoEmpresa.setFechaBaja(fecha.toLocalDate());
+        empleadoEmpresa.setMotivobaja(descripcion);
+        empleado.setInformacionEmpresa(empleadoEmpresa);
+        empleado.setActivo(0);
+        empleadoRepo.save(empleado);
+    }
+    
+    public void validarRegistroIncapacidad(Incapacidad incapacidad)
+    {
+        log.info("Entrando a validar incapacidades");
+        Empleado empleado = incapacidad.getIdEmpleadoInc();
+        OffsetDateTime fechaInicio = incapacidad.getFechaInicio();
+        OffsetDateTime fechaFinal = incapacidad.getFechaFin();
+        String claveEstatus = "A";
+        
+        List<Incapacidad> auxRegistroIncapacidad = incapacidadRepo.findByParametros(empleado.getIdEmpleado(), fechaInicio, fechaFinal, claveEstatus);
+        
+        if(auxRegistroIncapacidad.isEmpty())
+        {
+            log.info("No se encontraron registros de incapacidades");
+        }else
+        {
+            for(Incapacidad auxIncapacidad : auxRegistroIncapacidad)
+            {
+                boolean auxRegDefuncion = this.validaRegistroEmpleadoDefuncion(auxIncapacidad);
+                if(auxIncapacidad.getSecuelaRiesgoTrabajo() != null && auxIncapacidad.getSecuelaRiesgoTrabajo().getClave().trim().matches("D") && auxRegDefuncion == true)
+                {
+                    throw new RuntimeException("Error: el empleado ya tiene un registro de defunción");
+                }
+            }
+            
+            if(!auxRegistroIncapacidad.isEmpty())
+            {
+                log.trace("Registros de incapacidades del empleado {} encontradas: {}", empleado.getIdEmpleado(), auxRegistroIncapacidad.toString());
+                throw new RuntimeException("Error: el empleado ya cuenta con un registro de incapacidad");
+            }
+        }
+    }
+    
+    public boolean validaRegistroEmpleadoDefuncion(Incapacidad auxIncapacidad)
+    {
+        boolean regDefuncion = false;
+        Empleado empleado = auxIncapacidad.getIdEmpleadoInc();
+        InformacionEmpresa empleadoEmpresa= empleado.getInformacionEmpresa();
+        
+        if(empleado.getActivo() == 0 && empleadoEmpresa.getFechaBaja() != null)
+        {
+            regDefuncion = true;
+        }
+        
+        return regDefuncion;
+    }
+    
+    public void validarPeriodoSolicitudPermiso(Incapacidad incapacidad) throws RuntimeException
+    {
+        log.info("Entrando a validar vacaciones y/o permisos");
+        String enviada = "E";
+        String aprobada = "A";
+        Integer idEmpleadoInc = incapacidad.getIdEmpleadoInc().getIdEmpleado();
+        OffsetDateTime fechaInicio = incapacidad.getFechaInicio();
+        OffsetDateTime fechaFin = incapacidad.getFechaFin();
+        log.trace("Fecha Inicial: {} y Fecha Final: {} del Empleado: {}", fechaInicio, fechaFin, idEmpleadoInc);
+        
+        List<SolicitudPermiso> lstSolicitudes = solicitudPermisoRepo.buscarPorEmpPeriodo(idEmpleadoInc, fechaInicio, fechaFin, enviada, aprobada);
+        
+        if(!lstSolicitudes.isEmpty())
+        {
+            log.trace("Los registros de vacacione y/o permisos son: {}", lstSolicitudes.toString());
+            throw new RuntimeException("Error: el empleado ya tiene un periodo de vacaciones y/o permiso");
+        }
     }
     
     public IncapacidadDTO convertir(Incapacidad incapacidad) {

@@ -14,4 +14,7 @@ public interface RiesgoTrabajoRepo extends CrudRepository <RiesgoTrabajo, Intege
     @Override
     @Query("SELECT rt FROM RiesgoTrabajo rt")
     public abstract List<RiesgoTrabajo> findAll();
+    
+    @Query("SELECT rt FROM RiesgoTrabajo rt WHERE rt.clave = :codigo")
+    public abstract RiesgoTrabajo findByCodigo(String codigo);
 }

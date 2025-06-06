@@ -15,4 +15,10 @@ public interface IncapacidadRepo extends CrudRepository <Incapacidad, Integer>
     @Query("SELECT i FROM Incapacidad i WHERE ((:fechaInicio = i.fechaInicio AND :fechaFin = i.fechaFin) OR ((:fechaInicio = i.fechaFin) AND (:fechaFin = i.fechaInicio)) OR ((:fechaInicio BETWEEN i.fechaInicio AND i.fechaFin) OR (:fechaFin BETWEEN i.fechaInicio AND i.fechaFin)) OR ((i.fechaInicio BETWEEN :fechaInicio AND :fechaFin) OR (i.fechaFin BETWEEN :fechaInicio AND :fechaFin)))")
     public abstract List<Incapacidad> findByPeriodo(OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
     
+    @Query("SELECT i FROM Incapacidad i WHERE i.idEmpleadoInc.idEmpleado = :idEmpleado AND (:fechaInicio BETWEEN i.fechaInicio AND i.fechaFin) ORDER BY i.fechaInicio DESC, i.idIncapacidad DESC")
+    public abstract Incapacidad buscarPorEmpleadoUltimoPeriodo(Integer idEmpleado, OffsetDateTime fechaInicio);
+    
+    @Query("SELECT i FROM Incapacidad i WHERE i.idEmpleadoInc.idEmpleado = :idEmpleado AND ((:fechaInicio = i.fechaInicio AND :fechaFin = i.fechaFin) OR ((:fechaInicio = i.fechaFin) AND (:fechaFin = i.fechaInicio)) OR ((:fechaInicio BETWEEN i.fechaInicio AND i.fechaFin) OR (:fechaFin BETWEEN i.fechaInicio AND i.fechaFin)) OR ((i.fechaInicio BETWEEN :fechaInicio AND :fechaFin) OR (i.fechaFin BETWEEN :fechaInicio AND :fechaFin))) AND i.estatusSolicitud.clave = :clave ORDER BY i.fechaInicio DESC, i.idIncapacidad DESC")
+    public abstract List<Incapacidad> findByParametros(Integer idEmpleado,OffsetDateTime fechaInicio, OffsetDateTime fechaFin, String clave);
+    
 }

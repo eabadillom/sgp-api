@@ -3,6 +3,7 @@ package com.ferbo.sgp.api.controller;
 import com.ferbo.sgp.api.dto.EmpleadoIncDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDetalleDTO;
+import com.ferbo.sgp.api.dto.IncapacidadGuardarDetalleDTO;
 import com.ferbo.sgp.api.dto.TipoIncapacidadDTO;
 import com.ferbo.sgp.api.model.ControlIncapacidad;
 import com.ferbo.sgp.api.model.RiesgoTrabajo;
@@ -15,7 +16,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -67,6 +70,26 @@ public class IncapacidadController
             log.error("Problema desconocido al obtener la incapacidad. {}", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
+        return ResponseEntity.ok(incapacidadDetalleDTO);
+    }
+    
+    @PatchMapping(value = "/incapacidad/{numEmpleado}/cancelar", produces = "application/json")
+    public ResponseEntity<?> cancelarIncapacidad(@PathVariable String numEmpleado, @RequestBody IncapacidadDetalleDTO body)
+    {
+        IncapacidadDetalleDTO incapacidadDetalleDTO = null;
+        
+        try{
+            log.info("Inicio proceso para cancelar la incapacidad en base a los parametros dados.");
+            incapacidadDetalleDTO = incapacidadSrv.cancelarIncapacidad(numEmpleado, body);
+            log.info("Finaliza proceso para cancelar la incapacidad en base a los parametros dados.");
+        }catch (RuntimeException rtEx) {
+            log.warn("Problema al cancelar la incapacidad en base a los parametros dados. {}", rtEx);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Problema desconocido al cancelar la incapacidad. {}", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+        }
+        
         return ResponseEntity.ok(incapacidadDetalleDTO);
     }
     
@@ -163,6 +186,24 @@ public class IncapacidadController
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(tiposDeRiesgo);
+    }
+    
+    @PatchMapping("/incapacidad/guardar")
+    public ResponseEntity<?> guardarIncapacidad(@RequestBody IncapacidadGuardarDetalleDTO body) 
+    {
+        IncapacidadDetalleDTO incapacidadDetalleDTO = null;
+        try {
+            log.info("Inicia el proceso para guardar la incapacidad");
+            incapacidadDetalleDTO = incapacidadSrv.guardarIncapacidad(body);
+            log.info("Finaliza el proceso para guardad la incapacidad");
+        }catch (RuntimeException rtEx) {
+            log.warn("Hubo algun problema en la base de datos. {}", rtEx);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (Exception ex) {
+            log.error("Hubo algun problema. {}", ex);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+        }
+        return ResponseEntity.ok(incapacidadDetalleDTO);
     }
     
 }
