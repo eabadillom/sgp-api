@@ -45,10 +45,10 @@ public class IncapacidadController
             incapacidadesDTO = incapacidadSrv.obtenerIncapacidadPorPeriodo(fechaIni, fechaFin);
             log.info("Finaliza proceso para obtener todas los incapacidades en base a los parametros dados.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener las incapacidades en base a los parametros dados. {}", rtEx);
+            log.warn("Problema al obtener las incapacidades en base a los parametros dados.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener las incapacidades. {}", ex);
+            log.error("Problema desconocido al obtener las incapacidades.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(incapacidadesDTO);
@@ -64,10 +64,10 @@ public class IncapacidadController
             incapacidadDetalleDTO = incapacidadSrv.obtenerIncapacidadPorId(id);
             log.info("Finaliza proceso para obtener la incapacidad en base a los parametros dados.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener la incapacidad en base a los parametros dados. {}", rtEx);
+            log.warn("Problema al obtener la incapacidad en base a los parametros dados.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener la incapacidad. {}", ex);
+            log.error("Problema desconocido al obtener la incapacidad.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(incapacidadDetalleDTO);
@@ -83,10 +83,10 @@ public class IncapacidadController
             incapacidadDetalleDTO = incapacidadSrv.cancelarIncapacidad(numEmpleado, body);
             log.info("Finaliza proceso para cancelar la incapacidad en base a los parametros dados.");
         }catch (RuntimeException rtEx) {
-            log.warn("Problema al cancelar la incapacidad en base a los parametros dados. {}", rtEx);
+            log.warn("Problema al cancelar la incapacidad en base a los parametros dados.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al cancelar la incapacidad. {}", ex);
+            log.error("Problema desconocido al cancelar la incapacidad.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         
@@ -103,10 +103,10 @@ public class IncapacidadController
             empleadosDTO = incapacidadSrv.obtenerEmpleados();
             log.info("Finaliza proceso para obtener todos los empleados.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener los empleados. {}", rtEx);
+            log.warn("Problema al obtener los empleados.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener los empleados. {}", ex);
+            log.error("Problema desconocido al obtener los empleados.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(empleadosDTO);
@@ -122,10 +122,10 @@ public class IncapacidadController
             tipoIncapacidadesDTO = incapacidadSrv.obtenerTipoIncapacidad();
             log.info("Finaliza proceso para obtener todas los tipos de incapacidades.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener los tipos de incapacidades. {}", rtEx);
+            log.warn("Problema al obtener los tipos de incapacidades.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener los tipos de incapacidades. {}", ex);
+            log.error("Problema desconocido al obtener los tipos de incapacidades.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(tipoIncapacidadesDTO);
@@ -141,10 +141,10 @@ public class IncapacidadController
             controlIncapacidades = incapacidadSrv.obtenerControlIncapacidad();
             log.info("Finaliza proceso para obtener el listado de control de incapacidades.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener el listado de control de incapacidades. {}", rtEx);
+            log.warn("Problema al obtener el listado de control de incapacidades.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener el listado de control de incapacidades. {}", ex);
+            log.error("Problema desconocido al obtener el listado de control de incapacidades.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(controlIncapacidades);
@@ -160,10 +160,10 @@ public class IncapacidadController
             riesgosDeTrabajo = incapacidadSrv.obtenerRiesgoTrabajo();
             log.info("Finaliza proceso para obtener el listado de riesgo de trabajo.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener el listado de riesgo de trabajo. {}", rtEx);
+            log.warn("Problema al obtener el listado de riesgo de trabajo.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener el listado de riesgo de trabajo. {}", ex);
+            log.error("Problema desconocido al obtener el listado de riesgo de trabajo.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(riesgosDeTrabajo);
@@ -179,10 +179,10 @@ public class IncapacidadController
             tiposDeRiesgo = incapacidadSrv.obtenerTipoRiesgo();
             log.info("Finaliza proceso para obtener el listado de tipos de riesgo.");
         } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener el listado de tipos de riesgo. {}", rtEx);
+            log.warn("Problema al obtener el listado de tipos de riesgo.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Problema desconocido al obtener el listado de tipos de riesgo. {}", ex);
+            log.error("Problema desconocido al obtener el listado de tipos de riesgo.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
         }
         return ResponseEntity.ok(tiposDeRiesgo);
@@ -191,16 +191,16 @@ public class IncapacidadController
     @PatchMapping("/incapacidad/guardar")
     public ResponseEntity<?> guardarIncapacidad(@RequestBody IncapacidadGuardarDetalleDTO body) 
     {
-        IncapacidadDetalleDTO incapacidadDetalleDTO = null;
+        IncapacidadGuardarDetalleDTO incapacidadDetalleDTO = null;
         try {
             log.info("Inicia el proceso para guardar la incapacidad");
             incapacidadDetalleDTO = incapacidadSrv.guardarIncapacidad(body);
             log.info("Finaliza el proceso para guardad la incapacidad");
         }catch (RuntimeException rtEx) {
-            log.warn("Hubo algun problema en la base de datos. {}", rtEx);
+            log.warn("Hubo algun problema en la base de datos.", rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
-            log.error("Hubo algun problema. {}", ex);
+            log.error("Hubo algun problema.", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
         return ResponseEntity.ok(incapacidadDetalleDTO);
