@@ -1,7 +1,6 @@
 package com.ferbo.sgp.api.controller;
 
 import javax.management.RuntimeErrorException;
-import javax.persistence.EntityManager;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ferbo.sgp.api.dto.IncidenciaDTO;
 import com.ferbo.sgp.api.dto.SolicitudArticuloDTO;
 import com.ferbo.sgp.api.dto.SolicitudPrendaDTO;
+import com.ferbo.sgp.api.model.Incidencia;
+import com.ferbo.sgp.api.repository.IncidenciaRepo;
 import com.ferbo.sgp.api.service.SolicitudSrv;
 
 @RestController
@@ -29,23 +30,27 @@ public class SolicitudController {
     @Autowired
     private SolicitudSrv solicitudSrv;
 
-    @GetMapping(value = "/solicitudes/{tipo}/{id}", produces = "application/json")
-    public ResponseEntity<?> obtenerSolicitudArticuloPorId(@PathVariable String tipo, @PathVariable Long id) {
+    @Autowired 
+    private IncidenciaRepo incidenciaRepo;
+
+    @GetMapping(value = "/solicitudes/{id}/estatus", produces = "application/json")
+    public ResponseEntity<?> obtenerSolicitudArticuloPorId(@PathVariable Integer id) {
 
         SolicitudArticuloDTO solicitudA = null;
         SolicitudPrendaDTO solicitudP = null;
-
-        tipo = tipo.trim().toLowerCase();
+        Incidencia incidencia = null;
 
         try {
 
-            switch(tipo){
-                case "articulo":
-                    solicitudA = solicitudSrv.obtenerSolicitudArticulo(id);
+            incidencia = incidenciaRepo.findById(id).orElseThrow(() -> new RuntimeException("No existe incidencia con con el id: " + id));
+
+            switch(incidencia.getTipo().getClave()){
+                case "A":
+                    solicitudA = solicitudSrv.obtenerSolicitudArticulo(incidencia.getSolicitudArticulo().getId());
                     return ResponseEntity.ok(solicitudA);
 
-                case "uniforme":
-                    solicitudP = solicitudSrv.obtenerSolicitudPrenda(id);
+                case "PR":
+                    solicitudP = solicitudSrv.obtenerSolicitudPrenda(incidencia.getSolicitudPrenda().getId());
                     return ResponseEntity.ok(solicitudP);
 
                 default:

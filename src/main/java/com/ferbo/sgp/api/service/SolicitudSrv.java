@@ -24,7 +24,6 @@ import com.ferbo.sgp.api.repository.EstatusSolicitudRepo;
 import com.ferbo.sgp.api.repository.IncidenciaRepo;
 import com.ferbo.sgp.api.repository.SolicitudArticulodRepo;
 import com.ferbo.sgp.api.repository.SolicitudPrendaRepo;
-import com.ferbo.sgp.api.service.helper.SolicitudHelperService;
 import org.apache.logging.log4j.LogManager;
 
 @Service
@@ -59,13 +58,11 @@ public class SolicitudSrv {
         @Autowired
         private RutaImagenProperties rutaImagenProperties;
 
-        @Autowired
-        private SolicitudHelperService helper;
+        /*@Autowired
+        private SolicitudHelperService helper;*/
 
         public SolicitudArticuloDTO obtenerSolicitudArticulo(Long id) {
-                SolicitudArticulo solicitud = helper.obtenerEntidadPorId(
-                                solicitudArticuloRepo.findById(id),
-                                "No existe solicitud de articulo con el id: " + id);
+                SolicitudArticulo solicitud = solicitudArticuloRepo.findById(id).orElseThrow(() -> new RuntimeException("No existe solicitud de articulo con el id: " + id));
 
                 SolicitudArticuloDTO dto = solicitudArticuloMapper.toDTO(solicitud);
                 dto.setRutaImagen(rutaImagenProperties.getArticulo());
@@ -73,14 +70,14 @@ public class SolicitudSrv {
         }
 
         public SolicitudPrendaDTO obtenerSolicitudPrenda(Long id) {
-                SolicitudPrenda solicitud = helper.obtenerEntidadPorId(solicitudPrendaRepo.findById(id),
-                                "No existe solicitud de uniforme con el id: " + id);
+                SolicitudPrenda solicitud = solicitudPrendaRepo.findById(id).orElseThrow(() -> new RuntimeException("No existe solicitud de uniforme con el id: " + id));
 
                 SolicitudPrendaDTO dto = solicitudPrendaMapper.toDTO(solicitud);
                 dto.setRutaImagen(rutaImagenProperties.getUniforme());
 
                 return dto;
         }
+
 
         public void actualizarSolicitud(Integer id, IncidenciaDTO body) {
 

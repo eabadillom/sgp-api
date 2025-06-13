@@ -92,6 +92,4 @@ public class SolicitudBaseDTO {
     public void setId(Long id) {
         this.id = id;
     }
-
-    
 }
