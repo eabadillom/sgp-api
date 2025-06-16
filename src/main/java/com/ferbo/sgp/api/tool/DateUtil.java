@@ -1,10 +1,13 @@
 package com.ferbo.sgp.api.tool;
 
+import com.ferbo.sgp.api.model.InformacionEmpresa;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -15,8 +18,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
@@ -913,6 +918,30 @@ public class DateUtil {
 		}
 		return resultado;
 	}
+        
+        public static List<OffsetDateTime> diasVacacionesSolicitados(List<OffsetDateTime> fechas, List<OffsetDateTime> diasAsueto, InformacionEmpresa empleadoEmpresa) 
+        {
+            log.trace("Dias antes de festividades: {}", fechas.size());
+            List<OffsetDateTime> diasDeDescanso = DateUtil.diasLaborales(fechas, diasAsueto);
+            log.trace("Dias despues de festividades: {}", diasDeDescanso.size());
+
+            Map<DayOfWeek, Boolean> diasEmpleado = new HashMap<>();
+            diasEmpleado.put(DayOfWeek.MONDAY, empleadoEmpresa.getDiaLunes());
+            diasEmpleado.put(DayOfWeek.TUESDAY, empleadoEmpresa.getDiaMartes());
+            diasEmpleado.put(DayOfWeek.WEDNESDAY, empleadoEmpresa.getDiaMiercoles());
+            diasEmpleado.put(DayOfWeek.THURSDAY, empleadoEmpresa.getDiaJueves());
+            diasEmpleado.put(DayOfWeek.FRIDAY, empleadoEmpresa.getDiaViernes());
+            diasEmpleado.put(DayOfWeek.SATURDAY, empleadoEmpresa.getDiaSabado());
+            diasEmpleado.put(DayOfWeek.SUNDAY, empleadoEmpresa.getDiaDomingo());
+
+            List<OffsetDateTime> diasDeVacaciones = diasDeDescanso.stream()
+                    .filter(dia -> diasEmpleado.getOrDefault(dia.getDayOfWeek(), true))
+                    .collect(Collectors.toList());
+
+            log.trace("Dias de descanso: {}", diasDeVacaciones.size());
+            log.trace("Y son: {}", diasDeVacaciones.toString());
+            return diasDeVacaciones;
+        }
 
 	/*
 	 * Inicializa la fecha dado un parametro del tipo entero,
@@ -920,7 +949,7 @@ public class DateUtil {
 	 * @param anioEnCurso es el atributo del que se fijara la fecha inicial del año
 	 * return fecha, regresa la fecha de inicio del dia 1 de enero del año en curso
 	 */
-	public static Date inicializaFechaInicioAnioCurso(Integer anioEnCurso) {
+	public static OffsetDateTime inicializaFechaInicioAnioCurso(Integer anioEnCurso) {
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT-06:00"), Locale.getDefault());
 		calendar.set(Calendar.DAY_OF_MONTH, 1);// Día 1
 		calendar.set(Calendar.MONTH, Calendar.JANUARY); // Mes Enero
@@ -930,10 +959,10 @@ public class DateUtil {
 		calendar.set(Calendar.SECOND, 0);// Segundo
 		calendar.set(Calendar.MILLISECOND, 0);// Milisegundo
 
-		return calendar.getTime();
+		return calendar.toInstant().atOffset(ZoneOffset.ofHours(-6));
 	}
 
-	public static Date inicializaFechaTerminoAnioCurso(Integer anioEnCurso) {
+	public static OffsetDateTime inicializaFechaTerminoAnioCurso(Integer anioEnCurso) {
 		Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT-06:00"), Locale.getDefault());
 		calendar.set(Calendar.DAY_OF_MONTH, 31);// Día 31
 		calendar.set(Calendar.MONTH, Calendar.DECEMBER); // Mes Diciembre
@@ -943,29 +972,53 @@ public class DateUtil {
 		calendar.set(Calendar.SECOND, 59);// Segundo
 		calendar.set(Calendar.MILLISECOND, 0);// Milisegundo
 
-		return calendar.getTime();
+		return calendar.toInstant().atOffset(ZoneOffset.ofHours(-6));
+	}
+        
+        public static OffsetDateTime addDay(OffsetDateTime fecha, int dias) 
+        {
+            OffsetDateTime resultado = fecha.plusDays(dias);
+            return resultado;
 	}
 
-	public static List<Date> generarArreglosFechas(Date inicio, Date fin) {
-		List<Date> fechas = new ArrayList<>();
-		Date actual = inicio;
+	public static List<OffsetDateTime> generarArreglosFechas(OffsetDateTime inicio, OffsetDateTime fin) 
+        {
+            List<OffsetDateTime> fechas = new ArrayList<>();
+            OffsetDateTime actual = inicio;
 
-		while (!actual.after(fin)) {
-			fechas.add(actual);
-			log.trace("Fecha: {}", actual);
-			actual = DateUtil.addDay(actual, 1); // Incrementa un día
-		}
+            while (!actual.isAfter(fin)) {
+                    fechas.add(actual);
+                    log.trace("Fecha: {}", actual);
+                    actual = DateUtil.addDay(actual, 1); // Incrementa un día
+            }
 
-		return fechas;
+            return fechas;
 	}
 
-	public static List<Date> diasLaborales(List<Date> dias, List<Date> diasAsueto) {
-		List<Date> diasDeTrabajo = dias.stream()
+	public static List<OffsetDateTime> diasLaborales(List<OffsetDateTime> dias, List<OffsetDateTime> diasAsueto) {
+		List<OffsetDateTime> diasDeTrabajo = dias.stream()
 				.filter(fecha -> !diasAsueto.contains(fecha))
 				.collect(Collectors.toList());
 
 		return diasDeTrabajo;
 	}
+        
+        public static Date offsetDateTimeToDate(OffsetDateTime fecha)
+        {
+            Date date = Date.from(fecha.toInstant());
+            return date;
+        }
+        
+        public static int getHora(LocalTime fecha){
+            int horaEntrada = fecha.getHour();
+            return horaEntrada;
+        }
+        
+        public static OffsetDateTime dateToOffsetDateTime(Date fecha)
+        {
+            OffsetDateTime offsetDateTime = fecha.toInstant().atOffset(ZoneOffset.ofHours(-6));
+            return offsetDateTime;
+        }
 
 	public static Date stringToDate(String fecha) {
 		try {
