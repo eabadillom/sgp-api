@@ -88,8 +88,9 @@ public class SolicitudSrv {
                 EstatusSolicitud estatusSolicitud = estatusSolicitudRepo
                                 .buscarPorClave(body.getCodigoEstadoIncidencia())
                                 .orElseThrow(() -> new RuntimeException("No existe estatus de solicitud con clave"));
-
-                Empleado empleadoRevisor = empleadoRepo.findByNumeroEmpleado(body.getNumeroRevisor());
+                
+                Empleado empleadoRevisor = empleadoRepo.findByNumeroEmpleado(body.getNumeroRevisor())
+                        .orElseThrow(() -> new RuntimeException("No existe empleado con ese numero de identificador"));
 
                 EstatusIncidencia estatusIncidencia = estatusIncidenciaRepo
                                 .findByClave(body.getCodigoEstadoIncidencia())
