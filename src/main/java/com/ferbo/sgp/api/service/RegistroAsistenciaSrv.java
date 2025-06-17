@@ -122,6 +122,19 @@ public class RegistroAsistenciaSrv {
 		return registroCompletoMapper.toDTO(registro);
 
 	}
+        
+        public RegistroAsistencia buscarPorFechaEstatus(Integer idEmp, OffsetDateTime fecha, String codigo)
+        {
+            RegistroAsistencia registro = asistenciaRepo.buscarPorFechaEstatus(idEmp, fecha, codigo)
+                                .orElseThrow(() -> new RuntimeException("No existe registro con ese identificador y fechas"));
+            return registro;
+        }
+        
+        public List<RegistroAsistencia> buscarPorEmpPeriodoSolicitud (Integer idEmp, String codigo, OffsetDateTime fechaInicial, OffsetDateTime fechaFin)
+        {
+            List<RegistroAsistencia> listRegistroAsistencia = asistenciaRepo.buscarPorPeriodoSolicitud(idEmp, codigo, fechaInicial, fechaFin);
+            return listRegistroAsistencia;
+        }
 
 	public RegistroDTO convertir(RegistroAsistencia registroAsistencia) {
 		return registroParcialMapper.toDTO(registroAsistencia);

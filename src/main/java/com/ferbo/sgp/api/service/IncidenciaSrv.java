@@ -109,7 +109,8 @@ public class IncidenciaSrv {
     public IncidenciaPermisoDTO actualizarEstatusIncidencia(Integer id, IncidenciaPermisoDTO body) {
         
         log.info("Iniciando el actualizado de incidencia");
-        Empleado empleadoRevision = empleadoRepo.findByNumeroEmpleado(body.getEmpleadoRev());
+        Empleado empleadoRevision = empleadoRepo.findByNumeroEmpleado(body.getEmpleadoRev())
+            .orElseThrow(() -> new RuntimeException("No se encontro registro de empleado con ese indentificador"));
         
         Incidencia incidencia = incidenciaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe incidencia con ese identificador"));
