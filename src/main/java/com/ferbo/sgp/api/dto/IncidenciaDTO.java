@@ -24,6 +24,10 @@ public class IncidenciaDTO {
     
     private Integer solicitudArticulo;
 
+	private String numeroRevisor;
+
+	private String motivoRechazo;
+
 	public Integer getIdIncidencia() {
 		return idIncidencia;
 	}
@@ -102,6 +106,22 @@ public class IncidenciaDTO {
 
 	public void setSolicitudArticulo(Integer idSolicitudArticulo) {
 		this.solicitudArticulo = idSolicitudArticulo;
+	}
+
+	public String getNumeroRevisor() {
+		return numeroRevisor;
+	}
+
+	public void setNumeroRevisor(String numeroRevisor) {
+		this.numeroRevisor = numeroRevisor;
+	}
+
+	public String getMotivoRechazo() {
+		return motivoRechazo;
+	}
+
+	public void setMotivoRechazo(String motivoRechazo) {
+		this.motivoRechazo = motivoRechazo;
 	}
 
 	@Override

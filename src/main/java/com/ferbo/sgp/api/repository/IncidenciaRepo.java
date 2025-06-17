@@ -13,4 +13,5 @@ public interface IncidenciaRepo extends CrudRepository <Incidencia, Integer>{
     @Query("SELECT i FROM Incidencia i WHERE i.tipo.clave = :claveTipo AND i.estatus.clave <> 'C' AND (i.fechaCaptura BETWEEN :fechaInicio AND :fechaFin)")
     public abstract List<Incidencia> findByTipoEnPeriodo(String claveTipo, OffsetDateTime fechaInicio, OffsetDateTime fechaFin);
 
+
 }

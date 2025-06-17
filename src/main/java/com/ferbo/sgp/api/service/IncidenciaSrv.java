@@ -142,7 +142,7 @@ public class IncidenciaSrv {
         solicitudPermisoRepo.save(solicitudPermiso);
 
         incidencia.setFechaModificacion(OffsetDateTime.now());
-        incidencia.setEmpladoRevisa(empleadoRevision);
+        incidencia.setEmpleadoRevisa(empleadoRevision);
         incidencia.setEstatus(estatusIncidenciaRepo.findByClave(body.getCodigoEstado()).orElseThrow(
                 () -> new RuntimeException("No existe estus con esa clave: " + body.getCodigoEstado())));
         
