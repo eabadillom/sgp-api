@@ -47,9 +47,10 @@ import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
+import javax.validation.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.web.servlet.mvc.support.DefaultHandlerExceptionResolver;
 /**
  *
  * @author alberto
@@ -144,28 +145,41 @@ public class IncapacidadSrv
     
     public IncapacidadDetalleDTO cancelarIncapacidad(String numEmpleadoRev, IncapacidadDetalleDTO body)
     {
-        String estatusIncapacidadCancelada = "C";
-        EstatusIncapacidad estatusCancelada = estatusIncapacidadRepo.findByClave(estatusIncapacidadCancelada);
-        
-        Empleado empleadoRev = empleadoRepo.findByNumeroEmpleado(numEmpleadoRev)
-            .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de empleado revisión"));
-        
-        Incapacidad incapacidad = incapacidadRepo.findById(body.getIdIncapacidad())
-            .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de incapacidad del empleado"));
-        
-        incapacidad.setIdEmpleadoRev(empleadoRev);
-        incapacidad.setEstatusSolicitud(estatusCancelada);
-        
-        String claveRegistro = "I";
-        List<RegistroAsistencia> listaRegistroIncapacidades = obtenerRegistroAsistencia(incapacidad.getIdEmpleadoInc(), incapacidad.getFechaInicio(), incapacidad.getFechaFin(), claveRegistro);
-        
-        if(!listaRegistroIncapacidades.isEmpty())
+        Incapacidad incapacidad = null;
+        try{
+            String estatusIncapacidadCancelada = "C";
+            EstatusIncapacidad estatusCancelada = estatusIncapacidadRepo.findByClave(estatusIncapacidadCancelada);
+
+            Empleado empleadoRev = empleadoRepo.findByNumeroEmpleado(numEmpleadoRev)
+                .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de empleado revisión"));
+
+            incapacidad = incapacidadRepo.findById(body.getIdIncapacidad())
+                .orElseThrow(() -> new RuntimeException("Error: no se encontro registro de incapacidad del empleado"));
+
+            incapacidad.setIdEmpleadoRev(empleadoRev);
+            incapacidad.setEstatusSolicitud(estatusCancelada);
+
+            String claveRegistro = "I";
+            List<RegistroAsistencia> listaRegistroIncapacidades = obtenerRegistroAsistencia(incapacidad.getIdEmpleadoInc(), incapacidad.getFechaInicio(), incapacidad.getFechaFin(), claveRegistro);
+
+            if(!listaRegistroIncapacidades.isEmpty())
+            {
+               int registrosBorrados = cancelarRegistroAsistencia(listaRegistroIncapacidades);
+               log.info("Registros eliminados del empleado {} en asistencia: {}", incapacidad.getIdEmpleadoInc().getIdEmpleado(), registrosBorrados);
+            }
+
+            incapacidadRepo.save(incapacidad);
+        }catch (DataIntegrityViolationException | ConstraintViolationException ex)
         {
-           int registrosBorrados = cancelarRegistroAsistencia(listaRegistroIncapacidades);
-           log.info("Registros eliminados del empleado {} en asistencia: {}", incapacidad.getIdEmpleadoInc().getIdEmpleado(), registrosBorrados);
+            log.error("Error: {}", ex);
+            String mensaje = "Error, consulte con el administrador de sistemas";
+            throw new RuntimeException(mensaje);
+        }catch (Exception e)
+        {
+            log.error("Error: {}", e);
+            String mensaje = "Error, consulte con el administrador de sistemas";
+            throw new RuntimeException(mensaje);
         }
-        
-        incapacidadRepo.save(incapacidad);
         
         IncapacidadDetalleDTO incapacidadDetalleDTO = this.convertirDetalle(incapacidad);
         
@@ -177,9 +191,14 @@ public class IncapacidadSrv
         List<EmpleadoIncDTO> listEmpleadosDTO = empleadoRepo.findByActivo().stream()
                 .map(this::convertirEmpleadoIncToDTO).collect(Collectors.toList());
         
-        log.info("Num. de empleados: {}", listEmpleadosDTO.size());
+        List<EmpleadoIncDTO> listEmpleadosOrdenado = listEmpleadosDTO.stream()
+            .sorted(Comparator.comparing(EmpleadoIncDTO::getNombre)
+                .thenComparing(EmpleadoIncDTO::getPrimerApEmpleado))
+            .collect(Collectors.toList());
         
-        return listEmpleadosDTO;
+        log.info("Num. de empleados: {}", listEmpleadosOrdenado.size());
+        
+        return listEmpleadosOrdenado;
     }
     
     public List<TipoIncapacidadDTO> obtenerTipoIncapacidad()
@@ -303,9 +322,15 @@ public class IncapacidadSrv
                 this.guardarRegistroIncapacidad(empleadoInc, incapacidad.getFechaInicio(), incapacidad.getFechaFin(), diasAsueto);
             }
             
-        }catch (DataIntegrityViolationException ex) 
+        }catch (DataIntegrityViolationException | ConstraintViolationException ex)
         {
-            String mensaje = "Error: uno de los atributos de la incapacidad ya se encuentra repetido";
+            log.error("Error: {}", ex);
+            String mensaje = "Error, consulte con el administrador de sistemas";
+            throw new RuntimeException(mensaje);
+        }catch (Exception e)
+        {
+            log.error("Error: {}", e);
+            String mensaje = "Error, consulte con el administrador de sistemas";
             throw new RuntimeException(mensaje);
         }
         

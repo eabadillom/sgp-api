@@ -2,6 +2,7 @@ package com.ferbo.sgp.api.model;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +12,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Null;
 
 /**
  *
@@ -23,61 +23,66 @@ public class Incapacidad
 {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     @Column(name = "cd_incapacidad")
     private Integer idIncapacidad;
     
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_empleado_inc", referencedColumnName = "id_empleado")
     private Empleado idEmpleadoInc;
     
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "id_empleado_rev", referencedColumnName = "id_empleado")
     private Empleado idEmpleadoRev;
     
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "cd_tp_incapacidad", referencedColumnName = "cd_tp_incapacidad")
     private TipoIncapacidad tipoIncapacidad;
     
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "cd_cont_incapacidad", referencedColumnName = "cd_control_incapacidad")
     private ControlIncapacidad controlIncapacidad;
     
-    @Null
-    @ManyToOne()
+    @ManyToOne(optional = true)
     @JoinColumn(name = "cd_secuela_rt", referencedColumnName = "cd_sec_riesgo_trabajo")
     private RiesgoTrabajo secuelaRiesgoTrabajo;
     
-    @Null
-    @ManyToOne()
+    @ManyToOne(optional = true)
     @JoinColumn(name = "cd_tp_riesgo", referencedColumnName = "cd_tp_riesgo")
     private TipoRiesgo tipoRiesgo;
     
     @NotNull
+    @Basic(optional = false)
     @Column(name = "nb_folio")
     private String folio;
     
     @NotNull
+    @Basic(optional = false)
     @Column(name = "nu_dias_autorizados")
     private Integer diasAutorizados;
     
     @NotNull
+    @Basic(optional = false)
     @Column(name = "fh_inicio")
     private OffsetDateTime fechaInicio;
     
     @NotNull
+    @Basic(optional = false)
     @Column(name = "fh_fin")
     private OffsetDateTime fechaFin;
     
     @NotNull
+    @Basic(optional = false)
     @Column(name = "fh_captura")
     private OffsetDateTime fechaCaptura;
     
     @NotNull
+    @Basic(optional = false)
     @Column(name = "tx_descripcion")
     private String descripcion;
     
     @NotNull
-    @ManyToOne()
+    @ManyToOne(optional = false)
     @JoinColumn(name = "cd_estatus", referencedColumnName = "cd_estatus_inc")
     private EstatusIncapacidad estatusSolicitud;
 
