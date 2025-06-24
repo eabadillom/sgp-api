@@ -87,7 +87,7 @@ public class IncidenciaSrv {
         OffsetDateTime fechaFin = DateUtil.stringToOffSetTime(fechaFinal);
 
         fechaInicio = DateUtil.resetOffSetTime(fechaInicio);
-        fechaFin = DateUtil.resetOffSetTime(fechaFin);
+        fechaFin = DateUtil.setToEndOfDay(fechaFin);
 
         if (fechaInicio.isAfter(fechaFin)) {
             OffsetDateTime fechaAux = fechaFin;
