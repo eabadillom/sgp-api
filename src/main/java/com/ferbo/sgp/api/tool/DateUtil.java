@@ -997,6 +997,29 @@ public class DateUtil {
 
         return diasDeTrabajo;
     }
+    
+    public static OffsetDateTime moverFechaUnDiaAdelante(OffsetDateTime fechaInicio) {
+        // Zona horaria GMT-6
+        ZoneOffset offset = ZoneOffset.of("-06:00");
+
+        // Avanzar un día manteniendo el mismo offset
+        OffsetDateTime fechaFin = fechaInicio.withOffsetSameInstant(offset).plusDays(1);
+        return fechaFin;
+    }
+    
+    public static Date agregaFechaFin(Date fechaInicio, Integer diasAutorizados) {
+        ZoneId systemDefault = ZoneId.of("GMT-6");
+
+        LocalDate localFechaInicio = fechaInicio.toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        LocalDate localFechaFin = localFechaInicio.plusDays(diasAutorizados - 1);
+
+        Date fechaFin = Date.from(localFechaFin.atStartOfDay(systemDefault).toInstant());
+
+        return fechaFin;
+    }
 
     public static Date offsetDateTimeToDate(OffsetDateTime fecha) {
         Date date = Date.from(fecha.toInstant());
@@ -1041,6 +1064,31 @@ public class DateUtil {
                 .withMinute(0)
                 .withSecond(0)
                 .withNano(0);
+    }
+    
+    public static OffsetDateTime setHourTime(OffsetDateTime dateTime, Integer hora, Integer min, Integer sec, Integer nanoSec)
+    {
+        return dateTime
+            .withHour(hora)
+            .withMinute(min)
+            .withSecond(sec)
+            .withNano(nanoSec);
+    }
+
+    public static OffsetDateTime getOffsetDateTime(int year, int month, int day, int hour, int minute, int second) 
+    {
+        // Offset de GMT-6
+        ZoneOffset offset = ZoneOffset.of("-06:00");
+
+        // Crear el OffsetDateTime con los valores indicados
+        return OffsetDateTime.of(year, month, day, hour, minute, second, 0, offset);
+    }
+
+    public static OffsetDateTime localDaTeToOffsetDateTime(LocalDateTime fecha)
+    {
+        OffsetDateTime offsetDateTime = fecha.atOffset(ZoneOffset.of("-06:00"));
+
+        return offsetDateTime;
     }
 
     /*Funcion que recibe una fecha y le setea la hora con 23:59:59:999999*/
