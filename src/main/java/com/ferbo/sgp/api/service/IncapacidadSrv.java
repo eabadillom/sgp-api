@@ -174,6 +174,10 @@ public class IncapacidadSrv
             log.error("Error: {}", ex);
             String mensaje = "Error, consulte con el administrador de sistemas";
             throw new RuntimeException(mensaje);
+        }catch (RuntimeException e)
+        {
+            log.error("Error: {}", e);
+            throw new RuntimeException(e.getMessage());
         }catch (Exception e)
         {
             log.error("Error: {}", e);
@@ -327,6 +331,10 @@ public class IncapacidadSrv
             log.error("Error: {}", ex);
             String mensaje = "Error, consulte con el administrador de sistemas";
             throw new RuntimeException(mensaje);
+        }catch (RuntimeException e)
+        {
+            log.error("Error: {}", e);
+            throw new RuntimeException(e.getMessage());
         }catch (Exception e)
         {
             log.error("Error: {}", e);
