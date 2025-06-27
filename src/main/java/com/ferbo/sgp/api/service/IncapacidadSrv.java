@@ -5,13 +5,11 @@ import com.ferbo.sgp.api.dto.IncapacidadDTO;
 import com.ferbo.sgp.api.dto.IncapacidadDetalleDTO;
 import com.ferbo.sgp.api.dto.IncapacidadGuardarDetalleDTO;
 import com.ferbo.sgp.api.dto.TipoIncapacidadDTO;
-
 import com.ferbo.sgp.api.mapper.EmpleadoIncMapper;
 import com.ferbo.sgp.api.mapper.IncapacidadDetalleMapper;
 import com.ferbo.sgp.api.mapper.IncapacidadGuardarDetalleMapper;
 import com.ferbo.sgp.api.mapper.IncapacidadMapper;
 import com.ferbo.sgp.api.mapper.TipoIncapacidadMapper;
-
 import com.ferbo.sgp.api.model.ControlIncapacidad;
 import com.ferbo.sgp.api.model.DiaNoLaboral;
 import com.ferbo.sgp.api.model.Empleado;
@@ -24,7 +22,6 @@ import com.ferbo.sgp.api.model.RiesgoTrabajo;
 import com.ferbo.sgp.api.model.SolicitudPermiso;
 import com.ferbo.sgp.api.model.TipoIncapacidad;
 import com.ferbo.sgp.api.model.TipoRiesgo;
-
 import com.ferbo.sgp.api.repository.ControlIncapacidadRepo;
 import com.ferbo.sgp.api.repository.DiaNoLaboralRepo;
 import com.ferbo.sgp.api.repository.EmpleadoRepo;
@@ -37,7 +34,6 @@ import com.ferbo.sgp.api.repository.SolicitudPermisoRepo;
 import com.ferbo.sgp.api.repository.TipoIncapacidadRepo;
 import com.ferbo.sgp.api.repository.TipoRiesgoRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
