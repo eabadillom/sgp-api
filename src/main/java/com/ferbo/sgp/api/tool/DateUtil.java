@@ -1020,11 +1020,10 @@ public class DateUtil {
             LocalDate localFechaInicio = fechaInicio.toInstant()
                     .atZone(ZoneId.systemDefault())
                     .toLocalDate();
-
             LocalDate localFechaFin = localFechaInicio.plusDays(diasAutorizados - 1);
 
             Date fechaFin = Date.from(localFechaFin.atStartOfDay(systemDefault).toInstant());
-
+            
             return fechaFin;
         }
         
