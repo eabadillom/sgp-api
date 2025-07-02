@@ -62,6 +62,10 @@ public class InformacionEmpresa {
 	@Column(name = "fh_ingreso")
 	@Basic(optional = false)
 	private LocalDate fechaIngreso;
+        
+        @Basic(optional = true)
+        @Column(name = "fh_baja")
+        private LocalDate fechaBaja;
 	
 	@Column(name = "nu_nss")
 	@Size(max = 45)
@@ -113,6 +117,10 @@ public class InformacionEmpresa {
         @Basic(optional = true)
         @Column(name = "st_diat_domingo")
         private Boolean diaDomingo;
+        
+        @Basic(optional = true)
+        @Column(name = "nb_baja")
+        private String motivobaja;
 
 	public Integer getId() {
 		return id;
@@ -193,6 +201,14 @@ public class InformacionEmpresa {
 	public void setFechaIngreso(LocalDate fechaIngreso) {
 		this.fechaIngreso = fechaIngreso;
 	}
+
+        public LocalDate getFechaBaja() {
+            return fechaBaja;
+        }
+
+        public void setFechaBaja(LocalDate fechaBaja) {
+            this.fechaBaja = fechaBaja;
+        }
 
 	public String getNss() {
 		return nss;
@@ -304,6 +320,14 @@ public class InformacionEmpresa {
 
         public void setDiaDomingo(Boolean diaDomingo) {
             this.diaDomingo = diaDomingo;
+        }
+
+        public String getMotivobaja() {
+            return motivobaja;
+        }
+
+        public void setMotivobaja(String motivobaja) {
+            this.motivobaja = motivobaja;
         }
 
 	@Override
