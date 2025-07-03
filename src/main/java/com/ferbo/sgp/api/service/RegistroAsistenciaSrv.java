@@ -81,7 +81,7 @@ public class RegistroAsistenciaSrv {
 		OffsetDateTime fechaFinal = DateUtil.stringToOffSetTime(fechaFin);
 
 		fechaInicio = DateUtil.resetOffSetTime(fechaInicio);
-		fechaFinal = DateUtil.resetOffSetTime(fechaFinal);
+		fechaFinal = DateUtil.setToEndOfDay(fechaFinal);
 
 		if (fechaInicio.isAfter(fechaFinal)) {
 			OffsetDateTime fechaAux = fechaFinal;
