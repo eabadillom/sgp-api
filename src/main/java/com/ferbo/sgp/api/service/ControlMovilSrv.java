@@ -40,62 +40,6 @@ public class ControlMovilSrv {
     @Autowired
     private EmpleadoSrv empleadoService;
 
-    /*public UsuarioMovilDTO obtenerUsuario(HttpServletRequest request, UsuarioMovilDTO body) {
-        UsuarioMovilDTO usuario = new UsuarioMovilDTO();
-
-        String[] credenciales = null;
-
-        String token = null;
-        String refreshToken = null;
-
-        Map<String, String> tokenResponse = new HashMap<String, String>();
-
-        log.info("Inicia proceso de extraccion de credenciales");
-        credenciales = securityTool.extractCredentials(request);
-        token = jwtUtil.generateToken(credenciales[0]);
-        refreshToken = jwtUtil.generateRefreshToken(credenciales[1]);
-        log.info("Finaliza proceso de extraccion de credenciales");
-
-        log.info("Inicia proceso para generar el token");
-        tokenResponse.put("access_token", token);
-        tokenResponse.put("refresh_token", refreshToken);
-        log.info("Finaliza proceso para generar el token");
-
-        log.info("Inicia proceso de generar el token");
-        ControlMovil nuevoToken = new ControlMovil();
-        Sistema sistemaReferencia = sistemaService.buscarPorNombre(credenciales[0]);
-
-        nuevoToken.setSistema(sistemaReferencia);
-        Date hoy = DateUtil.now();
-        DateUtil.resetTime(hoy);
-        Date fechaExpiracion = DateUtil.addDay(hoy, 7);
-        nuevoToken.setExpiracion(fechaExpiracion);
-        nuevoToken.setToken(token);
-        log.info("Finaliza proceso de generar el token");
-
-        log.info("Inicia proceso de fuardado de  token");
-        controlMovilRepo.save(nuevoToken);
-        log.info("Finaliza proceso de fuardado de  token");
-
-        log.info("Inicia proceso para construir el usurio");
-
-        log.info("Inicia proceso para obtener el empleado por su numero");
-        Empleado empleado = empleadoService.buscarPorNumeroEmpleado(body.getNumeroUsuario());
-        log.info("Finaliza proceso para obtener el empleado por su numero");
-
-        usuario.setNumeroUsuario(empleado.getNumeroEmpleado());
-        usuario.setNombreUsuario(empleado.getNombre());
-        usuario.setPrimerApUsuario(empleado.getPrimeroAp());
-        usuario.setSegundoApUsuario(empleado.getSegundoAp());
-        usuario.setToken(token);
-        usuario.setRefreshToken(refreshToken);
-        usuario.setPuesto(empleado.getInformacionEmpresa().getPuesto().getDescripcion());
-
-        log.info("Finaliza proceso para construir el usurio");
-
-        return usuario;
-    }*/
-
     public UsuarioMovilDTO obtenerUsuario(HttpServletRequest request, UsuarioMovilDTO body) {
         UsuarioMovilDTO usuario = new UsuarioMovilDTO();
 
