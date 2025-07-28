@@ -1,6 +1,7 @@
 package com.ferbo.sgp.api.model;
 
 import java.math.BigDecimal;
+import java.util.Objects;
 
 import javax.persistence.Basic;
 import javax.persistence.Column;
@@ -85,5 +86,28 @@ public class Prenda {
     public void setActivo(Boolean activo) {
         this.activo = activo;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 53 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Prenda other = (Prenda) obj;
+        return Objects.equals(this.id, other.id);
+    }
+    
     
 }
