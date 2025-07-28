@@ -56,26 +56,46 @@ public class ControlMovilSrv {
         refreshToken = jwtUtil.generateRefreshToken(credenciales[1]);
         log.info("Finaliza proceso de extraccion de credenciales");
 
+        log.info("Inicia proceso de obtencion del sistema");
+        Sistema sistemaReferencia = sistemaService.buscarPorNombre(credenciales[0]);
+        log.info("Finaliza proceso de obtencion del sistema");
+
+        Date hoy = DateUtil.now();
+        DateUtil.resetTime(hoy);
+
         log.info("Inicia proceso para generar el token");
         tokenResponse.put("access_token", token);
         tokenResponse.put("refresh_token", refreshToken);
         log.info("Finaliza proceso para generar el token");
 
-        log.info("Inicia proceso de generar el token");
-        ControlMovil nuevoToken = new ControlMovil();
-        Sistema sistemaReferencia = sistemaService.buscarPorNombre(credenciales[0]);
+        Date fechaExpiracion = DateUtil.addDay(hoy, 7);
+
+        ControlMovil nuevoToken = controlMovilRepo.findTopBySistemaOrderByIdDesc(sistemaReferencia);
+
+        if(nuevoToken != null) { 
+            int validezToken = hoy.compareTo(nuevoToken.getExpiracion());
+            log.info("El ultimo token del sistema solicitante: {}", nuevoToken);
+            if(validezToken <= 0){
+                log.info("Ya existe un token valido, se mantiene");
+                log.info("Inicia proceso de para notificar del token existente");
+                token = nuevoToken.getToken();
+                refreshToken = nuevoToken.getToken();
+                fechaExpiracion = nuevoToken.getExpiracion();
+                log.info("Finaliza proceso de para notificar del token existente");
+            } else {
+                nuevoToken = new ControlMovil();
+            }
+        } else {
+            nuevoToken = new ControlMovil(); 
+        }
 
         nuevoToken.setSistema(sistemaReferencia);
-        Date hoy = DateUtil.now();
-        DateUtil.resetTime(hoy);
-        Date fechaExpiracion = DateUtil.addDay(hoy, 7);
         nuevoToken.setExpiracion(fechaExpiracion);
         nuevoToken.setToken(token);
-        log.info("Finaliza proceso de generar el token");
 
-        log.info("Inicia proceso de fuardado de  token");
+        log.info("Inicia proceso de guardado de  token");
         controlMovilRepo.save(nuevoToken);
-        log.info("Finaliza proceso de fuardado de  token");
+        log.info("Finaliza proceso de guardado de  token");
 
         log.info("Inicia proceso para construir el usurio");
 
@@ -95,5 +115,4 @@ public class ControlMovilSrv {
 
         return usuario;
     }
-
 }
