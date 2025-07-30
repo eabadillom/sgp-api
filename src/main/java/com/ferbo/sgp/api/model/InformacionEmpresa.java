@@ -62,6 +62,10 @@ public class InformacionEmpresa {
 	@Column(name = "fh_ingreso")
 	@Basic(optional = false)
 	private LocalDate fechaIngreso;
+        
+        @Basic(optional = true)
+        @Column(name = "fh_baja")
+        private LocalDate fechaBaja;
 	
 	@Column(name = "nu_nss")
 	@Size(max = 45)
@@ -76,12 +80,47 @@ public class InformacionEmpresa {
 	
 	@Column(name = "tm_entrada")
 	private LocalTime horaEntrada;
+        
+        @Column(name = "tm_salida")
+        private LocalTime horasalida;
 	
 	@Column(name = "nu_tolerancia")
 	private Integer tolerancia;
 	
 	@OneToOne(mappedBy = "informacionEmpresa")
 	private Empleado empleado;
+        
+        @Basic(optional = true)
+        @Column(name = "st_diat_lunes")
+        private Boolean diaLunes;
+
+        @Basic(optional = true)
+        @Column(name = "st_diat_martes")
+        private Boolean diaMartes;
+
+        @Basic(optional = true)
+        @Column(name = "st_diat_miercoles")
+        private Boolean diaMiercoles;
+
+        @Basic(optional = true)
+        @Column(name = "st_diat_jueves")
+        private Boolean diaJueves;
+
+        @Basic(optional = true)
+        @Column(name = "st_diat_viernes")
+        private Boolean diaViernes;
+
+        @Basic(optional = true)
+        @Column(name = "st_diat_sabado")
+        private Boolean diaSabado;
+
+        @Basic(optional = true)
+        @Column(name = "st_diat_domingo")
+        private Boolean diaDomingo;
+        
+        @Basic(optional = true)
+        @Column(name = "nb_baja")
+        private String motivobaja;
 
 	public Integer getId() {
 		return id;
@@ -163,6 +202,14 @@ public class InformacionEmpresa {
 		this.fechaIngreso = fechaIngreso;
 	}
 
+        public LocalDate getFechaBaja() {
+            return fechaBaja;
+        }
+
+        public void setFechaBaja(LocalDate fechaBaja) {
+            this.fechaBaja = fechaBaja;
+        }
+
 	public String getNss() {
 		return nss;
 	}
@@ -194,6 +241,14 @@ public class InformacionEmpresa {
 	public void setHoraEntrada(LocalTime horaEntrada) {
 		this.horaEntrada = horaEntrada;
 	}
+        
+        public LocalTime getHorasalida() {
+            return horasalida;
+        }
+
+        public void setHorasalida(LocalTime horasalida) {
+            this.horasalida = horasalida;
+        }
 
 	public Integer getTolerancia() {
 		return tolerancia;
@@ -210,6 +265,70 @@ public class InformacionEmpresa {
 	public void setEmpleado(Empleado empleado) {
 		this.empleado = empleado;
 	}
+        
+        public Boolean getDiaLunes() {
+            return diaLunes;
+        }
+
+        public void setDiaLunes(Boolean diaLunes) {
+            this.diaLunes = diaLunes;
+        }
+
+        public Boolean getDiaMartes() {
+            return diaMartes;
+        }
+
+        public void setDiaMartes(Boolean diaMartes) {
+            this.diaMartes = diaMartes;
+        }
+
+        public Boolean getDiaMiercoles() {
+            return diaMiercoles;
+        }
+
+        public void setDiaMiercoles(Boolean diaMiercoles) {
+            this.diaMiercoles = diaMiercoles;
+        }
+
+        public Boolean getDiaJueves() {
+            return diaJueves;
+        }
+
+        public void setDiaJueves(Boolean diaJueves) {
+            this.diaJueves = diaJueves;
+        }
+
+        public Boolean getDiaViernes() {
+            return diaViernes;
+        }
+
+        public void setDiaViernes(Boolean diaViernes) {
+            this.diaViernes = diaViernes;
+        }
+
+        public Boolean getDiaSabado() {
+            return diaSabado;
+        }
+
+        public void setDiaSabado(Boolean diaSabado) {
+            this.diaSabado = diaSabado;
+        }
+
+        public Boolean getDiaDomingo() {
+            return diaDomingo;
+        }
+
+        public void setDiaDomingo(Boolean diaDomingo) {
+            this.diaDomingo = diaDomingo;
+        }
+
+        public String getMotivobaja() {
+            return motivobaja;
+        }
+
+        public void setMotivobaja(String motivobaja) {
+            this.motivobaja = motivobaja;
+        }
 
 	@Override
 	public int hashCode() {
