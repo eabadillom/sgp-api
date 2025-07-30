@@ -10,46 +10,25 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import com.ferbo.sgp.api.filter.JwtAuthenticationFilter;
-import org.springframework.security.authentication.AuthenticationManager;
 
 import com.ferbo.sgp.api.tool.SistemaDetailsSrv;
 
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(prePostEnabled = true)
+@EnableGlobalMethodSecurity(prePostEnabled = true)	
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
-    @Autowired
-    private SistemaDetailsSrv sistemaDetailsSrv;
-
-    @Autowired
-    private JwtAuthenticationFilter jwtAtuthenticationFilter;
-
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth
-                .userDetailsService(sistemaDetailsSrv)
-                .passwordEncoder(encoder());
-    }
-
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http
-                .csrf().disable()
-                .authorizeRequests()
-                .antMatchers("/fp-client/**").authenticated()
-                .antMatchers("/movil/generar").authenticated()
-                .antMatchers("/movil/**").authenticated()
-                .anyRequest().authenticated()
-                .and()
-                .httpBasic()
-                .and()
-                .addFilterBefore(jwtAtuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-    }
-
-    /* 
+	
+	@Autowired
+	private SistemaDetailsSrv sistemaDetailsSrv;
+	
+	@Override
+	protected void configure (AuthenticationManagerBuilder auth) throws Exception {
+		auth
+			.userDetailsService(sistemaDetailsSrv)
+			.passwordEncoder(encoder())
+			;
+	}
+	
 	@Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -58,7 +37,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             .anyRequest().authenticated()
             .and()
             .httpBasic();
-    }*/
+    }
+
 //	@Override
 //	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
 //		auth
@@ -72,6 +52,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.roles("USER")
 //			;
 //	}
+	
 //	@Override
 //	protected void configure(HttpSecurity http) throws Exception {
 //		http
@@ -81,14 +62,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 //			.and()
 //			.httpBasic();
 //	}
-    @Bean
-    public PasswordEncoder encoder() {
-        return new BCryptPasswordEncoder();
-    }
 
-    @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
-    }
+	@Bean
+	public PasswordEncoder encoder() {
+		return new BCryptPasswordEncoder();
+	}
 }

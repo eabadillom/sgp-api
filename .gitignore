@@ -29,10 +29,6 @@ replay_pid*
 # Eclipse files
 .classpath
 .project
-.factorypath
-
-# Netbeans files
-nb-configuration.xml
 
 # Folders
 bin/

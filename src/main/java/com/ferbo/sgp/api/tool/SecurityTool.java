@@ -1,10 +1,7 @@
 package com.ferbo.sgp.api.tool;
 
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.logging.log4j.LogManager;
@@ -73,20 +70,5 @@ private static Logger log = LogManager.getLogger(SecurityTool.class);
         	throw new Exception("Contraseña no válida: " + validator.getMessages(result));
         }
 	}
-
-	public String[] extractCredentials(HttpServletRequest request) {
-        String authorizationHeader = request.getHeader("Authorization");
-        
-        if (authorizationHeader != null && authorizationHeader.startsWith("Basic ")) {
-            
-            String base64Credentials = authorizationHeader.substring(6);
-            String credentials = new String(Base64.getDecoder().decode(base64Credentials));
-
-            String[] values = credentials.split(":", 2);
-            return values;
-        }
-
-        return null; 
-    }
 
 }
