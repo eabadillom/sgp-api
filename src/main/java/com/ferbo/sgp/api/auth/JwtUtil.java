@@ -2,6 +2,13 @@ package com.ferbo.sgp.api.auth;
 
 import java.util.Date;
 
+import javax.annotation.PostConstruct;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.jsonwebtoken.JwtException;
@@ -16,9 +23,26 @@ import io.jsonwebtoken.security.Keys;
 @Component
 public class JwtUtil {
 
-    private final String secret = "V3ryS3cur3JWTK3yWithMoreThan32Bytes";
-    private final long accessExpiration = 1000L * 60 * 60 * 24 * 7;
-    final long refreshExpiration = 1000L * 60 * 60 * 24 * 30;
+    private static final Logger log = LogManager.getLogger(JwtUtil.class);
+
+    private String secret;
+
+    @Value("${jwt.accessExpiration}")
+    private long accessExpiration;
+    
+    @Value("${jwt.refreshExpiration}")
+    private long refreshExpiration;
+
+    @PostConstruct
+    public void init() {
+        try {
+            InitialContext ctx = new InitialContext();
+            secret = (String) ctx.lookup("java:comp/env/jwt.secret");
+        } catch (NamingException e) {
+            log.info("No se pude extraer del JNDI el secreto. {}", e);
+            throw new RuntimeException("No se pudo cargar desde el JNDI");
+        }
+    }
 
     public String generateToken(String username) {
         return Jwts.builder()

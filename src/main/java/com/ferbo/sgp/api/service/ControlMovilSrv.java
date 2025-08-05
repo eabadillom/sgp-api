@@ -48,6 +48,8 @@ public class ControlMovilSrv {
         String token = null;
         String refreshToken = null;
 
+        Boolean valido = Boolean.TRUE;
+
         Map<String, String> tokenResponse = new HashMap<String, String>();
 
         log.info("Inicia proceso de extraccion de credenciales");
@@ -75,12 +77,13 @@ public class ControlMovilSrv {
         if(nuevoToken != null) { 
             int validezToken = hoy.compareTo(nuevoToken.getExpiracion());
             log.info("El ultimo token del sistema solicitante: {}", nuevoToken);
-            if(validezToken <= 0){
+            if(validezToken <= 0 && nuevoToken.getValido()){
                 log.info("Ya existe un token valido, se mantiene");
                 log.info("Inicia proceso de para notificar del token existente");
                 token = nuevoToken.getToken();
                 refreshToken = nuevoToken.getToken();
                 fechaExpiracion = nuevoToken.getExpiracion();
+                valido = nuevoToken.getValido();
                 log.info("Finaliza proceso de para notificar del token existente");
             } else {
                 nuevoToken = new ControlMovil();
@@ -92,6 +95,7 @@ public class ControlMovilSrv {
         nuevoToken.setSistema(sistemaReferencia);
         nuevoToken.setExpiracion(fechaExpiracion);
         nuevoToken.setToken(token);
+        nuevoToken.setValido(valido);
 
         log.info("Inicia proceso de guardado de  token");
         controlMovilRepo.save(nuevoToken);
@@ -114,5 +118,17 @@ public class ControlMovilSrv {
         log.info("Finaliza proceso para construir el usurio");
 
         return usuario;
+    }
+
+    public String deshabilitarToken(String authHeader){
+         String token = authHeader.replace("Bearer ", "");
+        
+		ControlMovil controlMovil = controlMovilRepo.findByToken(token).orElseThrow(()-> new RuntimeException("No se tiene un sistema asginado"));
+
+        controlMovil.setValido(Boolean.FALSE);
+
+        controlMovilRepo.save(controlMovil);
+
+        return "El proceso finalizo exitosamente";
     }
 }
