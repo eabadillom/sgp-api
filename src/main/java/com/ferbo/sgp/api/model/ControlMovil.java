@@ -34,6 +34,9 @@ public class ControlMovil {
     @JoinColumn(name = "id_fp_client", nullable = false)
     private Sistema sistema;
 
+	@Column(name = "st_valido")
+	private Boolean valido = Boolean.FALSE;
+
 	public Integer getId() {
 		return id;
 	}
@@ -64,6 +67,14 @@ public class ControlMovil {
 
 	public void setSistema(Sistema sistema) {
 		this.sistema = sistema;
+	}
+
+	public Boolean getValido() {
+		return valido;
+	}
+
+	public void setValido(Boolean valido) {
+		this.valido = valido;
 	}
 
 	@Override

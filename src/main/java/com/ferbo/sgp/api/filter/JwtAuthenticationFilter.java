@@ -8,6 +8,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
@@ -15,6 +16,9 @@ import org.springframework.web.filter.GenericFilterBean;
 import org.springframework.stereotype.Component;
 
 import com.ferbo.sgp.api.auth.JwtUtil;
+import com.ferbo.sgp.api.model.ControlMovil;
+import com.ferbo.sgp.api.repository.ControlMovilRepo;
+
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
@@ -29,6 +33,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
 
     private final JwtUtil jwtUtil;
 
+    @Autowired
+    ControlMovilRepo controlMovilRepo;
+
     public JwtAuthenticationFilter(JwtUtil jwtUtil) {
         this.jwtUtil = jwtUtil;
     }
@@ -41,18 +48,23 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String authHeader = httpRequest.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            
             String jwt = authHeader.substring(7);
+
+            ControlMovil controlMovil = controlMovilRepo.findByToken(jwt)
+                .orElseThrow(() -> new RuntimeException("Acceso no autorizado"));
+
+            if (!controlMovil.getValido()) {
+                throw new RuntimeException("Acceso no autorizado");
+            }
 
             if (jwtUtil.isValid(jwt)) {
                 String username = jwtUtil.extractUsername(jwt);
 
                 List<GrantedAuthority> authorities = Arrays.asList(
-                        new SimpleGrantedAuthority("ROLE_USER")
-                );
+                        new SimpleGrantedAuthority("ROLE_USER"));
 
-                UsernamePasswordAuthenticationToken authentication
-                        = new UsernamePasswordAuthenticationToken(username, null, authorities);
+                UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(username,
+                        null, authorities);
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(httpRequest));
 
                 SecurityContextHolder.getContext().setAuthentication(authentication);

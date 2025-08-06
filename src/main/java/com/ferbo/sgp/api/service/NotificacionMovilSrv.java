@@ -60,7 +60,7 @@ public class NotificacionMovilSrv {
 
         String token = authHeader.replace("Bearer ", "");
         
-		ControlMovil controlMovil = controlMovilRepo.findByToken(token).orElseThrow(()-> new RuntimeException("El token recibido no tiene un sistema asginado"));
+		ControlMovil controlMovil = controlMovilRepo.findByToken(token).orElseThrow(()-> new RuntimeException("No se tiene un sistema asginado"));
 
         Sistema sistema = controlMovil.getSistema();
 
@@ -68,7 +68,7 @@ public class NotificacionMovilSrv {
 
         if(tokenNotificacion != null){
             if(nuevoToken.getToken().equals(tokenNotificacion.getToken())){
-                throw new RuntimeException("El token ya esta asignado al sistema solicitante del servicio");
+                throw new RuntimeException("Ya esta asignado al sistema solicitante del servicio");
             } else {
                 tokenNotificacion.setEsValido(Boolean.FALSE);
                 tokenNotificacionRepo.save(tokenNotificacion);
