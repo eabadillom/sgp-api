@@ -2,6 +2,7 @@ package com.ferbo.sgp.api.model;
 
 import java.time.OffsetDateTime;
 import java.util.Objects;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,7 +11,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "det_registro")
@@ -34,6 +37,9 @@ public class RegistroAsistencia {
 	@ManyToOne
 	@JoinColumn(name = "id_estatus", referencedColumnName = "id_estatus")
 	private EstadoRegistro status;
+        
+    @OneToOne(mappedBy = "registroAsistencia", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    private RegistroVacaciones registroVacaciones;
 
 	public Integer getId() {
 		return id;
@@ -74,6 +80,14 @@ public class RegistroAsistencia {
 	public void setStatus(EstadoRegistro status) {
 		this.status = status;
 	}
+
+        public RegistroVacaciones getRegistroVacaciones() {
+            return registroVacaciones;
+        }
+
+        public void setRegistroVacaciones(RegistroVacaciones registroVacaciones) {
+            this.registroVacaciones = registroVacaciones;
+        }
 
 	@Override
 	public int hashCode() {

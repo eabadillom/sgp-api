@@ -50,15 +50,22 @@ public class IncidenciaController {
         IncidenciaPermisoDTO incidenciaPermisoDTO = null;
         try {
             log.info("Inicia el proceso para actualizar el estado de la incidencia");
-            incidenciaPermisoDTO = incidenciaSrv.actualizarEstatusIncidencia(id, body);
+            if(body.getCodigoEstado().equals("C")){
+                incidenciaPermisoDTO = incidenciaSrv.eliminarRegistroVacaciones(id, body);
+            } else {
+                incidenciaPermisoDTO = incidenciaSrv.actualizarEstatusIncidencia(id, body);
+            }
             log.info("Finaliza el proceso para actualizar el estado de la incidencia");
+        } catch(IllegalArgumentException iAE){
+            log.error("Hubo algun problema. {}", iAE);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(iAE.getMessage());
         } catch (RuntimeException rtEx) {
             log.warn("Hubo algun problema en la base de datos. {}", id, rtEx);
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
         } catch (Exception ex) {
             log.error("Hubo algun problema. {}", ex);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-        }
+        } 
         return ResponseEntity.ok(incidenciaPermisoDTO);
     }
     
