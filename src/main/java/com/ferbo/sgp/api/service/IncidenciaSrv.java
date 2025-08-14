@@ -38,19 +38,6 @@ import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-/*
-    Funcionalidad para cancelar un periodo vacacional solicitado
-
-Primero: obtener los dias solicitados de la solicitud del empleado
-Segundo: buscar los registos por dias solicitados como vacaciones
-Tercero: verificar que el ultimo dia solicitado del periodo vacacional sea anterior al dia en que se esta cancelando el perido
-    Tercero A: En caso de ser verdadero lanzar excepcion de que el perido ya no se puede cancelar
-    Tercero B: Continuar con el flujo de la funcionalidad
-Cuarto: Verificar que si se cancela el periodo autorizado, mientras los días de vaciones se esten tomando 
-    Cuarto A: no alterar los días si tomados previo a la cancelación y alterar solamente los registros posteriores al dia de la cancelación. 
-    Cuarto B: Si todos los dias no han sido tomados, deben eliminarse los registros.
-Quinto: Modificar los estatus de la solicitud y de la incidencia a cancelada.
- */
 @Service
 public class IncidenciaSrv {
 
