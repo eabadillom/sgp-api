@@ -14,10 +14,10 @@ import com.ferbo.sgp.api.mapper.IncidenciaPermisoMapper;
 import com.ferbo.sgp.api.model.DiaNoLaboral;
 import com.ferbo.sgp.api.model.Empleado;
 import com.ferbo.sgp.api.model.EstadoRegistro;
-import com.ferbo.sgp.api.model.EstatusSolicitud;
 import com.ferbo.sgp.api.model.Incidencia;
 import com.ferbo.sgp.api.model.InformacionEmpresa;
 import com.ferbo.sgp.api.model.RegistroAsistencia;
+import com.ferbo.sgp.api.model.RegistroVacaciones;
 import com.ferbo.sgp.api.model.SolicitudPermiso;
 import com.ferbo.sgp.api.repository.DiaNoLaboralRepo;
 import com.ferbo.sgp.api.repository.EmpleadoRepo;
@@ -26,11 +26,14 @@ import com.ferbo.sgp.api.repository.EstatusIncidenciaRepo;
 import com.ferbo.sgp.api.repository.EstatusSolicitudRepo;
 import com.ferbo.sgp.api.repository.IncidenciaRepo;
 import com.ferbo.sgp.api.repository.RegistroAsistenciaRepo;
+import com.ferbo.sgp.api.repository.RegistroVacacionesRepo;
 import com.ferbo.sgp.api.repository.SolicitudPermisoRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.NoSuchElementException;
+import java.util.Objects;
 import java.util.Optional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -69,6 +72,9 @@ public class IncidenciaSrv {
 
     @Autowired
     private DiaNoLaboralRepo diaNoLaboralRepo;
+
+    @Autowired
+    private RegistroVacacionesRepo registroVacacionesRepo;
 
     public IncidenciaPermisoDTO obtenerIncidenciaPorID(Integer id) {
         Incidencia incidencia = incidenciaRepo.findById(id)
@@ -131,8 +137,8 @@ public class IncidenciaSrv {
 
         log.info("Iniciando el actualizado de incidencia");
         Empleado empleadoRevision = empleadoRepo.findByNumeroEmpleado(body.getEmpleadoRev())
-            .orElseThrow(() -> new RuntimeException("No se encontro registro de empleado con ese indentificador"));
-        
+                .orElseThrow(() -> new RuntimeException("No se encontro registro de empleado con ese indentificador"));
+
         Incidencia incidencia = incidenciaRepo.findById(id)
                 .orElseThrow(() -> new RuntimeException("No existe incidencia con ese identificador"));
 
@@ -280,4 +286,141 @@ public class IncidenciaSrv {
         return diasDeAsueto;
     }
 
+    private void validarIncidenciaTieneEmpleado(Incidencia incidencia) {
+        if (incidencia.getEmpleadoSol() == null) {
+            throw new IllegalStateException("La incidencia no contiene empleado solicitante");
+        }
+    }
+
+    private void validarIncidenciaEsVacaciones(Incidencia incidencia) {
+        SolicitudPermiso solicitud = incidencia.getSolicitudPermiso();
+        if (solicitud == null || solicitud.getTipoSolicitud() == null) {
+            throw new IllegalStateException("La incidencia no tiene una solicitud de permiso válida");
+        }
+
+        String clave = solicitud.getTipoSolicitud().getClave();
+        if (!"V".equalsIgnoreCase(clave)) {
+            throw new IllegalArgumentException("El código de registro de la incidencia no es de vacaciones");
+        }
+    }
+
+    private void validarPeriodoVacacionalActivo(List<RegistroAsistencia> asistencias) {
+        OffsetDateTime ultimoDia = asistencias.get(asistencias.size() - 1).getFechaSalida();
+        OffsetDateTime hoy = OffsetDateTime.now();
+
+        DateUtil.setToEndOfDay(ultimoDia);
+        DateUtil.setToEndOfDay(hoy);
+
+        if (ultimoDia.isBefore(hoy)) {
+            throw new IllegalStateException("El periodo vacacional ya ha terminado y no se puede cancelar");
+        }
+    }
+
+    private void validarPeriodoVacacionalEnCurso(List<RegistroAsistencia> asistencias, Incidencia incidencia, String empleadoRevisor) {
+        OffsetDateTime registroPrimerDia = asistencias.get(0).getFechaSalida();
+        OffsetDateTime registroUltimoDia = asistencias.get(asistencias.size() - 1).getFechaSalida();
+        OffsetDateTime fechaHoy = OffsetDateTime.now();
+
+        OffsetDateTime primerDia = DateUtil.setToEndOfDay(registroPrimerDia);
+        OffsetDateTime ultimoDia = DateUtil.setToEndOfDay(registroUltimoDia);
+        OffsetDateTime hoy = DateUtil.setToEndOfDay(fechaHoy);
+
+        if (primerDia.isBefore(hoy) && ultimoDia.isAfter(hoy)) {
+            actualizarEstatusIncidencia(incidencia, empleadoRevisor);
+            throw new IllegalStateException("El periodo vacacional esta en curso");
+        }
+    }
+
+    private void eliminarAsistenciasSiCorresponde(List<RegistroAsistencia> asistencias) {
+        OffsetDateTime registroPrimerDia = asistencias.get(0).getFechaSalida();
+        OffsetDateTime fechaHoy = OffsetDateTime.now();
+
+        OffsetDateTime primerDia = DateUtil.setToEndOfDay(registroPrimerDia);
+        OffsetDateTime hoy = DateUtil.setToEndOfDay(fechaHoy);
+
+        log.info("Inicia proceso de eliminación de registros del periodo vacacional");
+
+        if (primerDia.isAfter(hoy)) {
+            List<RegistroVacaciones> registrosVacaciones = asistencias.stream()
+                    .map(RegistroAsistencia::getRegistroVacaciones).collect(Collectors.toList());
+
+            registrosVacaciones.stream()
+                    .filter(Objects::nonNull)
+                    .forEach(registroVacacionesRepo::delete);
+
+            asistencias.forEach(asistenciaRepo::delete);
+        }
+
+        log.info("Finaliza proceso de eliminación de registros del periodo vacacional");
+    }
+
+    private void actualizarEstatusIncidencia(Incidencia incidencia, String numeroEmpleadoRevisante) {
+        log.info("Inicia actualización de estatus de la incidencia y la solicitud");
+
+        Empleado empleadoRev = empleadoRepo.findByNumeroEmpleado(numeroEmpleadoRevisante)
+                .orElseThrow(() -> new RuntimeException("No existe empleado con el número " + numeroEmpleadoRevisante));
+
+        OffsetDateTime fechaMod = OffsetDateTime.now();
+
+        incidencia.setEstatus(
+                estatusIncidenciaRepo.findByClave("C")
+                        .orElseThrow(() -> new RuntimeException("No existe estatus de incidencia con la clave 'C'"))
+        );
+        incidencia.setEmpleadoRevisa(empleadoRev);
+        incidencia.setFechaModificacion(fechaMod);
+
+        SolicitudPermiso solicitud = incidencia.getSolicitudPermiso();
+        solicitud.setEstatusSolicitud(
+                estatusSoliciturRepo.buscarPorClave("C")
+                        .orElseThrow(() -> new RuntimeException("No existe estatus de solicitud con la clave 'C'"))
+        );
+        solicitud.setEmpleadoRev(empleadoRev);
+        solicitud.setFechaMod(fechaMod);
+
+        incidenciaRepo.save(incidencia);
+
+        log.info("Finaliza actualización de estatus de la incidencia y la solicitud");
+    }
+
+    public IncidenciaPermisoDTO eliminarRegistroVacaciones(Integer id, IncidenciaPermisoDTO body) {
+        // 1. Obtener incidencia
+        Incidencia incidencia = incidenciaRepo.findById(id)
+                .orElseThrow(() -> new RuntimeException("No existe incidencia con ese identificador"));
+
+        // 2. Validar que la incidencia esté correctamente configurada
+        validarIncidenciaTieneEmpleado(incidencia);
+        validarIncidenciaEsVacaciones(incidencia);
+
+        // 3. Obtener fechas de la solicitud de permiso
+        OffsetDateTime inicioVacaciones = incidencia.getSolicitudPermiso().getFechaInicio();
+        OffsetDateTime finVacaciones = incidencia.getSolicitudPermiso().getFechaFin();
+
+        OffsetDateTime inicio = DateUtil.setHourTime(inicioVacaciones, 0, 0, 0, 0);
+        OffsetDateTime fin = DateUtil.setToEndOfDay(finVacaciones);
+
+        // 4. Obtener registros de asistencia
+        Empleado empleado = incidencia.getEmpleadoSol();
+        String codigo = incidencia.getSolicitudPermiso().getTipoSolicitud().getClave();
+        List<RegistroAsistencia> asistencias = asistenciaRepo.buscarPorPeriodoSolicitud(
+                empleado.getIdEmpleado(), codigo, inicio, fin
+        );
+
+        if (asistencias.isEmpty()) {
+            throw new IllegalStateException("El registro de las vacaciones de la incidencia está vacío");
+        }
+
+        // 5. Validar si el periodo vacacional ya terminó
+        validarPeriodoVacacionalActivo(asistencias);
+
+        // 6. Validar si el perido vacional esta en curso
+        validarPeriodoVacacionalEnCurso(asistencias, incidencia, body.getEmpleadoRev());
+
+        // 7. Eliminar registros si aplica
+        eliminarAsistenciasSiCorresponde(asistencias);
+
+        // 8. Actualizar estatus
+        actualizarEstatusIncidencia(incidencia, body.getEmpleadoRev());
+
+        return convertirPermiso(incidencia);
+    }
 }
