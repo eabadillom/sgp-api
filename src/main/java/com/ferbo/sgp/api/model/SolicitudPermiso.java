@@ -2,7 +2,11 @@ package com.ferbo.sgp.api.model;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -10,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
@@ -62,6 +67,14 @@ public class SolicitudPermiso
     
     @Column(name = "pc_goce_sueldo")
     private BigDecimal goceSueldo;
+
+    @ManyToOne
+    @JoinColumn(name = "id_vacaciones")
+    @Basic(optional = false)
+    private Vacaciones vacaciones;
+
+    @OneToMany(mappedBy = "solicitud", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<DiaPermiso> diasPermiso;
 
     public SolicitudPermiso() {
     }
@@ -163,6 +176,22 @@ public class SolicitudPermiso
 
     public void setEstatusSolicitud(EstatusSolicitud estatusSolicitud) {
         this.estatusSolicitud = estatusSolicitud;
+    }
+
+    public Vacaciones getVacaciones() {
+        return vacaciones;
+    }
+
+    public void setVacaciones(Vacaciones vacaciones) {
+        this.vacaciones = vacaciones;
+    }
+
+    public List<DiaPermiso> getDiasPermiso() {
+        return diasPermiso;
+    }
+
+    public void setDiasPermiso(List<DiaPermiso> diasPermiso) {
+        this.diasPermiso = diasPermiso;
     }
 
     @Override

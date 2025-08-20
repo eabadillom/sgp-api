@@ -1,9 +1,16 @@
 package com.ferbo.sgp.api.service;
 
+import java.math.BigDecimal;
 import java.time.OffsetDateTime;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +21,7 @@ import com.ferbo.sgp.api.mapper.IncidenciaPermisoMapper;
 import com.ferbo.sgp.api.model.DiaNoLaboral;
 import com.ferbo.sgp.api.model.Empleado;
 import com.ferbo.sgp.api.model.EstadoRegistro;
+import com.ferbo.sgp.api.model.EstatusSolicitud;
 import com.ferbo.sgp.api.model.Incidencia;
 import com.ferbo.sgp.api.model.InformacionEmpresa;
 import com.ferbo.sgp.api.model.RegistroAsistencia;
@@ -29,19 +37,14 @@ import com.ferbo.sgp.api.repository.RegistroAsistenciaRepo;
 import com.ferbo.sgp.api.repository.RegistroVacacionesRepo;
 import com.ferbo.sgp.api.repository.SolicitudPermisoRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.NoSuchElementException;
-import java.util.Objects;
-import java.util.Optional;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 @Service
 public class IncidenciaSrv {
 
     private static final Logger log = LogManager.getLogger(IncidenciaSrv.class);
+
+    private static final String TP_VACACIONES = "V";
+    public static final String TP_PERMISO = "P";
 
     @Autowired
     IncidenciaRepo incidenciaRepo;
@@ -196,11 +199,13 @@ public class IncidenciaSrv {
         InformacionEmpresa empleadoEmpresa = empleado.getInformacionEmpresa();
         EstadoRegistro estadoRegistro = null;
 
-        switch (incidencia.getSolicitudPermiso().getTipoSolicitud().getClave()) {
-            case "V":
+        String tipoIncidencia = incidencia.getSolicitudPermiso().getTipoSolicitud().getClave();
+
+        switch (tipoIncidencia) {
+            case TP_VACACIONES:
                 estadoRegistro = this.estatusVacaciones();
                 break;
-            case "P":
+            case TP_PERMISO:
                 estadoRegistro = this.estatusPermiso();
                 break;
         }
@@ -232,7 +237,15 @@ public class IncidenciaSrv {
             log.trace("Dia hora salida: {}", registroSalida);
             registro.setFechaSalida(DateUtil.dateToOffsetDateTime(registroSalida));
 
-            asistenciaRepo.save(registro);
+            if(TP_VACACIONES.equals(tipoIncidencia)){
+                RegistroVacaciones registroVacaciones = new RegistroVacaciones();
+                registroVacaciones.setRegistroAsistencia(registro);
+                registroVacaciones.setVacaciones(incidencia.getSolicitudPermiso().getVacaciones());
+                registroVacacionesRepo.save(registroVacaciones);
+            } else {
+                asistenciaRepo.save(registro);
+            }
+            
             cantidadRegistrosGuardados += 1;
         }
 
@@ -260,13 +273,13 @@ public class IncidenciaSrv {
     }
 
     public EstadoRegistro estatusPermiso() {
-        String permiso = "P";
+        String permiso = TP_PERMISO;
         Optional<EstadoRegistro> estatusPermiso = estadoRegistroRepo.findByCodigo(permiso);
         return estatusPermiso.get();
     }
 
     public EstadoRegistro estatusVacaciones() {
-        String vacaciones = "V";
+        String vacaciones = TP_VACACIONES;
         Optional<EstadoRegistro> estatusVacaciones = estadoRegistroRepo.findByCodigo(vacaciones);
         return estatusVacaciones.get();
     }
@@ -299,7 +312,7 @@ public class IncidenciaSrv {
         }
 
         String clave = solicitud.getTipoSolicitud().getClave();
-        if (!"V".equalsIgnoreCase(clave)) {
+        if (!TP_VACACIONES.equalsIgnoreCase(clave)) {
             throw new IllegalArgumentException("El código de registro de la incidencia no es de vacaciones");
         }
     }
@@ -370,12 +383,16 @@ public class IncidenciaSrv {
         incidencia.setFechaModificacion(fechaMod);
 
         SolicitudPermiso solicitud = incidencia.getSolicitudPermiso();
-        solicitud.setEstatusSolicitud(
-                estatusSoliciturRepo.buscarPorClave("C")
-                        .orElseThrow(() -> new RuntimeException("No existe estatus de solicitud con la clave 'C'"))
+        EstatusSolicitud estatusSolicitud =  estatusSoliciturRepo.buscarPorClave("C")
+                        .orElseThrow(() -> new RuntimeException("No existe estatus de solicitud con la clave 'C'")
         );
+        solicitud.setEstatusSolicitud(estatusSolicitud);
+               
         solicitud.setEmpleadoRev(empleadoRev);
         solicitud.setFechaMod(fechaMod);
+        
+        
+        incidencia.setSolicitudPermiso(solicitud);
 
         incidenciaRepo.save(incidencia);
 
