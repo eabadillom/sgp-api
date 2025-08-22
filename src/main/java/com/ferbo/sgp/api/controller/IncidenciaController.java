@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.ferbo.sgp.api.dto.IncidenciaDTO;
 import com.ferbo.sgp.api.dto.IncidenciaPermisoDTO;
 import com.ferbo.sgp.api.service.IncidenciaSrv;
+import static com.ferbo.sgp.api.tool.ErrorResponseBuilder.construirErrorMovil;
 import org.springframework.web.bind.annotation.RequestBody;
 
 @RestController
@@ -23,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 public class IncidenciaController {
 
     private static Logger log = LogManager.getLogger(IncidenciaController.class);
+
+    private static final String TIPO_ERROR_INCIDENCIA = "Incidencia";
 
     @Autowired
     private IncidenciaSrv incidenciaSrv;
@@ -35,12 +38,12 @@ public class IncidenciaController {
             log.info("Inicio proceso para obtener todas los incidencias en base a los parametros dados.");
             incidenciasDTO = incidenciaSrv.obtenerIncidenciaTipoEnPeriodo(tipo, fechaIni, fechaFin);
             log.info("Finaliza proceso para obtener todas los incidencias en base a los parametros dados.");
-        } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtenr las incidencias en base a los parametros dados. {}", rtEx);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (RuntimeException ex) {
+            log.warn("Problema al obtenr las incidencias en base a los parametros dados. {}", ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_INCIDENCIA, ex);
         } catch (Exception ex) {
             log.error("Problema desconocido al obtener las incidencias. {}", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_INCIDENCIA, ex);
         }
         return ResponseEntity.ok(incidenciasDTO);
     }
@@ -56,15 +59,15 @@ public class IncidenciaController {
                 incidenciaPermisoDTO = incidenciaSrv.actualizarEstatusIncidencia(id, body);
             }
             log.info("Finaliza el proceso para actualizar el estado de la incidencia");
-        } catch(IllegalArgumentException iAE){
-            log.error("Hubo algun problema. {}", iAE);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(iAE.getMessage());
-        } catch (RuntimeException rtEx) {
-            log.warn("Hubo algun problema en la base de datos. {}", id, rtEx);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch(IllegalArgumentException ex){
+            log.error("Hubo algun problema. {}", ex);
+            return construirErrorMovil(HttpStatus.BAD_REQUEST, TIPO_ERROR_INCIDENCIA, ex);
+        } catch (RuntimeException ex) {
+            log.warn("Hubo algun problema en la base de datos. {}", id, ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_INCIDENCIA, ex);
         } catch (Exception ex) {
             log.error("Hubo algun problema. {}", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_INCIDENCIA, ex);
         } 
         return ResponseEntity.ok(incidenciaPermisoDTO);
     }
@@ -77,12 +80,12 @@ public class IncidenciaController {
             log.info("Inicio proceso para obtener todas los incidencias en base a los parametros dados.");
             incidenciasPermisoDTO = incidenciaSrv.obtenerIncidenciaPorID(id);
             log.info("Finaliza proceso para obtener todas los incidencias en base a los parametros dados.");
-        } catch (RuntimeException rtEx){
-            log.warn("Problema al obtenr las incidencias en base a los parametros dados. {}", rtEx);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (RuntimeException ex){
+            log.warn("Problema al obtenr las incidencias en base a los parametros dados. {}", ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_INCIDENCIA, ex);
         } catch(Exception ex) {
             log.error("Problema desconocido al obtener las incidencias. {}", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_INCIDENCIA, ex);
         }
         return ResponseEntity.ok(incidenciasPermisoDTO);
     }
