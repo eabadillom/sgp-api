@@ -325,7 +325,7 @@ public class IncidenciaSrv {
         DateUtil.setToEndOfDay(hoy);
 
         if (ultimoDia.isBefore(hoy)) {
-            throw new IllegalStateException("El periodo vacacional ya ha terminado y no se puede cancelar");
+            throw new IllegalStateException("El periodo vacacional ya ha terminado");
         }
     }
 
@@ -391,8 +391,7 @@ public class IncidenciaSrv {
         solicitud.setEmpleadoRev(empleadoRev);
         solicitud.setFechaMod(fechaMod);
         
-        
-        incidencia.setSolicitudPermiso(solicitud);
+        solicitudPermisoRepo.save(solicitud);
 
         incidenciaRepo.save(incidencia);
 

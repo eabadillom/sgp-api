@@ -2,7 +2,7 @@ package com.ferbo.sgp.api.tool;
 
 import java.time.OffsetDateTime;
 
-import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatus;                                                  
 import org.springframework.http.ResponseEntity;
 
 import com.ferbo.sgp.api.model.response.MovilResponse;

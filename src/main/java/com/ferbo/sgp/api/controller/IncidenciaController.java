@@ -68,7 +68,7 @@ public class IncidenciaController {
         } catch (Exception ex) {
             log.error("Hubo algun problema. {}", ex);
             return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_INCIDENCIA, ex);
-        } 
+        }
         return ResponseEntity.ok(incidenciaPermisoDTO);
     }
     
