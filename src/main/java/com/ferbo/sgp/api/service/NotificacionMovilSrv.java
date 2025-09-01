@@ -43,7 +43,7 @@ public class NotificacionMovilSrv {
 
     public void notifocarAdministradores(NotificacionMovilDTO body) throws FirebaseMessagingException{
 
-        if (body.getTitle().isEmpty() || body.getToken().isEmpty() || body.getBody().isEmpty()){
+        if (body.getTitle().isEmpty() || body.getBody().isEmpty()){
             throw new IllegalArgumentException("Los campos para la notificación no pueden ser vacíos");
         }
 
