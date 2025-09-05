@@ -1,5 +1,7 @@
 package com.ferbo.sgp.api.controller;
 
+import static com.ferbo.sgp.api.tool.ErrorResponseBuilder.construirErrorMovil;
+
 import javax.management.RuntimeErrorException;
 
 import org.apache.logging.log4j.LogManager;
@@ -26,6 +28,8 @@ import com.ferbo.sgp.api.service.SolicitudSrv;
 public class SolicitudController {
 
     private static Logger log = LogManager.getLogger(SolicitudController.class);
+
+    private static final String TIPO_ERROR_SOLICITUD = "Solicitud";
 
     @Autowired
     private SolicitudSrv solicitudSrv;
@@ -58,12 +62,12 @@ public class SolicitudController {
                     throw new RuntimeErrorException(rtEx, "El tipo de solicituda introducida no existe");
             }
 
-        } catch (RuntimeException rtEx) {
+        } catch (RuntimeException ex) {
 
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_SOLICITUD, ex);
 
         } catch (Exception ex) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_SOLICITUD, ex);
         }
     }
 
@@ -74,12 +78,12 @@ public class SolicitudController {
             log.info("Inicia el proceso para actualizar incidencia y solicitud");
             solicitudSrv.actualizarSolicitud(id, body);
             log.info("Finaliza el preoceso para actualizar incidencia y solicitud");
-        } catch (RuntimeException rtEx){
-            log.warn("Hubo algun problema al actualizar: {}", rtEx);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (RuntimeException ex){
+            log.warn("Hubo algun problema al actualizar: {}", ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_SOLICITUD, ex);
         } catch (Exception ex) {
             log.error("Hubo algun problema al actualizar: {}", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte al administrador del sistema");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_SOLICITUD, ex);
         }
         return ResponseEntity.ok("La solicitud se ha actualizado correctamente");
     } 

@@ -13,6 +13,7 @@ import com.ferbo.sgp.api.dto.UsuarioMovilDTO;
 import com.ferbo.sgp.api.service.ControlMovilSrv;
 import com.ferbo.sgp.api.service.SistemaSrv;
 
+import static com.ferbo.sgp.api.tool.ErrorResponseBuilder.construirErrorMovil;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -24,6 +25,8 @@ import org.apache.logging.log4j.Logger;
 public class MovilController {
 
     private static Logger log = LogManager.getLogger(MovilController.class);
+
+    private static final String TIPO_ERROR_ACCESO = "Acceso";
 
     @Autowired
     SistemaSrv sistemaService;
@@ -38,12 +41,12 @@ public class MovilController {
             log.info("Inicia el proceso para generar el usuario");
             usuario = controlMovilSrv.obtenerUsuario(request, body);
             log.info("Finaliza el proceso para generar el usuario");
-        } catch(RuntimeException rtEx){
-            log.warn("Hubo un problema al obtener los datos. {}", rtEx);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Hubo algun problema al obtener los datos");
+        } catch(RuntimeException ex){
+            log.warn("Hubo un problema al obtener los datos. {}", ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ACCESO, ex);
         } catch(Exception ex){
             log.error("Problema desconocido. {}", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador del sistema.");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ACCESO, ex);
         }
         return ResponseEntity.ok(usuario);
     }
@@ -61,12 +64,12 @@ public class MovilController {
         log.info("Finaliza proceso para desahibilitar el token del sistema.");
         return ResponseEntity.ok(respuesta);
         
-       } catch (RuntimeException rtEx) {
-        log.warn("Hubo un problema al desahibilitar el token del sistema. {}", rtEx);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+       } catch (RuntimeException ex) {
+        log.warn("Hubo un problema al desahibilitar el token del sistema. {}", ex);
+        return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ACCESO, ex);
        } catch (Exception ex) {
         log.error("Hubo un problema al desahibilitar el token del sistema. {}", ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador del sistema.");
+        return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ACCESO, ex);
        }
     }
 }
