@@ -1,5 +1,7 @@
 package com.ferbo.sgp.api.controller;
 
+import static com.ferbo.sgp.api.tool.ErrorResponseBuilder.construirErrorMovil;
+
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -24,6 +26,8 @@ public class RegistroAsistenciaController {
 
     private static Logger log = LogManager.getLogger(RegistroAsistenciaController.class);
 
+    private static final String TIPO_ERROR_ASISTENCIA = "Asistencia";
+
     @Autowired
     private RegistroAsistenciaSrv registroAsistenciaSrv;
 
@@ -37,12 +41,12 @@ public class RegistroAsistenciaController {
             log.info("Inicia proceso de obtencion de registros con estatus {} del periodo desde {} al {}", estatus, fechaIni, fechaFin);
             registros = registroAsistenciaSrv.obtenerPorPeriodoYEstatus(fechaIni, fechaFin, estatus);
             log.info("Finaliza proceso de obtencion de registros con estatus {} del periodo dedde {} al {}", estatus, fechaIni, fechaFin);
-        } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener los registros. Error: {}", rtEx);
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (RuntimeException ex) {
+            log.warn("Problema al obtener los registros. Error: {}", ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ASISTENCIA, ex);
         } catch (Exception ex) {
             log.error("Problema al obtener los registros. Error: {}", ex);
-            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ASISTENCIA, ex);
         }
         return ResponseEntity.ok(registros);
     }
@@ -55,12 +59,12 @@ public class RegistroAsistenciaController {
             log.info("Inicia proceso de obtencion del registro con id {}", id);
             registro = registroAsistenciaSrv.obtenerRegistoPorId(id);
             log.info("Finaliza proceso de obtencion del registro con id {}", id);
-        } catch (RuntimeException rtEx) {
-            log.warn("Problema al obtener el registro. Error: {}", rtEx);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+        } catch (RuntimeException ex) {
+            log.warn("Problema al obtener el registro. Error: {}", ex);
+            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ASISTENCIA, ex);
         } catch (Exception ex) {
             log.error("Problema al obtener el registro. Error: {}", ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ASISTENCIA, ex);
         }
         return ResponseEntity.ok(registro);
     }
@@ -74,12 +78,12 @@ public class RegistroAsistenciaController {
             log.info("Inicia proceso para actualizar el estado del registro con id {}", id);
              registro = registroAsistenciaSrv.actualizarEstatusRegistro(id, body);
              log.info("Finaliza proceso para actualizar el estado del registro con id {}", id);
-         } catch (RuntimeException rtEx) {
-            log.warn("Problema obtener el estado del registro con id {}. Error: {}", id, rtEx);
-             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+         } catch (RuntimeException ex) {
+            log.warn("Problema obtener el estado del registro con id {}. Error: {}", id, ex);
+             return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ASISTENCIA, ex);
          } catch (Exception ex) {
             log.warn("Problema actualizar el estado del registro con id {}. Error: {}", id, ex);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Contacte con el administrador de sistemas");
+            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ASISTENCIA, ex);
          }
          return ResponseEntity.ok(registro);
      }

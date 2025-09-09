@@ -1,5 +1,7 @@
 package com.ferbo.sgp.api.controller;
 
+import static com.ferbo.sgp.api.tool.ErrorResponseBuilder.construirErrorMovil;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +22,8 @@ public class NotificacionMovilController {
 
    private static Logger log = LogManager.getLogger(NotificacionMovilController.class);
 
+   private static final String TIPO_ERROR_NOTIFICACION = "Notificiación";
+
    @Autowired
    private NotificacionMovilSrv notificacionMovilSrv;
 
@@ -31,12 +35,12 @@ public class NotificacionMovilController {
         log.info("Finaliza proceso para guardar el token de notificacion");
         return ResponseEntity.ok("El token de notificacion se guardo exitosamente");
         
-       } catch (RuntimeException rtEx) {
-        log.warn("Hubo un problema al guardar el token de notificacion. {}", rtEx);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(rtEx.getMessage());
+       } catch (RuntimeException ex) {
+        log.warn("Hubo un problema al guardar el token de notificacion. {}", ex);
+        return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_NOTIFICACION, ex);
        } catch (Exception ex) {
         log.error("Hubo un problema al guardar el token de notificacion. {}", ex);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Problema desconocido, contacte con el administrador del sistema");
+        return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_NOTIFICACION, ex);
        }
     }
 }

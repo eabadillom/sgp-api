@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.checkerframework.checker.units.qual.t;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,6 +43,10 @@ public class NotificacionMovilSrv {
 
     public void notifocarAdministradores(NotificacionMovilDTO body) throws FirebaseMessagingException{
 
+        if (body.getTitle().isEmpty() || body.getBody().isEmpty()){
+            throw new IllegalArgumentException("Los campos para la notificación no pueden ser vacíos");
+        }
+
         List<TokenNotificacion> admistradores = tokenNotificacionRepo.findAllByActivo();
 
         if(admistradores.isEmpty()){
@@ -60,7 +65,7 @@ public class NotificacionMovilSrv {
 
         String token = authHeader.replace("Bearer ", "");
         
-		ControlMovil controlMovil = controlMovilRepo.findByToken(token).orElseThrow(()-> new RuntimeException("El token recibido no tiene un sistema asginado"));
+		ControlMovil controlMovil = controlMovilRepo.findByToken(token).orElseThrow(()-> new RuntimeException("No se tiene un sistema asginado"));
 
         Sistema sistema = controlMovil.getSistema();
 
@@ -68,7 +73,7 @@ public class NotificacionMovilSrv {
 
         if(tokenNotificacion != null){
             if(nuevoToken.getToken().equals(tokenNotificacion.getToken())){
-                throw new RuntimeException("El token ya esta asignado al sistema solicitante del servicio");
+                throw new RuntimeException("Ya esta asignado al sistema solicitante del servicio");
             } else {
                 tokenNotificacion.setEsValido(Boolean.FALSE);
                 tokenNotificacionRepo.save(tokenNotificacion);
