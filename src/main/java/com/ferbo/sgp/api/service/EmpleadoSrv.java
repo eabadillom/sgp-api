@@ -19,7 +19,8 @@ public class EmpleadoSrv {
     }
 
     public Empleado buscarPorNumeroEmpleado(String numeroEmpleado ){
-        return (Empleado) detEmpleadoRepository.findByNumeroEmpleado(numeroEmpleado);
+        return (Empleado) detEmpleadoRepository.findByNumeroEmpleado(numeroEmpleado)
+            .orElseThrow(() -> new RuntimeException("No se encontro registro de empleado con ese indentificador"));
     }
     
     public List<Empleado> obtenerEmpleadosActivos() {

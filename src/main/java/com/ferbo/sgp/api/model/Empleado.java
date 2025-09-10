@@ -78,6 +78,9 @@ public class Empleado {
     @OneToOne(mappedBy = "empleado", fetch = FetchType.LAZY)
     private Biometrico biometrico;
     
+    @OneToOne(mappedBy = "empleado", orphanRemoval = true)
+    private EmpleadoConfiguracion empleadoConfiguracion;
+    
     @Override
 	public int hashCode() {
 		return Objects.hash(idEmpleado);
@@ -239,4 +242,12 @@ public class Empleado {
 	public void setBiometrico(Biometrico biometrico) {
 		this.biometrico = biometrico;
 	}
+        
+        public EmpleadoConfiguracion getEmpleadoConfiguracion() {
+            return empleadoConfiguracion;
+        }
+
+        public void setEmpleadoConfiguracion(EmpleadoConfiguracion empleadoConfiguracion) {
+            this.empleadoConfiguracion = empleadoConfiguracion;
+        }
 }
