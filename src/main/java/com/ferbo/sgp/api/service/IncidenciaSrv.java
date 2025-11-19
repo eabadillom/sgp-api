@@ -44,6 +44,7 @@ public class IncidenciaSrv {
     private static final Logger log = LogManager.getLogger(IncidenciaSrv.class);
 
     private static final String TP_VACACIONES = "V";
+    private static final String TP_FALTA = "F";
     public static final String TP_PERMISO = "P";
 
     @Autowired
@@ -198,6 +199,7 @@ public class IncidenciaSrv {
         int cantidadRegistrosGuardados = 0;
         InformacionEmpresa empleadoEmpresa = empleado.getInformacionEmpresa();
         EstadoRegistro estadoRegistro = null;
+        EstadoRegistro registroFalta = this.estatusFalta();
 
         String tipoIncidencia = incidencia.getSolicitudPermiso().getTipoSolicitud().getClave();
 
@@ -239,8 +241,22 @@ public class IncidenciaSrv {
 
             if(TP_VACACIONES.equals(tipoIncidencia)){
                 RegistroVacaciones registroVacaciones = new RegistroVacaciones();
-                registroVacaciones.setRegistroAsistencia(registro);
-                registroVacaciones.setVacaciones(incidencia.getSolicitudPermiso().getVacaciones());
+                
+                Optional<RegistroAsistencia> registroPasado = asistenciaRepo.buscarPorPeriodoAusencia(empleado.getIdEmpleado(), DateUtil.setHourTime(fechaInicio, 0, 0, 0, 0), DateUtil.setHourTime(fechaFin, 0, 0, 0, 0), registroFalta.getCodigo());
+                
+                if (registroPasado.isPresent()) {
+                    RegistroAsistencia registroAux = registroPasado.get();
+                    registroAux.setStatus(estadoRegistro);
+                    asistenciaRepo.save(registroAux);
+                    
+                    registroVacaciones.setRegistroAsistencia(registroAux);
+                    registroVacaciones.setVacaciones(incidencia.getSolicitudPermiso().getVacaciones());
+                } else {
+                    asistenciaRepo.save(registro);
+                    registroVacaciones.setRegistroAsistencia(registro);
+                    registroVacaciones.setVacaciones(incidencia.getSolicitudPermiso().getVacaciones());
+                }
+                
                 registroVacacionesRepo.save(registroVacaciones);
             } else {
                 asistenciaRepo.save(registro);
@@ -281,6 +297,12 @@ public class IncidenciaSrv {
     public EstadoRegistro estatusVacaciones() {
         String vacaciones = TP_VACACIONES;
         Optional<EstadoRegistro> estatusVacaciones = estadoRegistroRepo.findByCodigo(vacaciones);
+        return estatusVacaciones.get();
+    }
+    
+    public EstadoRegistro estatusFalta() {
+        String falta = TP_FALTA;
+        Optional<EstadoRegistro> estatusVacaciones = estadoRegistroRepo.findByCodigo(falta);
         return estatusVacaciones.get();
     }
 
