@@ -1,5 +1,6 @@
 package com.ferbo.sgp.api.dto;
 import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -20,8 +21,7 @@ public class IncapacidadDetalleDTO
     private String folio;
     private Integer diasAutorizados;
     private String descripcion;
-    private OffsetDateTime fechaIni;
-    private OffsetDateTime fechaFin;
+    private List<OffsetDateTime> periodo;
     private String estatusIncapacidad;
 
     public IncapacidadDetalleDTO() {
@@ -127,20 +127,12 @@ public class IncapacidadDetalleDTO
         this.descripcion = descripcion;
     }
 
-    public OffsetDateTime getFechaIni() {
-        return fechaIni;
+    public List<OffsetDateTime> getPeriodo() {
+        return periodo;
     }
 
-    public void setFechaIni(OffsetDateTime fechaIni) {
-        this.fechaIni = fechaIni;
-    }
-
-    public OffsetDateTime getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(OffsetDateTime fechaFin) {
-        this.fechaFin = fechaFin;
+    public void setPeriodo(List<OffsetDateTime> periodo) {
+        this.periodo = periodo;
     }
 
     public String getEstatusIncapacidad() {
@@ -177,7 +169,7 @@ public class IncapacidadDetalleDTO
     public String toString() {
         return "IncapacidadDetalleDTO[" + "idIncapacidad=" + idIncapacidad + ", nombreInc=" + nombreInc + ", primerApInc=" + primerApInc 
                 + ", segundoApInc=" + segundoApInc + ", idEmpleadoRev=" + empleadoRev + ", folio=" + folio + ", diasAutorizados=" 
-                + diasAutorizados + ", descripcion=" + descripcion + ", fechaIni=" + fechaIni + ", fechaFin=" + fechaFin + ']';
+                + diasAutorizados + ", descripcion=" + descripcion + ']';
     }
     
 }

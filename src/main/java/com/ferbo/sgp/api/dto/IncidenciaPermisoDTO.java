@@ -1,6 +1,7 @@
 package com.ferbo.sgp.api.dto;
 
 import java.time.OffsetDateTime;
+import java.util.List;
 
 /**
  *
@@ -13,8 +14,7 @@ public class IncidenciaPermisoDTO
     private String nombreSolicitante;
     private String primerApSolicitante;
     private String segundoApSolicitante;
-    private OffsetDateTime fechaInicio;
-    private OffsetDateTime fechaFin;
+    private List<OffsetDateTime> periodo;
     private String empleadoRev;
     private String descripcionRechazo;
 
@@ -61,20 +61,12 @@ public class IncidenciaPermisoDTO
         this.segundoApSolicitante = segundoApSolicitante;
     }
 
-    public OffsetDateTime getFechaInicio() {
-        return fechaInicio;
+    public List<OffsetDateTime> getPeriodo() {
+        return periodo;
     }
 
-    public void setFechaInicio(OffsetDateTime fechaInicio) {
-        this.fechaInicio = fechaInicio;
-    }
-
-    public OffsetDateTime getFechaFin() {
-        return fechaFin;
-    }
-
-    public void setFechaFin(OffsetDateTime fechaFin) {
-        this.fechaFin = fechaFin;
+    public void setPeriodo(List<OffsetDateTime> periodo) {
+        this.periodo = periodo;
     }
 
     public String getEmpleadoRev() {
