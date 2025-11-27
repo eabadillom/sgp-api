@@ -27,7 +27,7 @@ public class RegistroVacaciones implements Serializable {
     @Column(name = "id_reg_vacaciones")
     private Integer id;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "id_registro")
     @Basic(optional = false)
     private RegistroAsistencia registroAsistencia;
