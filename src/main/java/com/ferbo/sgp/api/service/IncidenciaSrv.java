@@ -178,8 +178,7 @@ public class IncidenciaSrv {
                 () -> new RuntimeException("No existe estus con esa clave: " + body.getCodigoEstado())));
 
         if (incidencia.getEstatus().getClave().trim().matches(TE_ACEPTADO)) {
-            List<OffsetDateTime> diasAsueto = this.diasDeAsueto();
-            this.guardarRegistroVacaciones(incidencia.getEmpleadoSol(), incidencia, diasAsueto);
+            this.guardarRegistroVacaciones(incidencia.getEmpleadoSol(), incidencia);
         }
 
         incidenciaRepo.save(incidencia);
@@ -195,7 +194,8 @@ public class IncidenciaSrv {
         return incidenciaPermisoMapper.toDTO(incidencia);
     }
 
-    public void guardarRegistroVacaciones(Empleado empleado, Incidencia incidencia, List<OffsetDateTime> diasAsueto) {
+    public void guardarRegistroVacaciones(Empleado empleado, Incidencia incidencia) {
+        log.info("Iniciando el guardado de las vacaciones");
         this.empleadoTieneDiasLaborales(empleado);
 
         int cantidadRegistrosGuardados = 0;
@@ -208,9 +208,6 @@ public class IncidenciaSrv {
         Integer horaEntrada = DateUtil.getHora(empleadoEmpresa.getHoraEntrada());
         Integer horaSalida = DateUtil.getHora(empleadoEmpresa.getHorasalida());
 
-        OffsetDateTime fechaInicio = incidencia.getSolicitudPermiso().getFechaInicio();
-        OffsetDateTime fechaFin = incidencia.getSolicitudPermiso().getFechaFin();
-
         List<OffsetDateTime> listaFechas = incidencia.getSolicitudPermiso().getDiasPermiso()
                 .stream()
                 .map(item -> item.getFecha())
@@ -222,10 +219,11 @@ public class IncidenciaSrv {
             
             Date entrada = DateUtil.offsetDateTimeToDate(dia);
             
-            Optional<RegistroAsistencia> registroPasado = asistenciaRepo.buscarPorPeriodoAusencia(empleado.getIdEmpleado(), DateUtil.setHourTime(fechaInicio, 0, 0, 0, 0), DateUtil.setHourTime(fechaFin, 0, 0, 0, 0), registroFalta.getCodigo());
+            Optional<RegistroAsistencia> registroPasado = buscarRegistroAusencia(empleado.getIdEmpleado(), dia, dia, registroFalta.getCodigo());
             
             if(registroPasado.isPresent()){
                 registro = registroPasado.get();
+                log.info("Modificando la ausencia del empleado {} con fecha: {}", empleado.getIdEmpleado(), registroPasado.get().getFechaEntrada().toString());
             } else {
                 registro = new RegistroAsistencia();
                 registro.setEmpleado(empleado);
@@ -237,6 +235,7 @@ public class IncidenciaSrv {
                 Date registroSalida = DateUtil.getDateTime(DateUtil.getAnio(entrada), DateUtil.getMes(entrada), DateUtil.getDia(entrada), horaSalida, 0, 0, 0);
                 log.trace("Dia hora salida: {}", registroSalida);
                 registro.setFechaSalida(DateUtil.dateToOffsetDateTime(registroSalida));
+                log.info("Registrando al empleado {} con el dia de vacaciones: {}", empleado.getIdEmpleado(), registroEntrada.toString());
             }
             
             switch (tipoIncidencia) {
@@ -249,11 +248,13 @@ public class IncidenciaSrv {
                     registroVacaciones.setRegistroAsistencia(registro);
                     registroVacaciones.setVacaciones(incidencia.getSolicitudPermiso().getVacaciones());
                     registroVacacionesRepo.save(registroVacaciones);
+                    log.info("Terminando de guardar 1 registro de vacaciones");
                     break;
                 case TP_PERMISO:
                     estadoRegistro = this.estatusPermiso();
                     registro.setStatus(estadoRegistro);
                     asistenciaRepo.save(registro);
+                    log.info("Terminando de guardar 1 registro de permiso");
                     break;
             }
             
@@ -261,6 +262,12 @@ public class IncidenciaSrv {
         }
 
         log.info("Num. registros de vacaciones / permisos guardados del empleado {} en asistencia: {}", empleado.getIdEmpleado(), cantidadRegistrosGuardados);
+    }
+    
+    public Optional<RegistroAsistencia> buscarRegistroAusencia(Integer idEmpleado, OffsetDateTime fechaInicio, OffsetDateTime fechaFin, String codigo){
+        OffsetDateTime inicio = DateUtil.setHourTime(fechaInicio, 0, 0, 0, 0);
+        OffsetDateTime fin = DateUtil.setHourTime(fechaFin, 0, 0, 0, 0);
+        return asistenciaRepo.buscarPorPeriodoAusencia(idEmpleado, inicio, fin, codigo);
     }
 
     public void empleadoTieneDiasLaborales(Empleado empleado) {
