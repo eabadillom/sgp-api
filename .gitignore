@@ -26,6 +26,9 @@ HELP.md
 hs_err_pid*
 replay_pid*
 
+#src/main/resources/firebase/firebase-service-account.json
+src/main/resources/firebase/firebase-service-account.json
+
 # Eclipse files
 .classpath
 .project
