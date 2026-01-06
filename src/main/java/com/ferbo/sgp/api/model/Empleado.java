@@ -51,18 +51,8 @@ public class Empleado {
     @Column(name = "curp")
     private String curp;
     
-    @Column(name = "rfc")
-    private String rfc;
-    
     @Column(name = "correo")
     private String correo;
-    
-    @Temporal(TemporalType.DATE)
-    @Column(name = "fecha_ingreso")
-    private Date fechaIngreso;
-    
-    @Column(name = "nss")
-    private String nss;
     
     @Column(name = "activo")
     private Integer activo;
@@ -83,6 +73,8 @@ public class Empleado {
     
     @Override
 	public int hashCode() {
+    	if(this.idEmpleado == null)
+    		return System.identityHashCode(this);
 		return Objects.hash(idEmpleado);
 	}
 
@@ -103,8 +95,7 @@ public class Empleado {
 		return "Empleado [idEmpleado=" + idEmpleado + ", numeroEmpleado=" + numeroEmpleado + ", nombre=" + nombre
 				+ ", primeroAp=" + primeroAp + ", segundoAp=" + segundoAp + ", fechaNacimiento=" + fechaNacimiento
 				+ ", fechaRegistro=" + fechaRegistro + ", fechaModificacion=" + fechaModificacion + ", curp=" + curp
-				+ ", rfc=" + rfc + ", correo=" + correo + ", fechaIngreso=" + fechaIngreso + ", nss=" + nss
-				+ ", activo=" + activo + "]";
+				+ ", correo=" + correo + ", activo=" + activo + "]";
 	}
     
 	public Integer getIdEmpleado() {
@@ -179,36 +170,12 @@ public class Empleado {
         this.curp = curp;
     }
 
-    public String getRfc() {
-        return rfc;
-    }
-
-    public void setRfc(String rfc) {
-        this.rfc = rfc;
-    }
-
     public String getCorreo() {
         return correo;
     }
 
     public void setCorreo(String correo) {
         this.correo = correo;
-    }
-
-    public Date getFechaIngreso() {
-        return fechaIngreso;
-    }
-
-    public void setFechaIngreso(Date fechaIngreso) {
-        this.fechaIngreso = fechaIngreso;
-    }
-
-    public String getNss() {
-        return nss;
-    }
-
-    public void setNss(String nss) {
-        this.nss = nss;
     }
 
     public Integer getActivo() {
