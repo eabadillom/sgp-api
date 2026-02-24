@@ -1,5 +1,7 @@
 package com.ferbo.sgp.api.service;
 
+import java.time.LocalDate;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +15,6 @@ public class FotografiaSrv {
 	FotografiaRepo fotografiaRepository;
 	
 	public Fotografia buscarPorNumeroEmpleado(String numeroEmpleado) {
-		return (Fotografia) fotografiaRepository.findByNumeroEmpleado(numeroEmpleado);
+		return (Fotografia) fotografiaRepository.findByNumeroEmpleado(numeroEmpleado, LocalDate.now());
 	}
 }
