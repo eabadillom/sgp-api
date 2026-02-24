@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -24,7 +25,8 @@ public class Fotografia {
 	@Basic(optional = false)
 	private String fotografia;
 	
-	@OneToOne(mappedBy = "fotografia")
+	@OneToOne(optional = false)
+	@JoinColumn(name = "id_empleado")
 	private Empleado empleado;
 	
 	@Override
