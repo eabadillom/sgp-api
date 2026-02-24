@@ -57,9 +57,9 @@ public class Empleado {
     @Column(name = "activo")
     private Integer activo;
     
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id_empleado_foto")
-    private Fotografia fotografia;
+//    @OneToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "id_empleado_foto")
+//    private Fotografia fotografia;
     
     @OneToOne
     @JoinColumn(name = "id_empleado_empresa")
@@ -186,13 +186,13 @@ public class Empleado {
         this.activo = activo;
     }
 
-	public Fotografia getFotografia() {
-		return fotografia;
-	}
-
-	public void setFotografia(Fotografia fotografia) {
-		this.fotografia = fotografia;
-	}
+//	public Fotografia getFotografia() {
+//		return fotografia;
+//	}
+//
+//	public void setFotografia(Fotografia fotografia) {
+//		this.fotografia = fotografia;
+//	}
 	
 	public InformacionEmpresa getInformacionEmpresa() {
 		return informacionEmpresa;
