@@ -1,5 +1,6 @@
 package com.ferbo.sgp.api.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +27,7 @@ public class BiometricoSrv {
     
     public Biometrico buscarPorNumeroEmpleado(String numero) {
     	Biometrico biometrico = null;
-    	biometrico = biometricoRepo.findByNumeroEmpleado(numero);
+    	biometrico = biometricoRepo.findByNumeroEmpleado(numero, LocalDate.now());
     	return biometrico;
     }
 
