@@ -10,11 +10,10 @@
 	</parent>
 	<groupId>com.ferbo</groupId>
 	<artifactId>sgp-api</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>API Empleados</name>
-	<description>API para información de empleados.</description>
-	
+	<description>API para Sistema de Gestión de Personal</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -85,9 +84,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.mysql</groupId>
-			<artifactId>mysql-connector-j</artifactId>
-			<version>8.0.33</version>
+		    <groupId>com.mysql</groupId>
+		    <artifactId>mysql-connector-j</artifactId>
+		    <version>8.4.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.passay</groupId>
