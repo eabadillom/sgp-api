@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>com.ferbo</groupId>
 	<artifactId>sgp-api</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.0-RELEASE</version>
 	<packaging>war</packaging>
 	<name>API Empleados</name>
 	<description>API para Sistema de Gestión de Personal</description>
