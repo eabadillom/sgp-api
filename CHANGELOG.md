@@ -16,3 +16,8 @@ Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Chang
 
 ## Nota
 Los cambios previos a esta versión (desde el inicio del proyecto) no están documentados por tratarse de la fase inicial de desarrollo.
+
+## [1.0.0] - 2026-04-15
+
+### Added
+* Se agrego end-point para la peticion de 1 empleado con numero de usuario
