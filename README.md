@@ -45,3 +45,6 @@ API para el Sistema de Gestión de Personal
 
 #### Solicitudes
 * /movil/solicitudes/{id}/estatus
+
+#### Empleados
+* /movil/empleado/{numero}
