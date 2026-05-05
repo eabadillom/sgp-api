@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.ferbo.sgp.api.dto.EmpleadoDTO;
 import com.ferbo.sgp.api.model.Empleado;
+import com.ferbo.sgp.api.mapper.EmpleadoMapper;
 import com.ferbo.sgp.api.repository.EmpleadoRepo;
 
 @Service
@@ -13,6 +15,9 @@ public class EmpleadoSrv {
     
     @Autowired
     EmpleadoRepo detEmpleadoRepository;
+    
+    @Autowired
+    EmpleadoMapper empleadoMapper;
 
     public List<Empleado> obtenerEmpleados(){
         return (List<Empleado>) detEmpleadoRepository.findAll();
@@ -25,6 +30,17 @@ public class EmpleadoSrv {
     
     public List<Empleado> obtenerEmpleadosActivos() {
     	return (List<Empleado>) detEmpleadoRepository.findByActivo();
+    }
+    
+    public EmpleadoDTO buscarPorNumero(String numeroEmpleado) {
+        Empleado empleado = (Empleado) detEmpleadoRepository.findByNumeroEmpleado(numeroEmpleado)
+            .orElseThrow(() -> new RuntimeException("No se encontro registro de empleado con ese indentificador"));
+        
+        return convertir(empleado);
+    }
+    
+    public EmpleadoDTO convertir(Empleado empleado) {
+        return empleadoMapper.toDTO(empleado);
     }
     
 }
