@@ -8,17 +8,17 @@ import org.mapstruct.Mapping;
 @Mapper(componentModel = "spring")
 public interface EmpleadoMapper 
 {
-    @Mapping(source = "numeroEmpleado", target = "numeroUsuario")
-    @Mapping(source = "nombre", target = "nombreUsuario")
-    @Mapping(source = "primeroAp", target = "primerApUsuario")
-    @Mapping(source = "segundoAp", target = "segundoApUsuario")
+    @Mapping(source = "numeroEmpleado", target = "numero")
+    @Mapping(source = "nombre", target = "nombre")
+    @Mapping(source = "primeroAp", target = "primerApellido")
+    @Mapping(source = "segundoAp", target = "segundoApellido")
     @Mapping(source = "empleado.informacionEmpresa.puesto.descripcion", target = "puesto")
     EmpleadoDTO toDTO(Empleado empleado);
     
-    @Mapping(source = "numeroUsuario", target = "numeroEmpleado")
-    @Mapping(source = "nombreUsuario", target = "nombre")
-    @Mapping(source = "primerApUsuario", target = "primeroAp")
-    @Mapping(source = "segundoApUsuario", target = "segundoAp")
+    @Mapping(source = "numero", target = "numeroEmpleado")
+    @Mapping(source = "nombre", target = "nombre")
+    @Mapping(source = "primerApellido", target = "primeroAp")
+    @Mapping(source = "segundoApellido", target = "segundoAp")
     @Mapping(source = "puesto", target = "informacionEmpresa.puesto.descripcion")
     Empleado toEntity(EmpleadoDTO empleadoDTO);
     
