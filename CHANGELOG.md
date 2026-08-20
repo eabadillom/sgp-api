@@ -6,6 +6,11 @@ Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Chang
 
 ---
 
+## [1.1.0] - 2026-08-19
+
+### Added
+* Se agrega end-point para la consulta de 1 cliente sistema
+
 ## [1.0.0] - 2026-04-17
 
 ### Added
