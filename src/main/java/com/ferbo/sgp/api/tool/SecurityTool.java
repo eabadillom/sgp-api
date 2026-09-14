@@ -1,5 +1,6 @@
 package com.ferbo.sgp.api.tool;
 
+import com.ferbo.tools.exception.SystemException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -18,7 +19,11 @@ import org.passay.PasswordValidator;
 import org.passay.Rule;
 import org.passay.RuleResult;
 import org.passay.WhitespaceRule;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.ferbo.tools.exception.ToolException;
+import com.ferbo.tools.exception.ValidationException;
 
 @Service
 public class SecurityTool {
@@ -87,6 +92,44 @@ private static Logger log = LogManager.getLogger(SecurityTool.class);
         }
 
         return null; 
+    }
+
+    public String cifrarBCrypt(String psw) throws ToolException{
+        String  cifrada = "";
+        try{
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        cifrada = passwordEncoder.encode(psw);
+        }
+        catch(Exception ex){
+            log.info("Error: no se pudo cifrar la contrasenia dada.");
+            throw new ToolException("La contrasenia no se pudo cifrar");
+        }
+        return cifrada;
+    }
+    
+    public String extractBearerToken(HttpServletRequest request) {
+
+        if (request == null) {
+            throw new ValidationException("La solicitud no puede ser vacía");
+        }
+
+        String authorization = request.getHeader("Authorization");
+
+        if (authorization == null || authorization.trim().isEmpty()) {
+            throw new SystemException("La solicitud no incluye el header Authorization");
+        }
+
+        if (!authorization.startsWith("Bearer ")) {
+            throw new ToolException("La solicitud no incluye un bearer token");
+        }
+
+        String token = authorization.substring(7).trim();
+
+        if (token.isEmpty()) {
+            throw new ToolException("La solicitud no incluye un bearer token");
+        }
+
+        return token;
     }
 
 }

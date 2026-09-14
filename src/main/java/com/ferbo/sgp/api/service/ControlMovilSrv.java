@@ -20,6 +20,10 @@ import com.ferbo.sgp.api.repository.ControlMovilRepo;
 import com.ferbo.sgp.api.tool.DateUtil;
 import com.ferbo.sgp.api.tool.SecurityTool;
 
+import com.ferbo.tools.exception.SystemException;
+import com.ferbo.tools.exception.ValidationException;
+import com.ferbo.tools.exception.RuleException;
+
 @Service
 public class ControlMovilSrv {
 
@@ -130,5 +134,43 @@ public class ControlMovilSrv {
         controlMovilRepo.save(controlMovil);
 
         return "El proceso finalizo exitosamente";
+    }
+
+    public ControlMovil obtenerPorTokenSolicitante(String token) throws  SystemException, ValidationException {
+
+        if (token == null || "".equalsIgnoreCase(token)) {
+            throw new ValidationException("El token no puede estar vacío");
+        }
+
+        ControlMovil controlMovil = controlMovilRepo.findByToken(token)
+                                                    .orElseThrow(() -> new SystemException("No token recibido no existe en el sistema"));
+
+        if (!controlMovil.getValido()) {
+            throw new RuleException("El token recibido no es valido");
+        }
+
+        return controlMovil;
+    }
+
+    public synchronized ControlMovil desahabilitarTokenPorControlMovil(ControlMovil controlMovil) throws ValidationException, SystemException{
+        
+        if (controlMovil == null) {
+            throw new ValidationException("El control movil no puede ser vacío");
+        }
+
+        if (controlMovil.getId() == null) {
+            throw new ValidationException("El control movil no se encuentra en el sistema");
+        }
+
+        if (!controlMovil.getValido()) {
+            throw new RuleException("El token ya se encuentra deshabilitado");
+        }
+
+    
+        controlMovil.setValido(Boolean.FALSE);
+
+        controlMovilRepo.save(controlMovil);
+
+        return controlMovil;
     }
 }
