@@ -94,6 +94,23 @@ private static Logger log = LogManager.getLogger(SecurityTool.class);
         return null; 
     }
 
+    public String[] extractCredentials(String header) {
+        if (header == null || "".equalsIgnoreCase(header)) {
+            throw new ValidationException("El encabezado no pueder ser vacío");
+        }
+
+        if (!header.startsWith("Basic ")) {
+            throw new ToolException("El tipo de encabezado no es compatible con la herramienta");
+        }
+
+        String base64Credentials = header.substring(6);
+        String values = new String(Base64.getDecoder().decode(base64Credentials));
+
+        String[] credentials = values.split(":", 2);
+        
+        return credentials;
+    }
+
     public String cifrarBCrypt(String psw) throws ToolException{
         String  cifrada = "";
         try{
