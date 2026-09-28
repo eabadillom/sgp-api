@@ -22,4 +22,7 @@ public interface ControlMovilRepo extends JpaRepository <ControlMovil, Integer> 
 
     @Query("SELECT cm FROM ControlMovil cm WHERE cm.token = :token")
     public abstract Optional<ControlMovil> findByToken(String token);
+
+    @Query("SELECT cm FROM ControlMovil cm where cm.sistema.id = :idSistema and cm.valido = true")
+    public abstract Optional<ControlMovil> findByIdSistema(Integer idSistema);
 }
