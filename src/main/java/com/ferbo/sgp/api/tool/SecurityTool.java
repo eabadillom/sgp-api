@@ -1,6 +1,5 @@
 package com.ferbo.sgp.api.tool;
 
-import com.ferbo.tools.exception.SystemException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -22,6 +21,7 @@ import org.passay.WhitespaceRule;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.ferbo.tools.exception.SystemException;
 import com.ferbo.tools.exception.ToolException;
 import com.ferbo.tools.exception.ValidationException;
 
@@ -133,17 +133,17 @@ private static Logger log = LogManager.getLogger(SecurityTool.class);
         String authorization = request.getHeader("Authorization");
 
         if (authorization == null || authorization.trim().isEmpty()) {
-            throw new SystemException("La solicitud no incluye el header Authorization");
+            throw new SystemException("La solicitud no incluye la autenticación necesaria");
         }
 
         if (!authorization.startsWith("Bearer ")) {
-            throw new ToolException("La solicitud no incluye un bearer token");
+            throw new ToolException("La solicitud no incluye el token");
         }
 
         String token = authorization.substring(7).trim();
 
         if (token.isEmpty()) {
-            throw new ToolException("La solicitud no incluye un bearer token");
+            throw new ToolException("La solicitud no incluye el token");
         }
 
         return token;
