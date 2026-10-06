@@ -52,3 +52,6 @@ API para el Sistema de Gestión de Personal
 #### Sistema
 * /movil/sistema/{usename}
 
+#### Dispositivos moviles
+* /movil/dispositivos/verificaciones
+* /movil/dispositivos/cambiarPassword
