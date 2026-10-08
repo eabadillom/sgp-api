@@ -1,24 +1,25 @@
 package com.ferbo.sgp.api.controller;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.ferbo.sgp.api.dto.UsuarioMovilDTO;
+import com.ferbo.sgp.api.mapper.ControlMovilMapper;
 import com.ferbo.sgp.api.service.ControlMovilSrv;
 import com.ferbo.sgp.api.service.SistemaSrv;
-
-import static com.ferbo.sgp.api.tool.ErrorResponseBuilder.construirErrorMovil;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import com.ferbo.sgp.api.tool.ErrorResponseBuilder;
+import com.ferbo.sgp.api.tool.SecurityTool;
 
 @RestController
 @RequestMapping("movil")
@@ -34,7 +35,13 @@ public class MovilController {
     @Autowired
     private ControlMovilSrv controlMovilSrv;
 
-    @GetMapping("/generar")
+    @Autowired
+    private ControlMovilMapper controlMovilMapper;
+
+    @Autowired
+    private SecurityTool securityTool;
+
+    @PostMapping("/generar")
     public ResponseEntity<?> inicioPantalla(HttpServletRequest request, @RequestBody UsuarioMovilDTO body) {
         UsuarioMovilDTO usuario = null; 
         try{
@@ -43,10 +50,10 @@ public class MovilController {
             log.info("Finaliza el proceso para generar el usuario");
         } catch(RuntimeException ex){
             log.warn("Hubo un problema al obtener los datos. {}", ex);
-            return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ACCESO, ex);
+            return ErrorResponseBuilder.construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ACCESO, ex);
         } catch(Exception ex){
             log.error("Problema desconocido. {}", ex);
-            return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ACCESO, ex);
+            return ErrorResponseBuilder.construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ACCESO, ex);
         }
         return ResponseEntity.ok(usuario);
     }
@@ -66,10 +73,11 @@ public class MovilController {
         
        } catch (RuntimeException ex) {
         log.warn("Hubo un problema al desahibilitar el token del sistema. {}", ex);
-        return construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ACCESO, ex);
+        return ErrorResponseBuilder.construirErrorMovil(HttpStatus.NOT_FOUND, TIPO_ERROR_ACCESO, ex);
        } catch (Exception ex) {
         log.error("Hubo un problema al desahibilitar el token del sistema. {}", ex);
-        return construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ACCESO, ex);
+        return ErrorResponseBuilder.construirErrorMovil(HttpStatus.INTERNAL_SERVER_ERROR, TIPO_ERROR_ACCESO, ex);
        }
     }
+
 }
