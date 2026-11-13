@@ -19,6 +19,7 @@ API para el Sistema de Gestión de Personal
 * /movil/generar
 * /movil/verificar
 * /movil/deshabilitar
+* /movil/autenticacion/cambiarPassword
 
 #### Incapacidades
 * /movil/incapacidades/{fechaInicio}/{fechaFin}

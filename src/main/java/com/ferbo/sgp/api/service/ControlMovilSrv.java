@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.ferbo.sgp.api.auth.JwtUtil;
+import com.ferbo.sgp.api.dto.ControlMovilDTO;
 import com.ferbo.sgp.api.dto.UsuarioMovilDTO;
+import com.ferbo.sgp.api.mapper.ControlMovilMapper;
 import com.ferbo.sgp.api.model.ControlMovil;
 import com.ferbo.sgp.api.model.Empleado;
 import com.ferbo.sgp.api.model.Sistema;
@@ -43,6 +45,9 @@ public class ControlMovilSrv {
 
     @Autowired
     private EmpleadoSrv empleadoService;
+    
+    @Autowired
+    private ControlMovilMapper controlMovilMapper;
 
     public UsuarioMovilDTO obtenerUsuario(HttpServletRequest request, UsuarioMovilDTO body) {
         UsuarioMovilDTO usuario = new UsuarioMovilDTO();
@@ -173,4 +178,17 @@ public class ControlMovilSrv {
 
         return controlMovil;
     }
+    
+    public void validarContrasenia(String password) throws Exception {
+        if (password == null || password.trim().isEmpty()) {
+            throw new ValidationException("La contraseña no puede ser vacía, ni se un espacio en blanco.");
+        }
+
+        securityTool.checkPassword(password.trim());
+    }
+    
+    public ControlMovilDTO convertirControlMovil(ControlMovil controlMovil) {
+        return controlMovilMapper.toDto(controlMovil);
+    }
+    
 }
