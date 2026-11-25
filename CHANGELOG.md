@@ -5,6 +5,17 @@ Todos los cambios importantes en este proyecto serán documentados en este archi
 Este proyecto sigue versionado semántico (SemVer) y el formato de [Keep a Changelog](https://keepachangelog.com/es-ES/1.0.0/).
 
 ---
+## [1.3.0] - 2026-11-25
+### Added
+* Se agrega endpoint para la consulta de empleados que tienen registro de asistencias durante un periodo.
+* Se agrega endpoint para la consulta de detalle del empleado donde se muestra los dias laborados segun su indidencias de asistencia.
+* Se agrega endpoint para mostrar las plantas activas.
+* Se agrega endpoint para mostrar las empresas activas.
+* Se agrega endpoint para mostrar los estatus de las asistencias
+
+### Change
+* Cuando se valida que el token ya esta expirado, cambiarle el status a no valido para dejarlo de usar.
+
 ## [1.2.0] - 2026-11-12
 ### Added
 * Se agrega endpoint para el cambio de contraseña del movil de sgp.

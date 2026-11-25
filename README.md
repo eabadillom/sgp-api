@@ -56,3 +56,17 @@ API para el Sistema de Gestión de Personal
 #### Dispositivos moviles
 * /movil/dispositivos/verificaciones
 * /movil/dispositivos/cambiarPassword
+
+#### Plantas
+* /movil/plantas/obtenerPlantas
+
+#### Empresas
+* /movil/empresas/obtenerEmpresas
+
+#### Estatus Asistencia
+* /movil/asistencia/estatus
+
+#### Empleado asistencias
+* /movil/incidencias/asistencia/empleados
+* /movil/incidencias/empleado/obtenerDetalle
+
