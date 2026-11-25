@@ -95,6 +95,8 @@ public class ControlMovilSrv {
                 valido = nuevoToken.getValido();
                 log.info("Finaliza proceso de para notificar del token existente");
             } else {
+                nuevoToken.setValido(Boolean.FALSE);
+                controlMovilRepo.save(nuevoToken);
                 nuevoToken = new ControlMovil();
             }
         } else {
