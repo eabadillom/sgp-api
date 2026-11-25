@@ -25,4 +25,8 @@ public interface RegistroAsistenciaRepo extends CrudRepository<RegistroAsistenci
         
         @Query("SELECT r FROM RegistroAsistencia r WHERE r.empleado.idEmpleado = :idEmp AND (:fecha BETWEEN r.fechaEntrada AND r.fechaSalida) AND r.status.codigo = :codigo")
         public abstract Optional<RegistroAsistencia> buscarPorFechaEstatus(Integer idEmp, OffsetDateTime fecha, String codigo);
+        
+        @Query("SELECT r FROM RegistroAsistencia r WHERE r.empleado.idEmpleado = :idEmp AND (r.fechaEntrada BETWEEN :fechaInicio AND :fechaFin)")
+        public abstract List<RegistroAsistencia> buscarPorPeriodoEmpleado(OffsetDateTime fechaInicio, OffsetDateTime fechaFin, Integer idEmp);
+        
 }
